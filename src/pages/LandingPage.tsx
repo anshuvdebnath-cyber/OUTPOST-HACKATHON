@@ -72,7 +72,7 @@ export default function LandingPage() {
               <NavLink
                 key={to}
                 to={to}
-                className="rounded-full px-4 py-2 text-[15px] font-medium text-ink-muted transition-colors duration-300 hover:bg-accent/15 hover:text-ink sm:text-base"
+                className="rounded-full px-4 py-2 text-[15px] font-medium text-ink/80 transition-colors duration-300 hover:bg-accent/15 hover:text-ink sm:text-[16px]"
               >
                 {label}
               </NavLink>

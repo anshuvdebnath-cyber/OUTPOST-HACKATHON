@@ -107,8 +107,8 @@ export function AppShell() {
                   to={to}
                   className={({ isActive }) =>
                     cn(
-                      'relative z-10 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[15px] font-medium tracking-tight transition-colors duration-300 sm:px-4.5 sm:text-base',
-                      isActive ? 'text-accent-ink' : 'text-ink-muted hover:text-ink',
+                      'relative z-10 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[15px] font-medium tracking-tight transition-colors duration-300 sm:px-4.5 sm:text-[16px]',
+                      isActive ? 'text-accent-ink' : 'text-ink/80 hover:text-ink',
                     )
                   }
                 >

@@ -29,7 +29,7 @@ export default {
         },
         surface: 'rgb(var(--color-surface) / <alpha-value>)',
         'surface-muted': 'rgb(var(--color-surface-muted) / <alpha-value>)',
-        base: 'rgb(var(--color-base) / <alpha-value>)',
+        canvas: 'rgb(var(--color-base) / <alpha-value>)',
         line: 'rgb(var(--color-line) / <alpha-value>)',
         ink: 'rgb(var(--color-ink) / <alpha-value>)',
         'ink-muted': 'rgb(var(--color-ink-muted) / <alpha-value>)',
