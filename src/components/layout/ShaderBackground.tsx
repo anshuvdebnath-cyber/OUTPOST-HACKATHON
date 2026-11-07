@@ -86,34 +86,34 @@ const FRAGMENT_SHADER = `
     vec2 uv = v_uv;
     float t = u_time * 1.15;
 
-    // Number of vertical fluted cylindrical reeds (matching the reference photo density)
-    float fluteWidth = clamp(u_resolution.x / 26.0, 32.0, 52.0);
+    // Dense, fine-fluted cylindrical reeds with significantly reduced breadth
+    float fluteWidth = clamp(u_resolution.x / 110.0, 10.0, 16.0);
     float strips = floor(u_resolution.x / fluteWidth);
     float stripPos = uv.x * strips;
     // Local coordinate inside each cylindrical flute: -1.0 (left seam) to +1.0 (right seam)
     float x = fract(stripPos) * 2.0 - 1.0;
 
-    // True physical cylindrical glass lens profile & normal vector
-    float r = x * 0.94;
+    // Smooth subtle cylindrical glass lens profile & normal vector
+    float r = x * 0.90;
     float arc = sqrt(max(0.001, 1.0 - r * r));
-    vec3 normal = normalize(vec3(r * 1.35, 0.0, arc));
+    vec3 normal = normalize(vec3(r * 1.15, 0.0, arc));
 
     // Snell's-law refraction through crown glass (IOR = 1.52)
     vec3 incident = vec3(0.0, 0.0, -1.0);
     vec3 refr = refract(incident, normal, 1.0 / 1.52);
 
-    // Refracted UV displacement: horizontal lens magnification & slight vertical tilt
-    vec2 refractShift = vec2(refr.x * 0.082, refr.x * 0.024);
+    // Refraction scaled proportionally to the fine reed breadth
+    vec2 refractShift = vec2(refr.x * (1.1 / strips), refr.x * 0.006);
 
-    // Multi-tap frosted sampling with RGB chromatic dispersion inside the glass flute
-    vec2 dispersion = vec2(refr.x * 0.0055, 0.0);
-    float jitter = (hash(gl_FragCoord.xy) - 0.5) * 0.003;
+    // Soft multi-tap frosted sampling with delicate chromatic dispersion
+    vec2 dispersion = vec2(refr.x * 0.0018, 0.0);
+    float jitter = (hash(gl_FragCoord.xy) - 0.5) * 0.002;
 
     vec3 accum = vec3(0.0);
     const int TAPS = 5;
     for (int i = -2; i <= 2; i++) {
-      float fi = float(i) * 0.005 + jitter;
-      vec2 sampleUv = uv + refractShift + vec2(fi * 0.35, fi * 1.1);
+      float fi = float(i) * 0.0035 + jitter;
+      vec2 sampleUv = uv + refractShift + vec2(fi * 0.25, fi * 0.85);
 
       float cr = sampleBackdrop(sampleUv + dispersion, t, u_dark).r;
       float cg = sampleBackdrop(sampleUv, t, u_dark).g;
@@ -122,28 +122,27 @@ const FRAGMENT_SHADER = `
     }
     vec3 refractedColor = accum / float(TAPS);
 
-    // Optical Caustic channeling: the cylindrical lens concentrates passing light waves into vertical bars
+    // Very subtle, non-intrusive caustic channeling
     float waveLuma = dot(refractedColor, vec3(0.299, 0.587, 0.114));
-    float lensCore = exp(-pow(x * 1.7, 2.0));
-    float causticBar = lensCore * smoothstep(0.35, 0.95, waveLuma) * 0.38;
+    float lensCore = exp(-pow(x * 1.5, 2.0));
+    float causticBar = lensCore * smoothstep(0.45, 0.92, waveLuma) * 0.14;
 
-    // Distinct vertical specular pinstripe along the bevel curve (exact look of reference image)
-    float pinstripe = exp(-pow((x - 0.28) * 11.0, 2.0));
-    float pinstripeSecondary = exp(-pow((x + 0.35) * 16.0, 2.0)) * 0.35;
-    float specHighlight = (pinstripe + pinstripeSecondary) * (0.35 + 0.65 * waveLuma);
+    // Soft, delicate specular sheen along the reed (not harsh or overtly visible)
+    float pinstripe = exp(-pow((x - 0.22) * 8.0, 2.0)) * 0.10;
+    float specHighlight = pinstripe * (0.3 + 0.7 * waveLuma);
 
-    // Seam groove shading and edge rim light between adjacent glass flutes
-    float seamEdge = smoothstep(0.0, 0.14, 1.0 - abs(x));
-    float grooveShadow = mix(0.85, 1.0, seamEdge);
-    float grooveGlint = exp(-pow((abs(x) - 0.94) * 22.0, 2.0)) * 0.28;
+    // Extremely soft seam groove so the ribs blend seamlessly with the background
+    float seamEdge = smoothstep(0.0, 0.18, 1.0 - abs(x));
+    float grooveShadow = mix(0.965, 1.0, seamEdge);
+    float grooveGlint = exp(-pow((abs(x) - 0.92) * 16.0, 2.0)) * 0.06;
 
-    // Transmittance depth across the glass flute (slightly richer at the sides, luminous in center)
-    float lensProfile = mix(0.92, 1.04, arc);
+    // Gentle lens profile transmittance
+    float lensProfile = mix(0.97, 1.02, arc);
 
-    vec3 specColor = mix(vec3(1.0, 0.98, 0.94), vec3(0.84, 0.99, 0.91), u_dark);
+    vec3 specColor = mix(vec3(1.0, 0.98, 0.95), vec3(0.85, 0.99, 0.92), u_dark);
     vec3 finalColor = refractedColor * lensProfile * grooveShadow
                     + refractedColor * causticBar
-                    + specColor * (specHighlight * 0.42 + grooveGlint);
+                    + specColor * (specHighlight * 0.18 + grooveGlint * 0.12);
 
     gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
   }
