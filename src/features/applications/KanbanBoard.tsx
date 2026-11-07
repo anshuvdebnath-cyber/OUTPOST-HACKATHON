@@ -1,6 +1,7 @@
-import { memo, useState, type DragEvent } from 'react';
+import { memo, useEffect, useRef, useState, type DragEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, GripVertical, Trash2 } from 'lucide-react';
+import { Check, ChevronDown, Compass, FolderKanban, GripVertical, Trash2 } from 'lucide-react';
+import { buttonClasses } from '@/components/ui/Button';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { getScholarshipById } from '@/data/scholarships';
 import { CountdownBadge } from '@/features/deadlines/CountdownBadge';
@@ -13,9 +14,19 @@ import type { Application, ApplicationStatus } from '@/types/scholarship';
 
 const DRAG_TYPE = 'application/x-grantly-scholarship';
 
+const STAGE_DESCRIPTIONS: Record<ApplicationStatus, string> = {
+  saved: 'Scholarships bookmarked for review before starting your application.',
+  preparing: 'Gathering documents, writing essays, and completing checklist items.',
+  submitted: 'Applications formally submitted and awaiting review by the provider.',
+  interview: 'Shortlisted for aptitude tests, interviews, or verification calls.',
+  awarded: 'Congratulations! Scholarships you have officially won.',
+  rejected: 'Past applications that were not selected this cycle.',
+};
+
 /**
- * Spacious, uncongested frosted-glass Kanban board.
- * Each column has a generous 21.5rem width with smooth horizontal scrolling and stage pill filters.
+ * Full-width, edge-aligned frosted-glass Kanban & stage workspace.
+ *  - No horizontal scrollbar: uses a balanced 3-column bento grid in "All stages" mode
+ *  - Full-width stage container when a specific stage tab is selected
  */
 export function KanbanBoard({ applications }: { applications: Application[] }) {
   const moveApplication = useApplicationStore((s) => s.moveApplication);
@@ -32,56 +43,65 @@ export function KanbanBoard({ applications }: { applications: Application[] }) {
     }
   };
 
-  const visibleStatuses = activeStage === 'all' ? APPLICATION_STATUSES : [activeStage];
-
   return (
     <div className="space-y-6">
-      {/* Stage filter pills for quick uncongested focus */}
-      <div className="flex flex-wrap items-center gap-2" role="tablist" aria-label="Kanban stage filter">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeStage === 'all'}
-          onClick={() => setActiveStage('all')}
-          className={cn(
-            'rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-200',
-            activeStage === 'all'
-              ? 'bg-accent text-accent-ink shadow-sm'
-              : 'glass-subtle text-ink/75 hover:text-ink',
-          )}
-        >
-          All stages ({applications.length})
-        </button>
-        {APPLICATION_STATUSES.map((status) => {
-          const count = applications.filter((a) => a.status === status).length;
-          const meta = STATUS_META[status];
-          const isSelected = activeStage === status;
-          return (
-            <button
-              key={status}
-              type="button"
-              role="tab"
-              aria-selected={isSelected}
-              onClick={() => setActiveStage(status)}
-              className={cn(
-                'inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200',
-                isSelected
-                  ? 'bg-accent text-accent-ink shadow-sm'
-                  : 'glass-subtle text-ink/75 hover:text-ink',
-              )}
-            >
-              <span className={cn('h-2 w-2 rounded-full', meta.dot)} aria-hidden="true" />
-              <span>{meta.label}</span>
-              <span className="opacity-75 font-semibold">({count})</span>
-            </button>
-          );
-        })}
+      {/* Full-width aligned frosted glass stage tab bar */}
+      <div
+        className="glass-pill flex flex-wrap items-center justify-between gap-2 rounded-2xl p-2"
+        role="tablist"
+        aria-label="Kanban stage filter"
+      >
+        <div className="flex flex-wrap items-center gap-1.5">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeStage === 'all'}
+            onClick={() => setActiveStage('all')}
+            className={cn(
+              'rounded-xl px-4 py-2 text-xs font-medium transition-all duration-300',
+              activeStage === 'all'
+                ? 'bg-accent text-accent-ink shadow-sm'
+                : 'text-ink/80 hover:bg-accent/10 hover:text-ink',
+            )}
+          >
+            All stages ({applications.length})
+          </button>
+
+          {APPLICATION_STATUSES.map((status) => {
+            const count = applications.filter((a) => a.status === status).length;
+            const meta = STATUS_META[status];
+            const isSelected = activeStage === status;
+            return (
+              <button
+                key={status}
+                type="button"
+                role="tab"
+                aria-selected={isSelected}
+                onClick={() => setActiveStage(status)}
+                className={cn(
+                  'inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-medium transition-all duration-300',
+                  isSelected
+                    ? 'bg-accent text-accent-ink shadow-sm'
+                    : 'text-ink/80 hover:bg-accent/10 hover:text-ink',
+                )}
+              >
+                <span className={cn('h-2 w-2 rounded-full', meta.dot)} aria-hidden="true" />
+                <span>{meta.label}</span>
+                <span className="opacity-75 font-semibold">({count})</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <span className="hidden pr-3 text-xs text-ink-muted xl:inline">
+          Drag cards between stages or use the status menu
+        </span>
       </div>
 
-      {/* Spacious Kanban columns container */}
-      <div className="scrollbar-thin -mx-4 overflow-x-auto px-4 pb-6 sm:mx-0 sm:px-0">
-        <div className="flex gap-5 snap-x">
-          {visibleStatuses.map((status) => {
+      {/* Stage Workspace: 3-column aligned Bento Grid for "All stages", or Full-Width Panel for a single stage */}
+      {activeStage === 'all' ? (
+        <div key="all-stages" className="animate-fade-in-up grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {APPLICATION_STATUSES.map((status) => {
             const items = applications.filter((a) => a.status === status);
             const meta = STATUS_META[status];
             const isTargeted = dragOver === status;
@@ -97,16 +117,18 @@ export function KanbanBoard({ applications }: { applications: Application[] }) {
                 onDragLeave={() => setDragOver((s) => (s === status ? null : s))}
                 onDrop={onDrop(status)}
                 className={cn(
-                  'card flex w-[21.5rem] min-w-[21.5rem] shrink-0 snap-start flex-col p-4.5 transition-all duration-300',
+                  'card flex min-h-[16rem] flex-col p-5 transition-all duration-300',
                   isTargeted && 'scale-[1.01] shadow-lift ring-2 ring-accent',
                 )}
               >
-                <header className="mb-4 flex items-center justify-between px-1">
-                  <h2 id={`col-${status}`} className="flex items-center gap-2 text-sm font-medium tracking-tight text-ink">
+                <header className="mb-4 flex items-center justify-between border-b border-line/15 pb-3">
+                  <div className="flex items-center gap-2.5">
                     <span className={cn('h-2.5 w-2.5 rounded-full', meta.dot)} aria-hidden="true" />
-                    <span>{meta.label}</span>
-                  </h2>
-                  <span className="glass-subtle rounded-full px-2.5 py-0.5 text-xs font-semibold text-ink">
+                    <h2 id={`col-${status}`} className="text-base font-medium tracking-tight text-ink">
+                      {meta.label}
+                    </h2>
+                  </div>
+                  <span className="glass-subtle rounded-full px-3 py-0.5 text-xs font-semibold text-ink">
                     {items.length}
                   </span>
                 </header>
@@ -116,24 +138,15 @@ export function KanbanBoard({ applications }: { applications: Application[] }) {
                     <ApplicationCard key={app.scholarshipId} app={app} />
                   ))}
 
-                  {/* Clean, compact drop zone target */}
-                  {items.length === 0 ? (
+                  {items.length === 0 && (
                     <div
                       className={cn(
-                        'glass-subtle flex min-h-[7rem] flex-col items-center justify-center rounded-2xl border border-dashed border-line/30 p-4 text-center text-xs text-ink-muted transition-colors duration-300',
+                        'glass-subtle flex flex-1 flex-col items-center justify-center rounded-2xl border border-dashed border-line/30 p-6 text-center transition-colors duration-300',
                         isTargeted && 'border-accent bg-accent/15 text-ink',
                       )}
                     >
-                      <span>Drop applications here to move</span>
-                    </div>
-                  ) : (
-                    <div
-                      className={cn(
-                        'flex min-h-[3rem] items-center justify-center rounded-xl border border-dashed border-transparent text-center text-xs text-ink-muted transition-colors duration-300',
-                        isTargeted && 'border-accent bg-accent/15 text-ink',
-                      )}
-                    >
-                      {isTargeted && <span>Drop here</span>}
+                      <p className="text-xs font-medium text-ink/80">No applications in {meta.label}</p>
+                      <p className="mt-1 text-[11px] text-ink-muted">Drag a scholarship card here to move it</p>
                     </div>
                   )}
                 </div>
@@ -141,8 +154,111 @@ export function KanbanBoard({ applications }: { applications: Application[] }) {
             );
           })}
         </div>
-      </div>
+      ) : (
+        /* Full-width aligned single-stage view */
+        <SingleStagePanel
+          key={activeStage}
+          status={activeStage}
+          items={applications.filter((a) => a.status === activeStage)}
+          isTargeted={dragOver === activeStage}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragOver(activeStage);
+          }}
+          onDragLeave={() => setDragOver((s) => (s === activeStage ? null : s))}
+          onDrop={onDrop(activeStage)}
+          onShowAll={() => setActiveStage('all')}
+        />
+      )}
     </div>
+  );
+}
+
+interface SingleStagePanelProps {
+  status: ApplicationStatus;
+  items: Application[];
+  isTargeted: boolean;
+  onDragOver: (e: DragEvent<HTMLElement>) => void;
+  onDragLeave: () => void;
+  onDrop: (e: DragEvent<HTMLElement>) => void;
+  onShowAll: () => void;
+}
+
+function SingleStagePanel({
+  status,
+  items,
+  isTargeted,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+  onShowAll,
+}: SingleStagePanelProps) {
+  const meta = STATUS_META[status];
+
+  return (
+    <section
+      aria-labelledby={`single-col-${status}`}
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
+      className={cn(
+        'card animate-fade-in-up w-full p-6 transition-all duration-300 sm:p-8',
+        isTargeted && 'ring-2 ring-accent',
+      )}
+    >
+      <header className="mb-6 flex flex-col justify-between gap-3 border-b border-line/20 pb-5 sm:flex-row sm:items-center">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <span className={cn('h-3 w-3 rounded-full', meta.dot)} aria-hidden="true" />
+            <h2 id={`single-col-${status}`} className="text-2xl font-normal tracking-[-0.02em] text-ink">
+              {meta.label}
+            </h2>
+            <span className="glass-subtle rounded-full px-3 py-0.5 text-xs font-semibold text-ink">
+              {items.length} {items.length === 1 ? 'application' : 'applications'}
+            </span>
+          </div>
+          <p className="mt-1.5 text-sm text-ink-muted">{STAGE_DESCRIPTIONS[status]}</p>
+        </div>
+
+        <button
+          type="button"
+          onClick={onShowAll}
+          className="glass-subtle self-start rounded-full px-4 py-2 text-xs font-medium text-ink transition hover:scale-[1.02] sm:self-auto"
+        >
+          View all 6 stages
+        </button>
+      </header>
+
+      {items.length === 0 ? (
+        <div className="glass-subtle flex min-h-[14rem] flex-col items-center justify-center rounded-2xl border border-dashed border-line/35 p-8 text-center">
+          <div className="glass-pill mb-3 grid h-11 w-11 place-items-center rounded-2xl text-ink">
+            <FolderKanban aria-hidden="true" className="h-5 w-5" />
+          </div>
+          <h3 className="text-base font-medium text-ink">No applications in {meta.label} yet</h3>
+          <p className="mt-1 max-w-md text-xs leading-relaxed text-ink-muted">
+            Switch to &ldquo;All stages&rdquo; to drag an existing application into {meta.label}, or explore new scholarships to add to your tracker.
+          </p>
+          <div className="mt-5 flex flex-wrap justify-center gap-2.5">
+            <button
+              type="button"
+              onClick={onShowAll}
+              className={buttonClasses('secondary', 'sm')}
+            >
+              Show all stages
+            </button>
+            <Link to="/discover" className={buttonClasses('primary', 'sm')}>
+              <Compass aria-hidden="true" className="h-3.5 w-3.5" /> Discover scholarships
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {items.map((app) => (
+            <ApplicationCard key={app.scholarshipId} app={app} />
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -150,6 +266,27 @@ const ApplicationCard = memo(function ApplicationCard({ app }: { app: Applicatio
   const s = getScholarshipById(app.scholarshipId);
   const moveApplication = useApplicationStore((st) => st.moveApplication);
   const removeApplication = useApplicationStore((st) => st.removeApplication);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', onOutside);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onOutside);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [menuOpen]);
+
   if (!s) return null;
   const progress = applicationProgress(app);
 
@@ -160,55 +297,90 @@ const ApplicationCard = memo(function ApplicationCard({ app }: { app: Applicatio
         e.dataTransfer.setData(DRAG_TYPE, s.id);
         e.dataTransfer.effectAllowed = 'move';
       }}
-      className="glass-pill animate-fade-in-up cursor-grab rounded-2xl p-4 transition hover:-translate-y-0.5 active:cursor-grabbing"
+      className="glass-pill animate-fade-in-up flex cursor-grab flex-col justify-between rounded-2xl p-4 transition hover:-translate-y-0.5 active:cursor-grabbing"
       aria-label={s.title}
     >
-      <div className="flex items-start gap-2">
-        <GripVertical aria-hidden="true" className="mt-0.5 hidden h-4 w-4 shrink-0 text-ink-muted sm:block" />
-        <div className="min-w-0 flex-1">
-          <Link to={`/scholarships/${s.id}`} className="line-clamp-2 text-[15px] font-medium leading-snug text-ink hover:underline">
-            {s.title}
-          </Link>
-          <p className="mt-1 truncate text-xs text-ink/75">{s.provider}</p>
+      <div>
+        <div className="flex items-start gap-2">
+          <GripVertical aria-hidden="true" className="mt-0.5 hidden h-4 w-4 shrink-0 text-ink-muted sm:block" />
+          <div className="min-w-0 flex-1">
+            <Link
+              to={`/scholarships/${s.id}`}
+              className="line-clamp-2 text-[15px] font-medium leading-snug text-ink hover:underline"
+            >
+              {s.title}
+            </Link>
+            <p className="mt-1 truncate text-xs text-ink/75">{s.provider}</p>
+          </div>
         </div>
+
+        <div className="mt-3.5 flex items-center justify-between gap-2">
+          <span className="font-display text-base font-semibold text-ink">{formatINRCompact(s.amount)}</span>
+          {app.status !== 'awarded' && app.status !== 'rejected' && <CountdownBadge deadline={s.deadline} />}
+        </div>
+
+        <ProgressBar className="mt-3.5" value={progress} label={`${s.title} checklist progress`} />
+        <p className="mt-1.5 text-xs text-ink/75">
+          {app.steps.filter((x) => x.done).length}/{app.steps.length} steps completed
+        </p>
       </div>
 
-      <div className="mt-3 flex items-center justify-between gap-2">
-        <span className="font-display text-sm font-semibold text-ink">{formatINRCompact(s.amount)}</span>
-        {app.status !== 'awarded' && app.status !== 'rejected' && <CountdownBadge deadline={s.deadline} />}
-      </div>
-
-      <ProgressBar className="mt-3" value={progress} label={`${s.title} checklist progress`} />
-      <p className="mt-1 text-xs text-ink/75">
-        {app.steps.filter((x) => x.done).length}/{app.steps.length} steps done
-      </p>
-
-      {/* Status control with plenty of breathing room */}
-      <div className="mt-3.5 flex items-center gap-2 border-t border-line/20 pt-3">
-        <div className="relative flex-1">
-          <label htmlFor={`status-${s.id}`} className="sr-only">
-            Status for {s.title}
-          </label>
-          <select
-            id={`status-${s.id}`}
-            value={app.status}
-            onChange={(e) => {
-              const status = e.target.value as ApplicationStatus;
-              moveApplication(s.id, status);
-              toast(`Moved to ${STATUS_META[status].label}`);
-            }}
-            className="input h-9 w-full appearance-none rounded-full py-0 pl-3.5 pr-8 text-xs font-medium text-ink"
+      {/* Custom Frosted Glass Status Dropdown + Remove Button */}
+      <div className="mt-4 flex items-center gap-2 border-t border-line/20 pt-3">
+        <div ref={menuRef} className="relative flex-1">
+          <button
+            type="button"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-haspopup="listbox"
+            aria-expanded={menuOpen}
+            aria-label={`Status for ${s.title}: ${STATUS_META[app.status].label}`}
+            className="glass-subtle flex h-9 w-full items-center justify-between rounded-full px-3.5 text-xs font-medium text-ink transition hover:bg-surface/40"
           >
-            {APPLICATION_STATUSES.map((st) => (
-              <option key={st} value={st}>
-                {STATUS_META[st].label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown
-            aria-hidden="true"
-            className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-muted"
-          />
+            <span className="flex items-center gap-2 truncate">
+              <span className={cn('h-2 w-2 rounded-full', STATUS_META[app.status].dot)} aria-hidden="true" />
+              <span className="truncate">{STATUS_META[app.status].label}</span>
+            </span>
+            <ChevronDown
+              aria-hidden="true"
+              className={cn('h-3.5 w-3.5 shrink-0 text-ink-muted transition-transform duration-200', menuOpen && 'rotate-180')}
+            />
+          </button>
+
+          {menuOpen && (
+            <ul
+              role="listbox"
+              aria-label={`Change status for ${s.title}`}
+              className="glass-pill animate-fade-in-up absolute bottom-full left-0 z-50 mb-1.5 w-full min-w-[11rem] space-y-1 rounded-2xl p-1.5 shadow-2xl backdrop-blur-2xl"
+            >
+              {APPLICATION_STATUSES.map((st) => {
+                const selected = st === app.status;
+                return (
+                  <li key={st} role="option" aria-selected={selected}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        moveApplication(s.id, st);
+                        toast(`Moved to ${STATUS_META[st].label}`);
+                        setMenuOpen(false);
+                      }}
+                      className={cn(
+                        'flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-xs font-medium transition-colors duration-150',
+                        selected
+                          ? 'bg-accent text-accent-ink shadow-sm'
+                          : 'text-ink/80 hover:bg-accent/15 hover:text-ink',
+                      )}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className={cn('h-2 w-2 rounded-full', STATUS_META[st].dot)} aria-hidden="true" />
+                        <span>{STATUS_META[st].label}</span>
+                      </span>
+                      {selected && <Check aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
 
         <button
@@ -218,7 +390,7 @@ const ApplicationCard = memo(function ApplicationCard({ app }: { app: Applicatio
             toast('Application removed', 'info');
           }}
           aria-label={`Remove ${s.title} from tracker`}
-          className="glass-subtle grid h-9 w-9 shrink-0 place-items-center rounded-full text-ink/70 transition hover:bg-red-500/15 hover:text-ink"
+          className="glass-subtle grid h-9 w-9 shrink-0 place-items-center rounded-full text-ink/75 transition hover:bg-red-500/15 hover:text-ink"
         >
           <Trash2 aria-hidden="true" className="h-4 w-4" />
         </button>

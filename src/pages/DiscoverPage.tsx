@@ -102,10 +102,10 @@ export default function DiscoverPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[18rem_1fr]">
-        {/* Desktop filter sidebar */}
+      <div className="grid items-start gap-6 lg:grid-cols-[19rem_1fr]">
+        {/* Desktop filter sidebar — scrolls naturally with the page so all filters are reachable */}
         <aside aria-label="Scholarship filters" className="hidden lg:block">
-          <div className="card sticky top-24 p-6">
+          <div className="card p-6">
             <FilterPanel />
           </div>
         </aside>

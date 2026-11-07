@@ -1,11 +1,12 @@
-import { RotateCcw } from 'lucide-react';
+import { Check, RotateCcw } from 'lucide-react';
 import { EDUCATION_LEVEL_LABELS, FIELD_LABELS, SCHOLARSHIP_TYPE_LABELS } from '@/lib/constants';
 import { formatINRCompact } from '@/lib/currency';
 import { cn } from '@/lib/cn';
 import { useFilterStore } from '@/store/useFilterStore';
 import type { EducationLevel, FieldOfStudy, ScholarshipType } from '@/types/scholarship';
 
-const AMOUNT_STEPS = [0, 25000, 50000, 100000, 200000];
+const MAX_AWARD = 200000;
+const AMOUNT_PRESETS = [0, 25000, 50000, 100000, 200000];
 const DEADLINE_OPTIONS: { label: string; value: number | null }[] = [
   { label: 'Any time', value: null },
   { label: '7 days', value: 7 },
@@ -13,14 +14,15 @@ const DEADLINE_OPTIONS: { label: string; value: number | null }[] = [
   { label: '60 days', value: 60 },
 ];
 
-/** Monochrome glassmorphism filter panel for the Discover page. */
+/** Frosted glassmorphism filter panel for the Discover page. */
 export function FilterPanel() {
   const { filters, setFilter, toggleInList, resetFilters } = useFilterStore();
+  const awardPct = Math.min(100, Math.max(0, (filters.minAmount / MAX_AWARD) * 100));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-normal tracking-[-0.02em] text-ink">Filters</h2>
+        <h2 className="text-base font-medium tracking-[-0.02em] text-ink">Filters</h2>
         <button
           type="button"
           onClick={resetFilters}
@@ -30,14 +32,35 @@ export function FilterPanel() {
         </button>
       </div>
 
-      <label className="glass-subtle flex cursor-pointer items-center justify-between gap-3 rounded-2xl p-3.5 transition hover:scale-[1.01]">
-        <span className="text-xs font-medium text-ink">Only show scholarships I qualify for</span>
+      {/* Custom Glassmorphism Checkbox Toggle */}
+      <label
+        className={cn(
+          'flex cursor-pointer items-center justify-between gap-3 rounded-2xl p-3.5 transition-all duration-300',
+          filters.eligibleOnly
+            ? 'glass-pill ring-1 ring-accent/50'
+            : 'glass-subtle hover:bg-surface/30',
+        )}
+      >
+        <span className="text-xs font-medium leading-snug text-ink">
+          Only show scholarships I qualify for
+        </span>
         <input
           type="checkbox"
           checked={filters.eligibleOnly}
           onChange={(e) => setFilter('eligibleOnly', e.target.checked)}
-          className="h-4 w-4 rounded accent-ink"
+          className="peer sr-only"
         />
+        <span
+          aria-hidden="true"
+          className={cn(
+            'grid h-5 w-5 shrink-0 place-items-center rounded-lg border transition-all duration-200 peer-focus-visible:ring-2 peer-focus-visible:ring-accent',
+            filters.eligibleOnly
+              ? 'border-accent bg-accent text-accent-ink shadow-sm scale-105'
+              : 'glass-subtle border-line/45 text-transparent',
+          )}
+        >
+          <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+        </span>
       </label>
 
       <ChipGroup<EducationLevel>
@@ -59,22 +82,64 @@ export function FilterPanel() {
         onToggle={(v) => toggleInList('fields', v)}
       />
 
+      {/* Custom Smooth Glassmorphism Minimum Award Slider */}
       <fieldset>
-        <legend className="label">Minimum award</legend>
-        <input
-          type="range"
-          min={0}
-          max={AMOUNT_STEPS.length - 1}
-          step={1}
-          value={Math.max(0, AMOUNT_STEPS.indexOf(filters.minAmount))}
-          onChange={(e) => setFilter('minAmount', AMOUNT_STEPS[Number(e.target.value)])}
-          aria-valuetext={filters.minAmount ? `At least ${formatINRCompact(filters.minAmount)}` : 'Any amount'}
-          aria-label="Minimum award amount"
-          className="w-full accent-ink"
-        />
-        <p className="mt-1 text-xs text-ink-muted">
-          {filters.minAmount ? `At least ${formatINRCompact(filters.minAmount)}` : 'Any amount'}
-        </p>
+        <div className="mb-2 flex items-center justify-between">
+          <legend className="text-sm font-medium tracking-tight text-ink">Minimum award</legend>
+          <span className="glass-subtle rounded-full px-2.5 py-0.5 text-xs font-semibold text-ink">
+            {filters.minAmount > 0 ? `${formatINRCompact(filters.minAmount)}+` : 'Any amount'}
+          </span>
+        </div>
+
+        <div className="relative flex h-7 items-center">
+          {/* Custom frosted glass track */}
+          <div className="glass-subtle relative h-2.5 w-full overflow-hidden rounded-full border border-line/35">
+            <div
+              className="h-full rounded-full bg-accent transition-[width] duration-75 ease-out"
+              style={{ width: `${awardPct}%` }}
+            />
+          </div>
+          {/* Custom glowing glassmorphism thumb */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-accent-ink bg-accent shadow-md transition-transform duration-150"
+            style={{ left: `clamp(10px, ${awardPct}%, calc(100% - 10px))` }}
+          />
+          {/* Native accessible range input layered invisibly on top for smooth dragging */}
+          <input
+            type="range"
+            min={0}
+            max={MAX_AWARD}
+            step={1000}
+            value={filters.minAmount}
+            onChange={(e) => setFilter('minAmount', Number(e.target.value))}
+            aria-valuetext={filters.minAmount ? `At least ${formatINRCompact(filters.minAmount)}` : 'Any amount'}
+            aria-label="Minimum award amount"
+            className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+          />
+        </div>
+
+        {/* Quick-select award preset chips */}
+        <div className="mt-2 flex flex-wrap justify-between gap-1">
+          {AMOUNT_PRESETS.map((amt) => {
+            const active = filters.minAmount === amt;
+            return (
+              <button
+                key={amt}
+                type="button"
+                onClick={() => setFilter('minAmount', amt)}
+                className={cn(
+                  'rounded-full px-2 py-0.5 text-[11px] font-medium transition-all duration-200',
+                  active
+                    ? 'bg-accent text-accent-ink shadow-sm'
+                    : 'glass-subtle text-ink-muted hover:text-ink',
+                )}
+              >
+                {amt === 0 ? 'Any' : formatINRCompact(amt)}
+              </button>
+            );
+          })}
+        </div>
       </fieldset>
 
       <fieldset>
