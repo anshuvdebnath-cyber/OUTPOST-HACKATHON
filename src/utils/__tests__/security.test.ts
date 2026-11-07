@@ -31,3 +31,4 @@ describe('security & data sanitization utilities', () => {
     expect(isValidExternalUrl('javascript:alert(1)')).toBe(false);
   });
 });
+
