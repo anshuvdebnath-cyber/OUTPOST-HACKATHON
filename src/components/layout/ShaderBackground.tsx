@@ -13,12 +13,13 @@ const VERTEX_SHADER = `
 /**
  * Optical Refracted Fluted-Glass WebGL Fragment Shader:
  *  - Faithfully reproduces the reeded-glass reference photo:
- *    * Vertical cylindrical glass ribs with physical Snell's refraction
- *    * Crisp vertical specular pinstripe & groove seam highlights
- *    * Tapered luminous caustic beams channeled vertically through each flute
- *    * Chromatic dispersion & soft multi-sample frosted blur
+ *    * Vertical cylindrical glass ribs with physical Snell's law refraction
+ *    * Natural fluted reed density (~16 reeds on mobile, ~36-44 on desktop)
+ *    * Tapered luminous caustic needles channeled vertically through each flute
+ *    * Calibrated 0.75 specular glossiness on cylindrical lens ridges
+ *    * Chromatic dispersion & soft multi-sample frosted diffusion
  *  - Dual-mode:
- *    * Light Mode: Rich periwinkle blue, soft lavender, icy aqua & glowing champagne sunlight beam
+ *    * Light Mode: Rich periwinkle/cornflower blue, pastel lavender/lilac, icy aqua & glowing champagne sunlight flare
  *    * Night Mode: Deep abyssal teal, forest emerald & brilliant mint-jade light beam
  */
 const FRAGMENT_SHADER = `
@@ -34,36 +35,46 @@ const FRAGMENT_SHADER = `
     return fract((p3.x + p3.y) * p3.z);
   }
 
-  // Light Mode scene: Periwinkle blue, lavender, icy aqua & glowing champagne-peach sunlight
+  // Light Mode scene: Periwinkle blue, lilac lavender, icy aqua & glowing champagne sunlight flare
   vec3 sampleLightScene(vec2 p, float t) {
-    // Flowing diagonal light waves behind the glass
-    float w1 = sin(p.x * 2.8 + p.y * 2.2 - t * 0.75 + sin(p.y * 2.4 + t * 0.45) * 0.55);
-    float w2 = cos(p.x * 2.2 - p.y * 2.6 + t * 0.62);
+    // Flowing diagonal organic waves behind the glass
+    float w1 = sin(p.x * 2.6 + p.y * 2.1 - t * 0.72 + sin(p.y * 2.4 + t * 0.45) * 0.52);
+    float w2 = cos(p.x * 2.1 - p.y * 2.5 + t * 0.58 + cos(p.x * 1.8 - t * 0.38) * 0.42);
 
-    // Warm champagne sunlight beam pouring diagonally from top right
-    float sunBeam = exp(-pow((p.x * 0.72 + p.y * 0.78 - 0.92 + sin(p.y * 2.2 - t * 0.65) * 0.22) * 2.2, 2.0));
-    float softFill = exp(-pow((p.x * 0.65 - p.y * 0.55 - 0.2 + cos(p.x * 2.0 + t * 0.5) * 0.2) * 2.4, 2.0));
+    // Warm golden-champagne sunlight beam pouring diagonally from upper right
+    float sunBeam = exp(-pow((p.x * 0.74 + p.y * 0.82 - 0.94 + sin(p.y * 2.2 - t * 0.6) * 0.2) * 2.1, 2.0));
+    float peachGlow = exp(-pow((p.x * 0.68 - p.y * 0.45 - 0.12 + cos(p.x * 2.0 + t * 0.48) * 0.22) * 2.3, 2.0));
 
-    vec3 periwinkleDeep = vec3(0.32, 0.47, 0.82);
-    vec3 lavender       = vec3(0.58, 0.68, 0.90);
-    vec3 icyAqua        = vec3(0.70, 0.88, 0.91);
-    vec3 champagneWarm  = vec3(1.00, 0.90, 0.78);
-    vec3 pureLight      = vec3(0.98, 0.99, 1.00);
+    // Reference-matched chromatic palette from media_1794043339478_8e37b37c.jpg
+    vec3 periwinkleDeep = vec3(0.28, 0.44, 0.83); // Left vibrant cornflower/periwinkle
+    vec3 periwinkleSoft = vec3(0.42, 0.56, 0.88); // Mid-left transition
+    vec3 lavenderLilac  = vec3(0.68, 0.71, 0.90); // Center soft pastel lilac
+    vec3 icyAqua        = vec3(0.68, 0.86, 0.90); // Bottom right icy seafoam aqua
+    vec3 deepAquaShadow = vec3(0.34, 0.48, 0.60); // Low contrast shadow on right
+    vec3 champagneWarm  = vec3(1.00, 0.91, 0.79); // Upper right warm champagne/peach
+    vec3 pureLight      = vec3(0.99, 0.98, 0.96); // High-luminance core flare
 
-    vec3 col = mix(periwinkleDeep, lavender, smoothstep(-0.75, 0.75, w1 * 0.65 + (p.x - 0.35) * 0.7));
-    col = mix(col, icyAqua, smoothstep(-0.25, 0.85, (p.x - 0.2) * 1.2 + w2 * 0.4));
-    col = mix(col, champagneWarm, clamp(sunBeam * 1.05 + softFill * 0.35, 0.0, 1.0));
-    col = mix(col, pureLight, smoothstep(0.65, 0.98, sunBeam) * 0.45);
+    // Blend base periwinkle into lavender/lilac
+    vec3 col = mix(periwinkleDeep, periwinkleSoft, smoothstep(-0.8, 0.4, w1));
+    col = mix(col, lavenderLilac, smoothstep(-0.3, 0.75, w1 * 0.6 + (p.x - 0.28) * 0.8));
+
+    // Blend into cool icy aqua at lower right
+    float aquaWeight = smoothstep(0.0, 0.95, (p.x - 0.25) * 1.1 - (p.y - 0.6) * 0.7 + w2 * 0.35);
+    col = mix(col, mix(deepAquaShadow, icyAqua, smoothstep(-0.4, 0.6, w2)), aquaWeight * 0.85);
+
+    // Overlay warm champagne sunlight flare streaming from upper right
+    col = mix(col, champagneWarm, clamp(sunBeam * 1.08 + peachGlow * 0.32, 0.0, 1.0));
+    col = mix(col, pureLight, smoothstep(0.68, 0.98, sunBeam) * 0.52);
     return col;
   }
 
   // Night Mode scene: Deep teal-sapphire, rich forest emerald & brilliant mint-jade beam
   vec3 sampleDarkScene(vec2 p, float t) {
-    float w1 = sin(p.x * 2.6 + p.y * 2.0 - t * 0.72 + cos(p.y * 2.2 + t * 0.5) * 0.55);
-    float w2 = cos(p.x * 2.4 - p.y * 2.4 + t * 0.6);
+    float w1 = sin(p.x * 2.5 + p.y * 2.0 - t * 0.70 + cos(p.y * 2.2 + t * 0.48) * 0.52);
+    float w2 = cos(p.x * 2.3 - p.y * 2.3 + t * 0.58);
 
     float mintBeam = exp(-pow((p.x * 0.75 + p.y * 0.72 - 0.88 + sin(p.y * 2.4 - t * 0.62) * 0.24) * 2.3, 2.0));
-    float tealFill = exp(-pow((p.x * 0.7 - p.y * 0.5 - 0.15 + cos(p.x * 2.2 + t * 0.52) * 0.22) * 2.5, 2.0));
+    float tealFill = exp(-pow((p.x * 0.70 - p.y * 0.50 - 0.15 + cos(p.x * 2.2 + t * 0.52) * 0.22) * 2.5, 2.0));
 
     vec3 deepAbyss      = vec3(0.01, 0.10, 0.17);
     vec3 forestPine     = vec3(0.02, 0.21, 0.15);
@@ -73,8 +84,8 @@ const FRAGMENT_SHADER = `
 
     vec3 col = mix(deepAbyss, forestPine, smoothstep(-0.7, 0.7, w2 + p.x * 0.45));
     col = mix(col, richEmerald, smoothstep(-0.55, 0.7, w1 * 0.65 + (p.x - 0.25) * 0.7));
-    col = mix(col, vibrantJade, clamp(mintBeam * 0.95 + tealFill * 0.4, 0.0, 1.0));
-    col = mix(col, mintHighlight, smoothstep(0.6, 0.98, mintBeam) * 0.52);
+    col = mix(col, vibrantJade, clamp(mintBeam * 0.95 + tealFill * 0.40, 0.0, 1.0));
+    col = mix(col, mintHighlight, smoothstep(0.60, 0.98, mintBeam) * 0.52);
     return col;
   }
 
@@ -86,34 +97,36 @@ const FRAGMENT_SHADER = `
     vec2 uv = v_uv;
     float t = u_time * 1.15;
 
-    // Dense, fine-fluted cylindrical reeds with significantly reduced breadth
-    float fluteWidth = clamp(u_resolution.x / 110.0, 10.0, 16.0);
+    // Physical fluted glass rib geometry calibrated to reference photo:
+    // ~16-20 reeds on mobile portrait, ~36-44 reeds on desktop
+    float fluteWidth = clamp(u_resolution.x / 38.0, 22.0, 48.0);
     float strips = floor(u_resolution.x / fluteWidth);
     float stripPos = uv.x * strips;
-    // Local coordinate inside each cylindrical flute: -1.0 (left seam) to +1.0 (right seam)
+    // Local normalized flute coordinate: -1.0 (left groove seam) to +1.0 (right groove seam)
     float x = fract(stripPos) * 2.0 - 1.0;
 
-    // Smooth subtle cylindrical glass lens profile & normal vector
-    float r = x * 0.90;
+    // Cylindrical lens surface profile & surface normal
+    float r = x * 0.92;
     float arc = sqrt(max(0.001, 1.0 - r * r));
-    vec3 normal = normalize(vec3(r * 1.15, 0.0, arc));
+    vec3 normal = normalize(vec3(r * 1.25, 0.0, arc));
 
-    // Snell's-law refraction through crown glass (IOR = 1.52)
+    // Physical Snell's-law refraction through soda-lime/borosilicate crown glass (IOR = 1.52)
     vec3 incident = vec3(0.0, 0.0, -1.0);
     vec3 refr = refract(incident, normal, 1.0 / 1.52);
 
-    // Refraction scaled proportionally to the fine reed breadth
-    vec2 refractShift = vec2(refr.x * (1.1 / strips), refr.x * 0.006);
+    // Horizontal refractive ray displacement across each cylinder
+    vec2 refractShift = vec2(refr.x * (1.35 / strips), refr.x * 0.004);
 
-    // Soft multi-tap frosted sampling with delicate chromatic dispersion
-    vec2 dispersion = vec2(refr.x * 0.0018, 0.0);
-    float jitter = (hash(gl_FragCoord.xy) - 0.5) * 0.002;
+    // Subtle chromatic dispersion along the lens curve
+    vec2 dispersion = vec2(refr.x * 0.0022, 0.0);
+    float jitter = (hash(gl_FragCoord.xy) - 0.5) * 0.0025;
 
+    // Multi-tap frosted blur sampling behind the glass
     vec3 accum = vec3(0.0);
     const int TAPS = 5;
     for (int i = -2; i <= 2; i++) {
-      float fi = float(i) * 0.0035 + jitter;
-      vec2 sampleUv = uv + refractShift + vec2(fi * 0.25, fi * 0.85);
+      float fi = float(i) * 0.0032 + jitter;
+      vec2 sampleUv = uv + refractShift + vec2(fi * 0.20, fi * 0.85);
 
       float cr = sampleBackdrop(sampleUv + dispersion, t, u_dark).r;
       float cg = sampleBackdrop(sampleUv, t, u_dark).g;
@@ -122,27 +135,39 @@ const FRAGMENT_SHADER = `
     }
     vec3 refractedColor = accum / float(TAPS);
 
-    // Very subtle, non-intrusive caustic channeling
+    // Vertical tapered caustic needles: light focusing through cylindrical reeds
+    // Notice in the reference how the flutes channel light into vertical spindle/needle caustics
     float waveLuma = dot(refractedColor, vec3(0.299, 0.587, 0.114));
-    float lensCore = exp(-pow(x * 1.5, 2.0));
-    float causticBar = lensCore * smoothstep(0.45, 0.92, waveLuma) * 0.14;
+    float lensCore = exp(-pow(x * 1.6, 2.0));
+    // Vertical modulation creates the tapering spindle caustics seen in the reference
+    float vCausticMod = 0.70 + 0.30 * sin(uv.y * 18.0 - t * 0.45 + stripPos * 0.35);
+    float causticNeedle = lensCore * smoothstep(0.40, 0.92, waveLuma) * vCausticMod * 0.24;
 
-    // Soft, delicate specular sheen along the reed (not harsh or overtly visible)
-    float pinstripe = exp(-pow((x - 0.22) * 8.0, 2.0)) * 0.10;
-    float specHighlight = pinstripe * (0.3 + 0.7 * waveLuma);
+    // Surface lighting with exact 0.75 glossiness parameter:
+    // Directional light from upper-right reflecting on the cylindrical glass ribs
+    vec3 lightDir = normalize(vec3(-0.35, 0.65, 0.68));
+    vec3 viewDir = vec3(0.0, 0.0, 1.0);
+    vec3 halfVec = normalize(lightDir + viewDir);
+    float nDotH = max(dot(normal, halfVec), 0.0);
+    // Glossiness of 0.75 corresponds to specular exponent ~52.0 and reflection coefficient 0.75
+    float glossiness = 0.75;
+    float specular = pow(nDotH, 52.0) * glossiness;
 
-    // Extremely soft seam groove so the ribs blend seamlessly with the background
-    float seamEdge = smoothstep(0.0, 0.18, 1.0 - abs(x));
-    float grooveShadow = mix(0.965, 1.0, seamEdge);
-    float grooveGlint = exp(-pow((abs(x) - 0.92) * 16.0, 2.0)) * 0.06;
+    // Fine vertical specular pinstripe highlight along each reed ridge
+    float ridgePinstripe = exp(-pow((x - 0.20) * 7.5, 2.0)) * 0.18 * (0.35 + 0.65 * waveLuma);
 
-    // Gentle lens profile transmittance
-    float lensProfile = mix(0.97, 1.02, arc);
+    // Seam grooves between reeds: subtle shadowed recess and glass seam glint
+    float seamEdge = smoothstep(0.0, 0.22, 1.0 - abs(x));
+    float grooveShadow = mix(0.94, 1.0, seamEdge);
+    float grooveGlint = exp(-pow((abs(x) - 0.94) * 20.0, 2.0)) * 0.10;
 
-    vec3 specColor = mix(vec3(1.0, 0.98, 0.95), vec3(0.85, 0.99, 0.92), u_dark);
+    // Lens transmittance profile
+    float lensProfile = mix(0.96, 1.03, arc);
+
+    vec3 specColor = mix(vec3(1.0, 0.98, 0.94), vec3(0.85, 0.99, 0.92), u_dark);
     vec3 finalColor = refractedColor * lensProfile * grooveShadow
-                    + refractedColor * causticBar
-                    + specColor * (specHighlight * 0.18 + grooveGlint * 0.12);
+                    + refractedColor * causticNeedle
+                    + specColor * (specular * 0.32 + ridgePinstripe + grooveGlint * 0.16);
 
     gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
   }
