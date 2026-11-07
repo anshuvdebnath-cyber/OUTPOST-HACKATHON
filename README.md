@@ -40,8 +40,8 @@ Accessing educational financial assistance is often a fragmented, stressful jour
 
 - **Framework:** React 18 + TypeScript 5.6 (`strict: true`)
 - **Build Tool:** Vite 5 (route-level code splitting via `React.lazy` + manual vendor chunks)
-- **Styling:** Tailwind CSS 3.4 + CSS custom property design tokens (light & dark mode)
-- **Routing:** React Router v6
+- **WebGL & Styling:** Custom GLSL Optical Fluted-Glass Fragment Shader (`ShaderBackground.tsx`) + Tailwind CSS 3.4 + `0.75` Glossiness Frosted Glassmorphism design tokens (Light & Night modes)
+- **Routing & Motion:** React Router v6 with directional horizontal slide tab transitions & gliding navbar active indicator
 - **State & Persistence:** Zustand 5 with `persist` middleware (`localStorage`)
 - **Icons & Dates:** `lucide-react`, `date-fns`
 - **Quality & Testing:** ESLint 9 (`eslint-plugin-jsx-a11y`), Prettier, Vitest, React Testing Library

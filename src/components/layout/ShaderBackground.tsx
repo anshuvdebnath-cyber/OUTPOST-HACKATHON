@@ -104,43 +104,42 @@ const FRAGMENT_SHADER = `
     vec2 uv = v_uv;
     float t = u_time * 1.18;
 
-    // Balanced fluted-glass reed density (~68-85 reeds across desktop, ~26-34 on mobile)
-    float fluteWidth = clamp(u_resolution.x / 76.0, 14.0, 23.0);
+    // Sweet-spot high-density fluted reeds (~120-135 reeds on desktop, ~45-55 on mobile — dense but not extreme)
+    float fluteWidth = clamp(u_resolution.x / 128.0, 9.5, 14.5);
     float strips = floor(u_resolution.x / fluteWidth);
     float stripPos = uv.x * strips;
     // Local coordinate inside each cylindrical flute: -1.0 (left seam) to +1.0 (right seam)
     float x = fract(stripPos) * 2.0 - 1.0;
 
     // Physical convex cylindrical lens surface normal:
-    // Each reed curves steeply from -1 to +1, acting as a real cylindrical magnifying/refracting rod
-    float r = x * 0.94;
-    float arc = sqrt(max(0.02, 1.0 - r * r));
-    // Subtle vertical undulation in the glass thickness so refraction shimmers organically
-    float ny = sin(uv.y * 4.5 - t * 0.65 + floor(stripPos) * 0.37) * 0.08;
-    vec3 normal = normalize(vec3(r * 1.38, ny, arc));
+    // Non-linear lens curvature near the edges produces real S-curve optical distortion per reed
+    float lensCurve = sign(x) * pow(abs(x), 1.25) * 0.95;
+    float arc = sqrt(max(0.02, 1.0 - lensCurve * lensCurve));
+    // Subtle vertical thickness wave along the glass reed
+    float ny = sin(uv.y * 5.0 - t * 0.70 + floor(stripPos) * 0.41) * 0.09;
+    vec3 normal = normalize(vec3(lensCurve * 1.48, ny, arc));
 
-    // Wavelength-dependent Snell's Law refraction (Crown/Flint Glass dispersion: IOR Red=1.49, Green=1.52, Blue=1.55)
+    // Wavelength-dependent Snell's Law refraction (Crown/Flint Glass dispersion: Red=1.485, Green=1.52, Blue=1.555)
     vec3 incident = vec3(0.0, 0.0, -1.0);
-    vec3 refrR = refract(incident, normal, 1.0 / 1.49);
-    vec3 refrG = refract(incident, normal, 1.0 / 1.52);
-    vec3 refrB = refract(incident, normal, 1.0 / 1.55);
+    vec3 refrR = refract(incident, normal, 1.0 / 1.485);
+    vec3 refrG = refract(incident, normal, 1.0 / 1.520);
+    vec3 refrB = refract(incident, normal, 1.0 / 1.555);
 
-    // Physical optical stand-off distance between the fluted glass plane and the background wave plane:
-    // Each cylindrical lens bends rays across a wide ~8.5% slice of the backdrop, creating the
-    // unmistakable stepped/scalloped optical magnification and compression inside every single reed!
-    float glassStandOff = 0.085;
-    vec2 offsetR = (refrR.xy / max(abs(refrR.z), 0.18)) * vec2(glassStandOff, glassStandOff * 0.48);
-    vec2 offsetG = (refrG.xy / max(abs(refrG.z), 0.18)) * vec2(glassStandOff, glassStandOff * 0.48);
-    vec2 offsetB = (refrB.xy / max(abs(refrB.z), 0.18)) * vec2(glassStandOff, glassStandOff * 0.48);
+    // Physical optical stand-off distance (9.5% of screen):
+    // Each narrow reed bends light rays across a wide slice of the flowing backdrop so you clearly
+    // see the diagonal waves stepping, magnifying, and refracting across every single glass rib
+    float glassStandOff = 0.095;
+    vec2 offsetR = (refrR.xy / max(abs(refrR.z), 0.16)) * vec2(glassStandOff, glassStandOff * 0.52);
+    vec2 offsetG = (refrG.xy / max(abs(refrG.z), 0.16)) * vec2(glassStandOff, glassStandOff * 0.52);
+    vec2 offsetB = (refrB.xy / max(abs(refrB.z), 0.16)) * vec2(glassStandOff, glassStandOff * 0.52);
 
     // Multi-tap frosted glassmorphism diffusion along the refracted ray
     float jitter = (hash(gl_FragCoord.xy) - 0.5) * 0.0022;
     vec3 accum = vec3(0.0);
     const int TAPS = 5;
     for (int i = -2; i <= 2; i++) {
-      float fi = float(i) * 0.0034 + jitter;
-      // Frosted anisotropic spread (stronger vertically along the reed grain, crisp horizontally)
-      vec2 blurStep = vec2(fi * 0.25, fi * 1.15);
+      float fi = float(i) * 0.0032 + jitter;
+      vec2 blurStep = vec2(fi * 0.22, fi * 1.10);
 
       float cr = sampleBackdrop(uv + offsetR + blurStep, t, u_dark).r;
       float cg = sampleBackdrop(uv + offsetG + blurStep, t, u_dark).g;
@@ -149,19 +148,19 @@ const FRAGMENT_SHADER = `
     }
     vec3 refractedColor = accum / float(TAPS);
 
-    // Secondary internal reflection inside the glass cylinder (Fresnel bounce near the curved reed edges)
+    // Secondary internal reflection inside each cylindrical reed (Fresnel grazing bounce at reed edges)
     float cosTheta = clamp(dot(-incident, normal), 0.0, 1.0);
-    float fresnel = pow(1.0 - cosTheta, 3.2);
-    vec2 internalReflectUv = uv - offsetG * 0.65 + vec2(0.0, 0.015);
+    float fresnel = pow(1.0 - cosTheta, 3.0);
+    vec2 internalReflectUv = uv - offsetG * 0.72 + vec2(0.0, 0.018);
     vec3 internalReflectColor = sampleBackdrop(internalReflectUv, t, u_dark);
-    refractedColor = mix(refractedColor, internalReflectColor, fresnel * 0.26);
+    refractedColor = mix(refractedColor, internalReflectColor, fresnel * 0.30);
 
     // Optical Caustic Focusing:
     // Convex cylindrical reeds focus bright background waves into tapered vertical caustic spindles
     float waveLuma = dot(refractedColor, vec3(0.299, 0.587, 0.114));
-    float lensCore = exp(-pow((x + 0.12) * 1.85, 2.0));
-    float vSpindle = 0.68 + 0.32 * sin(uv.y * 14.0 - t * 0.55 + floor(stripPos) * 0.45);
-    float causticFocus = lensCore * smoothstep(0.38, 0.92, waveLuma) * vSpindle * 0.16;
+    float lensCore = exp(-pow((x + 0.14) * 1.95, 2.0));
+    float vSpindle = 0.65 + 0.35 * sin(uv.y * 15.0 - t * 0.60 + floor(stripPos) * 0.48);
+    float causticFocus = lensCore * smoothstep(0.36, 0.92, waveLuma) * vSpindle * 0.18;
 
     // Calibrated 0.75 Glossiness Specular Lighting on the cylindrical glass surface
     vec3 lightDir = normalize(vec3(-0.38, 0.62, 0.68));
@@ -171,19 +170,19 @@ const FRAGMENT_SHADER = `
     float glossiness = 0.75;
     float specular = pow(nDotH, 52.0) * glossiness;
 
-    // Fine vertical specular pinstripe & delicate seam groove between reeds
-    float ridgePinstripe = exp(-pow((x - 0.22) * 7.8, 2.0)) * 0.09 * (0.35 + 0.65 * waveLuma);
+    // Crisp but transparent specular ridge pinstripe & seam groove
+    float ridgePinstripe = exp(-pow((x - 0.24) * 8.2, 2.0)) * 0.095 * (0.35 + 0.65 * waveLuma);
     float seamEdge = smoothstep(0.0, 0.22, 1.0 - abs(x));
-    float grooveShadow = mix(0.962, 1.0, seamEdge);
-    float grooveGlint = exp(-pow((abs(x) - 0.93) * 19.0, 2.0)) * 0.055;
+    float grooveShadow = mix(0.958, 1.0, seamEdge);
+    float grooveGlint = exp(-pow((abs(x) - 0.93) * 20.0, 2.0)) * 0.06;
 
-    // Cylindrical glass transmittance curve (thicker center vs angled edges)
-    float lensTransmittance = mix(0.968, 1.022, arc);
+    // Cylindrical glass transmittance curve
+    float lensTransmittance = mix(0.965, 1.025, arc);
 
     vec3 specColor = mix(vec3(1.0, 0.98, 0.95), vec3(0.85, 0.99, 0.92), u_dark);
     vec3 finalColor = refractedColor * lensTransmittance * grooveShadow
                     + refractedColor * causticFocus
-                    + specColor * (specular * 0.15 + ridgePinstripe + grooveGlint);
+                    + specColor * (specular * 0.16 + ridgePinstripe + grooveGlint);
 
     gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
   }
