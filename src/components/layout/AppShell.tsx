@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import { Logo } from './Logo';
 import { NAV_ITEMS } from './navItems';
 import { ThemeToggle } from './ThemeToggle';
@@ -31,6 +32,7 @@ export function AppShell() {
   const currentIdx = getTabIndex(location.pathname);
   const prevIdxRef = useRef(currentIdx);
   const [slideDir, setSlideDir] = useState<'right' | 'left'>('right');
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   // Track tab direction for smooth horizontal slide transition
   useLayoutEffect(() => {
@@ -134,8 +136,57 @@ export function AppShell() {
               </Link>
             )}
             <ThemeToggle />
+            <button
+              type="button"
+              onClick={() => setMobileDrawerOpen((prev) => !prev)}
+              aria-expanded={mobileDrawerOpen}
+              aria-controls="appshell-mobile-menu"
+              aria-label={mobileDrawerOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              className="glass-subtle inline-flex items-center justify-center rounded-full p-2 text-ink lg:hidden"
+            >
+              {mobileDrawerOpen ? (
+                <X aria-hidden="true" className="h-5 w-5" />
+              ) : (
+                <Menu aria-hidden="true" className="h-5 w-5" />
+              )}
+            </button>
           </div>
         </div>
+
+        {mobileDrawerOpen && (
+          <nav
+            id="appshell-mobile-menu"
+            aria-label="Mobile menu drawer"
+            className="glass-popover mt-2 flex flex-col gap-1 rounded-3xl p-3 lg:hidden"
+          >
+            {NAV_ITEMS.map(({ to, label, icon: Icon }) => {
+              const count = badgeFor(to);
+              return (
+                <NavLink
+                  key={to}
+                  to={to}
+                  onClick={() => setMobileDrawerOpen(false)}
+                  className={({ isActive }) =>
+                    cn(
+                      'flex items-center justify-between rounded-2xl px-4 py-2.5 text-sm font-medium transition',
+                      isActive ? 'bg-accent text-accent-ink' : 'text-ink hover:bg-accent/15',
+                    )
+                  }
+                >
+                  <span className="inline-flex items-center gap-2.5">
+                    <Icon aria-hidden="true" className="h-4 w-4" />
+                    <span>{label}</span>
+                  </span>
+                  {count > 0 && (
+                    <span className="rounded-full bg-current/15 px-2 py-0.5 text-xs font-semibold">
+                      {count}
+                    </span>
+                  )}
+                </NavLink>
+              );
+            })}
+          </nav>
+        )}
       </header>
 
       {/* Directional slide route stage */}

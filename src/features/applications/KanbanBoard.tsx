@@ -276,6 +276,7 @@ const ApplicationCard = memo(function ApplicationCard({ app }: { app: Applicatio
   const s = getScholarshipById(app.scholarshipId);
   const moveApplication = useApplicationStore((st) => st.moveApplication);
   const removeApplication = useApplicationStore((st) => st.removeApplication);
+  const updateNotes = useApplicationStore((st) => st.updateNotes);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -336,6 +337,17 @@ const ApplicationCard = memo(function ApplicationCard({ app }: { app: Applicatio
         <p className="mt-1.5 text-xs text-ink/75">
           {app.steps.filter((x) => x.done).length}/{app.steps.length} steps completed
         </p>
+
+        <div className="mt-2.5">
+          <input
+            type="text"
+            value={app.notes}
+            onChange={(e) => updateNotes(s.id, e.target.value)}
+            placeholder="Add portal ID or note…"
+            aria-label={`Application note for ${s.title}`}
+            className="glass-subtle w-full rounded-xl px-2.5 py-1.5 text-xs text-ink placeholder:text-ink-muted/70 focus:outline-none focus:ring-1 focus:ring-accent"
+          />
+        </div>
       </div>
 
       {/* Custom Frosted Glass Status Dropdown + Remove Button */}

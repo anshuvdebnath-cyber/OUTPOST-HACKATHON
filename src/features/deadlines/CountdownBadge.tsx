@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Clock } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { formatCountdown, formatDate, getUrgency, type Urgency } from '../../lib/date';
@@ -11,7 +12,13 @@ const URGENCY_STYLES: Record<Urgency, string> = {
 };
 
 /** Shader-matched glass deadline countdown chip. */
-export function CountdownBadge({ deadline, className }: { deadline: string; className?: string }) {
+export const CountdownBadge = memo(function CountdownBadge({
+  deadline,
+  className,
+}: {
+  deadline: string;
+  className?: string;
+}) {
   const urgency = getUrgency(deadline);
   return (
     <span
@@ -25,4 +32,4 @@ export function CountdownBadge({ deadline, className }: { deadline: string; clas
       </span>
     </span>
   );
-}
+});

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { CheckCircle2, Circle, FileCheck2 } from 'lucide-react';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { DOCUMENT_LABELS } from '../../lib/constants';
@@ -8,7 +9,11 @@ import { computeDocumentReadiness } from './documentReadiness';
 /**
  * Document Readiness Meter — monochrome frosted glass card synced with the student's Document Vault.
  */
-export function DocumentReadinessMeter({ scholarship }: { scholarship: Scholarship }) {
+export const DocumentReadinessMeter = memo(function DocumentReadinessMeter({
+  scholarship,
+}: {
+  scholarship: Scholarship;
+}) {
   const owned = useProfileStore((s) => s.profile.documents);
   const toggleDocument = useProfileStore((s) => s.toggleDocument);
   const { percent } = computeDocumentReadiness(scholarship, owned);
@@ -49,4 +54,4 @@ export function DocumentReadinessMeter({ scholarship }: { scholarship: Scholarsh
       </ul>
     </section>
   );
-}
+});

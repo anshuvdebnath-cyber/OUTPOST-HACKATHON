@@ -48,7 +48,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 });
 
 /** Shared class list so <Link> elements can look like shader-matched glass buttons. */
-// eslint-disable-next-line react-refresh/only-export-components
 export function buttonClasses(variant: Variant = 'primary', size: Size = 'md', className?: string): string {
   return cn(
     'inline-flex shrink-0 items-center justify-center rounded-full font-medium tracking-tight transition-all duration-300',

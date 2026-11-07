@@ -28,8 +28,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     // Preserve structured diagnostic context without crashing the host shell
-    if (import.meta.env.DEV) {
-      console.error('[Grantly ErrorBoundary]', error, errorInfo.componentStack);
+    if (typeof document !== 'undefined') {
+      document.documentElement.dataset.lastError = `${error.name}:${Boolean(errorInfo.componentStack)}`;
     }
   }
 

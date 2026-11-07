@@ -52,7 +52,6 @@ export function ScholarshipProvider({ children }: { children: ReactNode }) {
 /**
  * Hook to consume the shared ScholarshipContext.
  */
-// eslint-disable-next-line react-refresh/only-export-components
 export function useScholarshipContext(): ScholarshipContextValue {
   const ctx = useContext(ScholarshipContext);
   if (!ctx) {

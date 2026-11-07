@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { memo, type ReactNode } from 'react';
 
 interface PageHeaderProps {
   title: string;
@@ -7,7 +7,7 @@ interface PageHeaderProps {
 }
 
 /** Editorial geometric heading inside a frosted glass header card. */
-export function PageHeader({ title, description, actions }: PageHeaderProps) {
+export const PageHeader = memo(function PageHeader({ title, description, actions }: PageHeaderProps) {
   return (
     <div className="card mb-8 flex flex-col gap-4 p-6 sm:flex-row sm:items-end sm:justify-between sm:p-8">
       <div>
@@ -21,4 +21,4 @@ export function PageHeader({ title, description, actions }: PageHeaderProps) {
       {actions && <div className="flex flex-wrap items-center gap-2.5">{actions}</div>}
     </div>
   );
-}
+});

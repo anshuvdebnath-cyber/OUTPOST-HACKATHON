@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { memo, type ReactNode } from 'react';
 import type { LucideIcon } from 'lucide-react';
 
 interface EmptyStateProps {
@@ -9,7 +9,12 @@ interface EmptyStateProps {
 }
 
 /** Frosted glass empty state with fluid entrance animation. */
-export function EmptyState({ icon: Icon, title, description, action }: EmptyStateProps) {
+export const EmptyState = memo(function EmptyState({
+  icon: Icon,
+  title,
+  description,
+  action,
+}: EmptyStateProps) {
   return (
     <div className="card animate-fade-in-up flex flex-col items-center px-6 py-16 text-center">
       <div className="glass-pill mb-4 rounded-2xl p-4 text-ink">
@@ -20,4 +25,4 @@ export function EmptyState({ icon: Icon, title, description, action }: EmptyStat
       {action && <div className="mt-6">{action}</div>}
     </div>
   );
-}
+});

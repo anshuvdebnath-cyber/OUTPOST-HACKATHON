@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { cn } from '../../lib/cn';
 
 interface ProgressBarProps {
@@ -9,7 +10,12 @@ interface ProgressBarProps {
 }
 
 /** Accessible shader-harmonized glass progress bar with smooth spring width transition. */
-export function ProgressBar({ value, label, showValue = false, className }: ProgressBarProps) {
+export const ProgressBar = memo(function ProgressBar({
+  value,
+  label,
+  showValue = false,
+  className,
+}: ProgressBarProps) {
   const clamped = Math.max(0, Math.min(100, Math.round(value)));
   return (
     <div className={cn('w-full', className)}>
@@ -34,4 +40,4 @@ export function ProgressBar({ value, label, showValue = false, className }: Prog
       </div>
     </div>
   );
-}
+});

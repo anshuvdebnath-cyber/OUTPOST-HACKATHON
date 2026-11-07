@@ -11,12 +11,16 @@ export default defineConfig({
   },
   build: {
     target: 'es2020',
+    minify: 'esbuild',
+    sourcemap: false,
     cssCodeSplit: true,
+    chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
         // Split vendor code into stable, cacheable chunks.
         manualChunks: {
           react: ['react', 'react-dom', 'react-router-dom'],
+          icons: ['lucide-react'],
           vendor: ['zustand', 'date-fns', 'clsx'],
         },
       },

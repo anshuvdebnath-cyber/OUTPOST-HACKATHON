@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { CheckCircle2, HelpCircle, XCircle } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import type { MatchCheck } from './matchEngine';
@@ -9,7 +10,7 @@ const OUTCOME_META = {
 } as const;
 
 /** Explains each eligibility criterion in crisp monochrome typography. */
-export function MatchReasons({ checks }: { checks: MatchCheck[] }) {
+export const MatchReasons = memo(function MatchReasons({ checks }: { checks: MatchCheck[] }) {
   return (
     <ul className="space-y-3" aria-label="Eligibility breakdown">
       {checks.map((c) => {
@@ -30,4 +31,4 @@ export function MatchReasons({ checks }: { checks: MatchCheck[] }) {
       })}
     </ul>
   );
-}
+});

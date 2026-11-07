@@ -4,15 +4,15 @@ import { AppShell } from '../components/layout/AppShell';
 import { RouteErrorFallback } from '../components/ui/ErrorBoundary';
 import { PageSkeleton } from '../components/ui/Skeleton';
 import { scheduleIdleTask } from '../lib/performance';
+import ComparePage from '../pages/ComparePage';
+import DashboardPage from '../pages/DashboardPage';
+import DeadlinesPage from '../pages/DeadlinesPage';
+import DiscoverPage from '../pages/DiscoverPage';
+import LandingPage from '../pages/LandingPage';
+import ProfilePage from '../pages/ProfilePage';
+import ScholarshipDetailPage from '../pages/ScholarshipDetailPage';
+import TrackerPage from '../pages/TrackerPage';
 
-const LandingPage = lazy(() => import('../pages/LandingPage'));
-const DashboardPage = lazy(() => import('../pages/DashboardPage'));
-const DiscoverPage = lazy(() => import('../pages/DiscoverPage'));
-const ScholarshipDetailPage = lazy(() => import('../pages/ScholarshipDetailPage'));
-const TrackerPage = lazy(() => import('../pages/TrackerPage'));
-const DeadlinesPage = lazy(() => import('../pages/DeadlinesPage'));
-const ComparePage = lazy(() => import('../pages/ComparePage'));
-const ProfilePage = lazy(() => import('../pages/ProfilePage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 
 function withSuspense(node: ReactNode) {
@@ -25,13 +25,7 @@ function withSuspense(node: ReactNode) {
  */
 export function preloadCoreRoutes(): void {
   scheduleIdleTask(() => {
-    void import('../pages/DashboardPage');
-    void import('../pages/DiscoverPage');
-    void import('../pages/TrackerPage');
-    void import('../pages/DeadlinesPage');
-    void import('../pages/ComparePage');
-    void import('../pages/ProfilePage');
-    void import('../pages/ScholarshipDetailPage');
+    void import('../pages/NotFoundPage');
   });
 }
 

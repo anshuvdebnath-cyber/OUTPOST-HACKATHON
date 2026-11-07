@@ -1,8 +1,9 @@
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
   Award,
+  Calculator,
   CalendarClock,
   Compass,
   IndianRupee,
@@ -37,6 +38,9 @@ export default function DashboardPage() {
   const eligibleMatches = useMemo(() => ranked.filter((r) => r.match.verdict !== 'ineligible'), [ranked]);
   const topMatches = useMemo(() => ranked.slice(0, 3), [ranked]);
 
+  const [annualTuition, setAnnualTuition] = useState(180000);
+  const [studyYears, setStudyYears] = useState(4);
+
   const fundingStats = useMemo(() => {
     let trackedTotal = 0;
     let awardedTotal = 0;
@@ -47,8 +51,11 @@ export default function DashboardPage() {
       if (app.status === 'awarded') awardedTotal += s.amount;
     }
     const eligiblePool = eligibleMatches.reduce((sum, r) => sum + r.scholarship.amount, 0);
-    return { trackedTotal, awardedTotal, eligiblePool };
-  }, [applications, eligibleMatches]);
+    const totalDegreeCost = Math.max(1, annualTuition * studyYears);
+    const projectedAid = trackedTotal > 0 ? trackedTotal * studyYears : Math.min(eligiblePool, totalDegreeCost);
+    const coveragePercent = Math.min(100, Math.round((projectedAid / totalDegreeCost) * 100));
+    return { trackedTotal, awardedTotal, eligiblePool, totalDegreeCost, projectedAid, coveragePercent };
+  }, [applications, eligibleMatches, annualTuition, studyYears]);
 
   const urgentDeadlines = useMemo(
     () =>
@@ -216,6 +223,78 @@ export default function DashboardPage() {
           )}
         </section>
       </div>
+
+      {/* Interactive Multi-Year Tuition & Financial Aid Coverage Estimator */}
+      <section aria-labelledby="aid-estimator-heading" className="card mt-8 p-6 sm:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line/20 pb-4">
+          <div className="flex items-center gap-2.5">
+            <Calculator aria-hidden="true" className="h-5 w-5 text-ink" />
+            <div>
+              <h2 id="aid-estimator-heading" className="text-lg font-normal tracking-[-0.02em] text-ink">
+                Multi-Year Tuition &amp; Scholarship Coverage Estimator
+              </h2>
+              <p className="text-xs text-ink-muted">
+                Simulate how your tracked and eligible scholarships offset your multi-year degree cost
+              </p>
+            </div>
+          </div>
+          <span className="chip font-semibold text-ink">
+            {fundingStats.coveragePercent}% projected degree coverage
+          </span>
+        </div>
+
+        <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <label htmlFor="annual-tuition-input" className="label">
+              Annual tuition &amp; hostel fee (₹/year)
+            </label>
+            <input
+              id="annual-tuition-input"
+              type="number"
+              min={10000}
+              max={5000000}
+              step={10000}
+              value={annualTuition}
+              onChange={(e) => setAnnualTuition(Math.max(10000, Number(e.target.value) || 10000))}
+              className="input"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="study-years-range" className="label">
+              Course duration: <strong>{studyYears} years</strong>
+            </label>
+            <input
+              id="study-years-range"
+              type="range"
+              min={1}
+              max={6}
+              step={1}
+              value={studyYears}
+              onChange={(e) => setStudyYears(Number(e.target.value))}
+              aria-label="Course duration in years"
+              className="mt-2 w-full accent-accent"
+            />
+          </div>
+
+          <div className="glass-subtle flex flex-col justify-between rounded-2xl p-4">
+            <div className="flex items-center justify-between text-xs text-ink-muted">
+              <span>Total degree cost ({studyYears} yrs):</span>
+              <strong className="text-ink">{formatINR(fundingStats.totalDegreeCost)}</strong>
+            </div>
+            <div className="mt-1 flex items-center justify-between text-xs text-ink-muted">
+              <span>Projected scholarship aid:</span>
+              <strong className="text-ink">{formatINR(fundingStats.projectedAid)}</strong>
+            </div>
+            <ProgressBar
+              className="mt-3"
+              value={fundingStats.coveragePercent}
+              label="Estimated scholarship tuition coverage"
+              showValue
+            />
+          </div>
+        </div>
+      </section>
     </>
   );
 }

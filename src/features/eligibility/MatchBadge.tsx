@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { cn } from '../../lib/cn';
 import type { MatchResult } from './matchEngine';
 
@@ -13,7 +14,7 @@ interface MatchBadgeProps {
 }
 
 /** Shader-harmonized circular match-score gauge with frosted glass verdict label. */
-export function MatchBadge({ match, size = 'sm' }: MatchBadgeProps) {
+export const MatchBadge = memo(function MatchBadge({ match, size = 'sm' }: MatchBadgeProps) {
   const meta = VERDICT_META[match.verdict];
   const dim = size === 'lg' ? 88 : 48;
   const stroke = size === 'lg' ? 6 : 4;
@@ -53,4 +54,4 @@ export function MatchBadge({ match, size = 'sm' }: MatchBadgeProps) {
       </div>
     </div>
   );
-}
+});

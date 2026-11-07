@@ -2,16 +2,23 @@
 
 All notable changes to **Grantly** are documented in this file.
 
-## [1.0.0] - 2026-11-07
-
+## [1.2.0] - 2026-11-07
 ### Added
-- **Discover Page (`/discover`)** with debounced search, multi-facet filtering, eligibility-only toggle, and sorting.
-- **Explainable Eligibility Match Engine** (`computeMatch`) scoring scholarships `0–100%` across 7 weighted criteria with human-readable explanations.
-- **Scholarship Detail Page (`/scholarships/:id`)** with eligibility breakdown, interactive application step checklist, and `.ics` calendar export.
-- **Document Readiness Meter & Document Vault** syncing owned documents across all scholarships.
-- **Kanban Application Tracker (`/tracker`)** with drag-and-drop and keyboard-accessible status transitions.
-- **Deadline Timeline (`/deadlines`)** grouped by urgency with one-click `.ics` export.
-- **Side-by-Side Comparison (`/compare`)** for up to 3 scholarships.
-- **Student Profile & Persona Presets (`/profile`)** with `localStorage` persistence.
-- **Dashboard (`/dashboard`)** featuring Eligible Pool, Tracked Funding Potential, and Awarded totals.
+- Interactive Multi-Year Tuition & Financial Aid Coverage Estimator on the Dashboard (`/dashboard`).
+- Typed Scholarship API client (`src/api/scholarshipApi.ts`) with `AbortController` support, TTL caching, and error boundaries.
+- Service Worker (`public/sw.js`) for offline resilience and static asset caching.
+- Responsive `@container` queries, `<picture>` art-directed media, and collapsible mobile navigation drawers across all shells.
+- Inline personal application notes & portal reference ID inputs on Kanban cards and Scholarship Detail pages.
 
+## [1.1.0] - 2026-11-07
+### Added
+- Unified interactive Scholarship Discovery, Live Eligibility Calculator, and Application Tracker on `/` (`LandingPage.tsx`).
+- Global `Ctrl+K` / `Cmd+K` Quick Scholarship Finder & Eligibility Modal (`App.tsx`).
+- Portfolio analytics & RFC 4180 `.csv` spreadsheet export (`src/services/scholarshipService.ts`).
+- Security & input sanitization utilities (`src/utils/security.ts`).
+
+## [1.0.0] - 2026-11-07
+### Added
+- Explainable 7-rule Eligibility Match Engine (`0–100%` score) across 24 Indian scholarships.
+- Document Readiness Vault, 6-stage Bento Kanban Application Tracker, Side-by-Side Comparison (`/compare`), and RFC 5545 `.ics` Calendar Export (`/deadlines`).
+- Optical Fluted-Glass WebGL Fragment Shader (`ShaderBackground.tsx`) with Light and Night themes.

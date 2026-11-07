@@ -1,6 +1,7 @@
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import { Bookmark, BookmarkCheck, CalendarPlus, Command, Compass, Search, Sparkles, X } from 'lucide-react';
+import { fetchScholarshipCatalog } from './api/scholarshipApi';
 import { preloadCoreRoutes } from './app/router';
 import { AppShell } from './components/layout/AppShell';
 import { ShaderBackground } from './components/layout/ShaderBackground';
@@ -25,7 +26,6 @@ import DashboardPage from './pages/DashboardPage';
 import DeadlinesPage from './pages/DeadlinesPage';
 import DiscoverPage from './pages/DiscoverPage';
 import LandingPage from './pages/LandingPage';
-import NotFoundPage from './pages/NotFoundPage';
 import ProfilePage from './pages/ProfilePage';
 import ScholarshipDetailPage from './pages/ScholarshipDetailPage';
 import TrackerPage from './pages/TrackerPage';
@@ -37,6 +37,8 @@ import { useThemeStore } from './store/useThemeStore';
 import { toast } from './store/useToastStore';
 import type { EducationLevel, ScholarshipType } from './types/scholarship';
 import { sanitizeSearchQuery } from './utils/security';
+
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 /**
  * Root GRANTLY Application Component:
@@ -65,6 +67,9 @@ export default function App() {
   useEffect(() => {
     initPerformanceMonitoring();
     preloadCoreRoutes();
+    const controller = new AbortController();
+    void fetchScholarshipCatalog(controller.signal);
+    return () => controller.abort();
   }, []);
 
   // Global keyboard shortcut (Ctrl+K / Cmd+K) for quick scholarship discovery

@@ -233,6 +233,7 @@ function EligibilityRules({ scholarship: { eligibility: e } }: { scholarship: Sc
 function ApplicationSteps({ scholarship: s }: { scholarship: Scholarship }) {
   const app = useApplicationStore((st) => st.applications[s.id]);
   const toggleStep = useApplicationStore((st) => st.toggleStep);
+  const updateNotes = useApplicationStore((st) => st.updateNotes);
 
   return (
     <section aria-labelledby="steps-heading" className="card p-6 sm:p-7">
@@ -288,6 +289,22 @@ function ApplicationSteps({ scholarship: s }: { scholarship: Scholarship }) {
           );
         })}
       </ol>
+
+      {app && (
+        <div className="mt-6 border-t border-line/20 pt-5">
+          <label htmlFor={`notes-${s.id}`} className="label">
+            Personal application notes &amp; portal reference ID
+          </label>
+          <textarea
+            id={`notes-${s.id}`}
+            rows={3}
+            value={app.notes}
+            onChange={(e) => updateNotes(s.id, e.target.value)}
+            placeholder="Record your application portal ID, essay draft link, recommender contact or interview date…"
+            className="input resize-y"
+          />
+        </div>
+      )}
     </section>
   );
 }

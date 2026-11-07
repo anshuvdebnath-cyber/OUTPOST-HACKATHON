@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Check, RotateCcw } from 'lucide-react';
 import { EDUCATION_LEVEL_LABELS, FIELD_LABELS, SCHOLARSHIP_TYPE_LABELS } from '../../lib/constants';
 import { formatINRCompact } from '../../lib/currency';
@@ -15,7 +16,7 @@ const DEADLINE_OPTIONS: { label: string; value: number | null }[] = [
 ];
 
 /** Frosted glassmorphism filter panel for the Discover page. */
-export function FilterPanel() {
+export const FilterPanel = memo(function FilterPanel() {
   const { filters, setFilter, toggleInList, resetFilters } = useFilterStore();
   const awardPct = Math.min(100, Math.max(0, (filters.minAmount / MAX_AWARD) * 100));
 
@@ -165,7 +166,7 @@ export function FilterPanel() {
       </fieldset>
     </div>
   );
-}
+});
 
 interface ChipGroupProps<T extends string> {
   legend: string;

@@ -12,11 +12,13 @@ import {
   GitCompareArrows,
   IndianRupee,
   KanbanSquare,
+  Menu,
   RotateCcw,
   Search,
   ShieldCheck,
   Sparkles,
   Wand2,
+  X,
 } from 'lucide-react';
 import { Logo } from '../components/layout/Logo';
 import { NAV_ITEMS } from '../components/layout/navItems';
@@ -114,6 +116,7 @@ export default function LandingPage() {
     filters.types[0] ?? 'all',
   );
   const [showCount, setShowCount] = useState(6);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const debouncedSearch = useDebounce(searchInput, 150);
 
@@ -199,18 +202,70 @@ export default function LandingPage() {
             <Link to="/dashboard" className={buttonClasses('primary', 'sm')}>
               Open workspace <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
             </Link>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((open) => !open)}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-nav-menu"
+              aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              className="glass-subtle inline-flex items-center justify-center rounded-full p-2 text-ink md:hidden"
+            >
+              {mobileMenuOpen ? (
+                <X aria-hidden="true" className="h-5 w-5" />
+              ) : (
+                <Menu aria-hidden="true" className="h-5 w-5" />
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Collapsible Mobile Navigation Drawer */}
+        {mobileMenuOpen && (
+          <nav
+            id="mobile-nav-menu"
+            aria-label="Mobile navigation"
+            className="glass-popover mt-2 flex flex-col gap-1 rounded-3xl p-3 md:hidden"
+          >
+            {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+              <NavLink
+                key={to}
+                to={to}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2.5 rounded-2xl px-4 py-2.5 text-sm font-medium text-ink transition hover:bg-accent/15"
+              >
+                <Icon aria-hidden="true" className="h-4 w-4" />
+                <span>{label}</span>
+              </NavLink>
+            ))}
+          </nav>
+        )}
       </header>
 
-      <main id="main-content" role="main" className="animate-fade-in-up flex-1">
+      <main id="main-content" role="main" className="responsive-container animate-fade-in-up flex-1">
         {/* Hero */}
         <section
           aria-labelledby="hero-heading"
           className="mx-auto max-w-7xl px-4 pb-8 pt-10 sm:px-6 sm:pt-14 lg:px-8"
         >
           <div className="card mx-auto px-6 py-12 text-center sm:px-14 sm:py-16">
-            <span className="chip text-ink">GRANTLY — Unified Scholarship Discovery &amp; Management Platform</span>
+            <picture className="mx-auto mb-4 inline-block">
+              <source media="(min-width: 768px)" srcSet="/favicon.svg" type="image/svg+xml" />
+              <source media="(max-width: 767px)" srcSet="/favicon.svg" type="image/svg+xml" />
+              <img
+                src="/favicon.svg"
+                srcSet="/favicon.svg 1x, /favicon.svg 2x"
+                sizes="(max-width: 768px) 36px, 44px"
+                width={44}
+                height={44}
+                loading="lazy"
+                decoding="async"
+                alt="Grantly optical prism emblem"
+                className="mx-auto h-11 w-11 rounded-2xl shadow-sm"
+              />
+            </picture>
+            <div>
+              <span className="chip text-ink">GRANTLY — Unified Scholarship Discovery &amp; Management Platform</span>
+            </div>
             <h1
               id="hero-heading"
               className="mx-auto mt-5 max-w-4xl font-display text-4xl font-light tracking-[-0.035em] text-ink sm:text-6xl lg:text-[4rem]"
