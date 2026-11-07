@@ -17,22 +17,22 @@
     --color-ink-muted: 38 66 102;
     --color-accent: 18 58 106;
     --color-accent-ink: 245 251 255;
-    --glass-bg: rgba(244, 250, 255, 0.32);
-    --glass-bg-strong: rgba(246, 251, 255, 0.45);
-    --glass-bg-subtle: rgba(255, 255, 255, 0.22);
-    --glass-border: rgba(255, 255, 255, 0.58);
+    --glass-bg: rgba(244, 250, 255, 0.22);
+    --glass-bg-strong: rgba(246, 251, 255, 0.34);
+    --glass-bg-subtle: rgba(255, 255, 255, 0.16);
+    --glass-border: rgba(255, 255, 255, 0.52);
     --glass-sheen: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.42) 0%,
-      rgba(214, 240, 255, 0.16) 38%,
-      rgba(255, 255, 255, 0.02) 65%,
-      rgba(255, 240, 218, 0.20) 100%
+      rgba(255, 255, 255, 0.36) 0%,
+      rgba(214, 240, 255, 0.12) 38%,
+      rgba(255, 255, 255, 0.01) 65%,
+      rgba(255, 240, 218, 0.16) 100%
     );
     --glass-shadow:
-      0 20px 48px -12px rgba(12, 34, 66, 0.16),
-      inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.82),
-      inset 1px 0 0.5px 0 rgba(255, 255, 255, 0.45),
-      inset 0 -1px 1px 0 rgba(255, 242, 224, 0.28);
+      0 20px 48px -12px rgba(12, 34, 66, 0.14),
+      inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.75),
+      inset 1px 0 0.5px 0 rgba(255, 255, 255, 0.40),
+      inset 0 -1px 1px 0 rgba(255, 242, 224, 0.24);
     color-scheme: light;
   }
 
@@ -45,22 +45,22 @@
     --color-ink-muted: 172 228 208;
     --color-accent: 180 246 216;
     --color-accent-ink: 4 34 26;
-    --glass-bg: rgba(4, 28, 23, 0.34);
-    --glass-bg-strong: rgba(6, 36, 29, 0.48);
-    --glass-bg-subtle: rgba(16, 76, 58, 0.24);
-    --glass-border: rgba(180, 246, 216, 0.30);
+    --glass-bg: rgba(4, 28, 23, 0.24);
+    --glass-bg-strong: rgba(6, 36, 29, 0.36);
+    --glass-bg-subtle: rgba(16, 76, 58, 0.18);
+    --glass-border: rgba(180, 246, 216, 0.26);
     --glass-sheen: linear-gradient(
       135deg,
-      rgba(209, 250, 229, 0.24) 0%,
-      rgba(16, 152, 104, 0.08) 38%,
-      rgba(0, 0, 0, 0.02) 68%,
-      rgba(253, 230, 138, 0.14) 100%
+      rgba(209, 250, 229, 0.20) 0%,
+      rgba(16, 152, 104, 0.06) 38%,
+      rgba(0, 0, 0, 0.01) 68%,
+      rgba(253, 230, 138, 0.12) 100%
     );
     --glass-shadow:
-      0 24px 54px -14px rgba(1, 14, 12, 0.48),
-      inset 0 1.5px 1.5px 0 rgba(209, 250, 229, 0.42),
-      inset 1px 0 0.5px 0 rgba(167, 243, 208, 0.22),
-      inset 0 -1px 1px 0 rgba(16, 185, 129, 0.16);
+      0 24px 54px -14px rgba(1, 14, 12, 0.42),
+      inset 0 1.5px 1.5px 0 rgba(209, 250, 229, 0.38),
+      inset 1px 0 0.5px 0 rgba(167, 243, 208, 0.20),
+      inset 0 -1px 1px 0 rgba(16, 185, 129, 0.14);
     color-scheme: dark;
   }
 

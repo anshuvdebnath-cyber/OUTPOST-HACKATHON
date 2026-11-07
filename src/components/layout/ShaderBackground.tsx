@@ -97,36 +97,41 @@ const FRAGMENT_SHADER = `
     vec2 uv = v_uv;
     float t = u_time * 1.15;
 
-    // Physical fluted glass rib geometry calibrated to reference photo:
-    // ~16-20 reeds on mobile portrait, ~36-44 reeds on desktop
-    float fluteWidth = clamp(u_resolution.x / 38.0, 22.0, 48.0);
+    // Ultra-high density micro-fluted glass with narrow breadth (~180-240 reeds across screen)
+    float fluteWidth = clamp(u_resolution.x / 190.0, 6.0, 10.5);
     float strips = floor(u_resolution.x / fluteWidth);
     float stripPos = uv.x * strips;
-    // Local normalized flute coordinate: -1.0 (left groove seam) to +1.0 (right groove seam)
+    // Local normalized flute coordinate: -1.0 (left seam) to +1.0 (right seam)
     float x = fract(stripPos) * 2.0 - 1.0;
 
-    // Cylindrical lens surface profile & surface normal
-    float r = x * 0.92;
-    float arc = sqrt(max(0.001, 1.0 - r * r));
-    vec3 normal = normalize(vec3(r * 1.25, 0.0, arc));
+    // Secondary fine sub-layer of refracted glass behind the primary layer for extra density
+    float subX = fract(stripPos * 2.0 + 0.25) * 2.0 - 1.0;
 
-    // Physical Snell's-law refraction through soda-lime/borosilicate crown glass (IOR = 1.52)
+    // Smooth, subtle cylindrical glass lens profile & surface normal
+    float r = x * 0.88 + subX * 0.12;
+    float arc = sqrt(max(0.001, 1.0 - clamp(r * r, 0.0, 0.99)));
+    vec3 normal = normalize(vec3(r * 1.10, 0.0, arc));
+
+    // Physical Snell's-law refraction through crown glass (IOR = 1.52)
     vec3 incident = vec3(0.0, 0.0, -1.0);
     vec3 refr = refract(incident, normal, 1.0 / 1.52);
 
-    // Horizontal refractive ray displacement across each cylinder
-    vec2 refractShift = vec2(refr.x * (1.35 / strips), refr.x * 0.004);
+    // Refractive ray displacement scaled to narrow micro-flute breadth + subtle wave distortion
+    vec2 refractShift = vec2(
+      refr.x * (1.65 / strips) + sin(uv.y * 6.0 + t * 0.8) * 0.0015,
+      refr.x * 0.0045
+    );
 
-    // Subtle chromatic dispersion along the lens curve
-    vec2 dispersion = vec2(refr.x * 0.0022, 0.0);
-    float jitter = (hash(gl_FragCoord.xy) - 0.5) * 0.0025;
+    // Delicate chromatic dispersion & frosted glassmorphism diffusion
+    vec2 dispersion = vec2(refr.x * 0.0016, 0.0);
+    float jitter = (hash(gl_FragCoord.xy) - 0.5) * 0.0032;
 
-    // Multi-tap frosted blur sampling behind the glass
+    // 7-tap frosted glassmorphism blur sampling behind the dense micro-reeds
     vec3 accum = vec3(0.0);
-    const int TAPS = 5;
-    for (int i = -2; i <= 2; i++) {
-      float fi = float(i) * 0.0032 + jitter;
-      vec2 sampleUv = uv + refractShift + vec2(fi * 0.20, fi * 0.85);
+    const int TAPS = 7;
+    for (int i = -3; i <= 3; i++) {
+      float fi = float(i) * 0.0042 + jitter;
+      vec2 sampleUv = uv + refractShift + vec2(fi * 0.35, fi * 0.95);
 
       float cr = sampleBackdrop(sampleUv + dispersion, t, u_dark).r;
       float cg = sampleBackdrop(sampleUv, t, u_dark).g;
@@ -135,39 +140,33 @@ const FRAGMENT_SHADER = `
     }
     vec3 refractedColor = accum / float(TAPS);
 
-    // Vertical tapered caustic needles: light focusing through cylindrical reeds
-    // Notice in the reference how the flutes channel light into vertical spindle/needle caustics
+    // Transparent, whisper-subtle caustic channeling so individual bars remain nearly invisible
     float waveLuma = dot(refractedColor, vec3(0.299, 0.587, 0.114));
-    float lensCore = exp(-pow(x * 1.6, 2.0));
-    // Vertical modulation creates the tapering spindle caustics seen in the reference
-    float vCausticMod = 0.70 + 0.30 * sin(uv.y * 18.0 - t * 0.45 + stripPos * 0.35);
-    float causticNeedle = lensCore * smoothstep(0.40, 0.92, waveLuma) * vCausticMod * 0.24;
+    float lensCore = exp(-pow(x * 1.55, 2.0));
+    float vCausticMod = 0.75 + 0.25 * sin(uv.y * 16.0 - t * 0.45 + stripPos * 0.25);
+    float causticNeedle = lensCore * smoothstep(0.45, 0.94, waveLuma) * vCausticMod * 0.075;
 
-    // Surface lighting with exact 0.75 glossiness parameter:
-    // Directional light from upper-right reflecting on the cylindrical glass ribs
+    // Calibrated 0.75 glossiness with high transparency so the ribs blend into a frosted sheet
     vec3 lightDir = normalize(vec3(-0.35, 0.65, 0.68));
     vec3 viewDir = vec3(0.0, 0.0, 1.0);
     vec3 halfVec = normalize(lightDir + viewDir);
     float nDotH = max(dot(normal, halfVec), 0.0);
-    // Glossiness of 0.75 corresponds to specular exponent ~52.0 and reflection coefficient 0.75
     float glossiness = 0.75;
     float specular = pow(nDotH, 52.0) * glossiness;
 
-    // Fine vertical specular pinstripe highlight along each reed ridge
-    float ridgePinstripe = exp(-pow((x - 0.20) * 7.5, 2.0)) * 0.18 * (0.35 + 0.65 * waveLuma);
+    // Ultra-delicate pinstripe & seam groove so the dense reeds are transparent and non-intrusive
+    float ridgePinstripe = exp(-pow((x - 0.18) * 7.5, 2.0)) * 0.05 * (0.35 + 0.65 * waveLuma);
+    float seamEdge = smoothstep(0.0, 0.20, 1.0 - abs(x));
+    float grooveShadow = mix(0.986, 1.0, seamEdge);
+    float grooveGlint = exp(-pow((abs(x) - 0.93) * 18.0, 2.0)) * 0.035;
 
-    // Seam grooves between reeds: subtle shadowed recess and glass seam glint
-    float seamEdge = smoothstep(0.0, 0.22, 1.0 - abs(x));
-    float grooveShadow = mix(0.94, 1.0, seamEdge);
-    float grooveGlint = exp(-pow((abs(x) - 0.94) * 20.0, 2.0)) * 0.10;
+    // Transparent lens transmittance
+    float lensProfile = mix(0.988, 1.012, arc);
 
-    // Lens transmittance profile
-    float lensProfile = mix(0.96, 1.03, arc);
-
-    vec3 specColor = mix(vec3(1.0, 0.98, 0.94), vec3(0.85, 0.99, 0.92), u_dark);
+    vec3 specColor = mix(vec3(1.0, 0.98, 0.95), vec3(0.85, 0.99, 0.92), u_dark);
     vec3 finalColor = refractedColor * lensProfile * grooveShadow
                     + refractedColor * causticNeedle
-                    + specColor * (specular * 0.32 + ridgePinstripe + grooveGlint * 0.16);
+                    + specColor * (specular * 0.085 + ridgePinstripe + grooveGlint);
 
     gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
   }
