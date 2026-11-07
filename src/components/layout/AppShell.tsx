@@ -77,7 +77,7 @@ export function AppShell() {
   return (
     <div className="flex min-h-dvh flex-col">
       {/* Floating glassmorphism pill navbar aligned to main content width */}
-      <header className="sticky top-4 z-40 mx-auto w-full max-w-7xl px-4 sm:top-6 sm:px-6 lg:px-8">
+      <header role="banner" className="sticky top-4 z-40 mx-auto w-full max-w-7xl px-4 sm:top-6 sm:px-6 lg:px-8">
         <div className="glass-pill flex items-center justify-between gap-4 rounded-full px-4 py-2 sm:px-6 sm:py-2.5">
           <Logo to="/" />
 
@@ -141,6 +141,7 @@ export function AppShell() {
       {/* Directional slide route stage */}
       <main
         id="main-content"
+        role="main"
         tabIndex={-1}
         className="mx-auto w-full max-w-7xl flex-1 overflow-x-clip px-4 pb-8 pt-8 focus:outline-none sm:px-6 lg:px-8 lg:pt-10"
       >
@@ -153,7 +154,7 @@ export function AppShell() {
       </main>
 
       {/* Aligned glassmorphism brand footer */}
-      <footer className="no-print mx-auto w-full max-w-7xl px-4 pb-28 sm:px-6 lg:px-8 lg:pb-10">
+      <footer role="contentinfo" className="no-print mx-auto w-full max-w-7xl px-4 pb-28 sm:px-6 lg:px-8 lg:pb-10">
         <div className="glass-subtle flex flex-col items-center justify-between gap-3 rounded-2xl px-5 py-3.5 text-xs text-ink-muted sm:flex-row">
           <Logo to="/" size="sm" />
           <p className="text-center sm:text-right">

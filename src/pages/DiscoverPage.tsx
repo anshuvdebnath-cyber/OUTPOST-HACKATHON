@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { GitCompareArrows, Search, SearchX, SlidersHorizontal, X } from 'lucide-react';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -33,10 +33,23 @@ export default function DiscoverPage() {
 
   const [query, setQuery] = useState(filters.query);
   const debouncedQuery = useDebounce(query, 200);
+  const deferredFilters = useDeferredValue(filters);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const drawerCloseRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => setFilter('query', debouncedQuery), [debouncedQuery, setFilter]);
+
+  const handleSortChange = useCallback(
+    (val: SortOption) => {
+      setFilter('sort', val);
+    },
+    [setFilter],
+  );
+
+  const handleClearAll = useCallback(() => {
+    setQuery('');
+    resetFilters();
+  }, [resetFilters]);
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -50,8 +63,11 @@ export default function DiscoverPage() {
     };
   }, [drawerOpen]);
 
-  const results = useMemo(() => filterScholarships(SCHOLARSHIPS, filters, profile), [filters, profile]);
-  const activeCount = countActiveFilters(filters);
+  const results = useMemo(
+    () => filterScholarships(SCHOLARSHIPS, deferredFilters, profile),
+    [deferredFilters, profile],
+  );
+  const activeCount = useMemo(() => countActiveFilters(filters), [filters]);
 
   return (
     <>
@@ -83,7 +99,7 @@ export default function DiscoverPage() {
         <div className="flex items-center gap-2.5">
           <SortDropdown
             value={filters.sort}
-            onChange={(val) => setFilter('sort', val)}
+            onChange={handleSortChange}
             options={SORT_LABELS}
           />
           <Button
@@ -114,7 +130,12 @@ export default function DiscoverPage() {
           <h2 id="results-heading" className="sr-only">
             Results
           </h2>
-          <div className="glass-pill mb-4 inline-flex rounded-full px-4 py-1.5 text-xs text-ink-muted" aria-live="polite">
+          <div
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            className="glass-pill mb-4 inline-flex rounded-full px-4 py-1.5 text-xs text-ink-muted"
+          >
             Showing <strong className="mx-1 text-ink">{results.length}</strong> of {SCHOLARSHIPS.length} open scholarships
           </div>
 
@@ -124,13 +145,7 @@ export default function DiscoverPage() {
               title="No scholarships match these filters"
               description="Try removing a filter or searching for a broader keyword."
               action={
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    setQuery('');
-                    resetFilters();
-                  }}
-                >
+                <Button variant="secondary" onClick={handleClearAll}>
                   Clear search & filters
                 </Button>
               }

@@ -64,7 +64,7 @@ export default function LandingPage() {
   return (
     <div className="flex min-h-dvh flex-col">
       {/* Floating glassmorphism pill navbar with new Fluted-Prism Logo */}
-      <header className="sticky top-4 z-40 mx-auto w-full max-w-7xl px-4 sm:top-6 sm:px-6 lg:px-8">
+      <header role="banner" className="sticky top-4 z-40 mx-auto w-full max-w-7xl px-4 sm:top-6 sm:px-6 lg:px-8">
         <div className="glass-pill flex items-center justify-between gap-4 rounded-full px-4 py-2 sm:px-6 sm:py-2.5">
           <Logo to="/" />
           <nav aria-label="Landing navigation" className="hidden items-center gap-1.5 md:flex">
@@ -87,7 +87,7 @@ export default function LandingPage() {
         </div>
       </header>
 
-      <main id="main-content" className="animate-fade-in-up flex-1">
+      <main id="main-content" role="main" className="animate-fade-in-up flex-1">
         {/* Hero */}
         <section className="mx-auto max-w-6xl px-4 pb-12 pt-12 sm:px-6 sm:pt-16 lg:px-8">
           <div className="card mx-auto max-w-5xl px-6 py-14 text-center sm:px-14 sm:py-20">
@@ -97,7 +97,7 @@ export default function LandingPage() {
               <br />
               So should scholarship discovery.
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
+            <p className="mx-auto mt-6 max-w-2xl text-[16px] leading-relaxed text-ink-muted sm:text-lg">
               Bridging scattered financial-aid portals, explainable eligibility matching, and high-confidence application workflows in one calm workspace.
             </p>
             <div className="mt-9 flex flex-wrap justify-center gap-3">
@@ -125,7 +125,7 @@ export default function LandingPage() {
             <h2 id="journey-heading" className="text-3xl font-light tracking-[-0.03em] text-ink sm:text-4xl">
               Every stage of the scholarship journey, in one place.
             </h2>
-            <p className="mx-auto mt-2.5 max-w-xl text-sm text-ink-muted sm:text-base">
+            <p className="mx-auto mt-2.5 max-w-xl text-sm text-ink-muted sm:text-[16px]">
               Designed around the four biggest barriers students face when seeking educational financial assistance.
             </p>
           </div>
@@ -148,7 +148,7 @@ export default function LandingPage() {
             <h2 id="cta-heading" className="text-3xl font-light tracking-[-0.03em] text-ink sm:text-4xl">
               Ready to see your personalised scholarship matches?
             </h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm text-ink-muted sm:text-base">
+            <p className="mx-auto mt-3 max-w-xl text-sm text-ink-muted sm:text-[16px]">
               Try one of our built-in student personas with a single click, or enter your own details. Everything stays in your browser.
             </p>
             <ul className="mt-6 flex flex-wrap justify-center gap-3 text-xs text-ink">

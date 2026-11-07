@@ -53,9 +53,11 @@ export function KanbanBoard({ applications }: { applications: Application[] }) {
       >
         <div className="flex flex-wrap items-center gap-1.5">
           <button
+            id="stage-tab-all"
             type="button"
             role="tab"
             aria-selected={activeStage === 'all'}
+            aria-controls="stage-panel-workspace"
             onClick={() => setActiveStage('all')}
             className={cn(
               'rounded-xl px-4 py-2 text-xs font-medium transition-all duration-300',
@@ -74,9 +76,11 @@ export function KanbanBoard({ applications }: { applications: Application[] }) {
             return (
               <button
                 key={status}
+                id={`stage-tab-${status}`}
                 type="button"
                 role="tab"
                 aria-selected={isSelected}
+                aria-controls="stage-panel-workspace"
                 onClick={() => setActiveStage(status)}
                 className={cn(
                   'inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-medium transition-all duration-300',
@@ -99,6 +103,11 @@ export function KanbanBoard({ applications }: { applications: Application[] }) {
       </div>
 
       {/* Stage Workspace: 3-column aligned Bento Grid for "All stages", or Full-Width Panel for a single stage */}
+      <div
+        id="stage-panel-workspace"
+        role="tabpanel"
+        aria-labelledby={activeStage === 'all' ? 'stage-tab-all' : `stage-tab-${activeStage}`}
+      >
       {activeStage === 'all' ? (
         <div key="all-stages" className="animate-fade-in-up grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {APPLICATION_STATUSES.map((status) => {
@@ -170,6 +179,7 @@ export function KanbanBoard({ applications }: { applications: Application[] }) {
           onShowAll={() => setActiveStage('all')}
         />
       )}
+      </div>
     </div>
   );
 }

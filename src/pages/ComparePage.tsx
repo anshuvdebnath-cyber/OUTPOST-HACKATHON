@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Compass, GitCompareArrows, Trash2, X } from 'lucide-react';
 import { Button, buttonClasses } from '@/components/ui/Button';
@@ -10,6 +10,7 @@ import { computeDocumentReadiness } from '@/features/documents/documentReadiness
 import { MatchBadge } from '@/features/eligibility/MatchBadge';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useAllMatches } from '@/hooks/useMatch';
+import { useViewportBreakpoints } from '@/hooks/useMediaQuery';
 import { DOCUMENT_LABELS, EDUCATION_LEVEL_LABELS, FIELD_LABELS, SCHOLARSHIP_TYPE_LABELS } from '@/lib/constants';
 import { formatINR } from '@/lib/currency';
 import { formatDate } from '@/lib/date';
@@ -23,8 +24,12 @@ export default function ComparePage() {
   const { ids, toggle, clear } = useCompareStore();
   const matches = useAllMatches();
   const ownedDocs = useProfileStore((s) => s.profile.documents);
+  const { isMobile } = useViewportBreakpoints();
 
-  const items = ids.map((id) => getScholarshipById(id)).filter((s): s is Scholarship => Boolean(s));
+  const items = useMemo(
+    () => ids.map((id) => getScholarshipById(id)).filter((s): s is Scholarship => Boolean(s)),
+    [ids],
+  );
 
   return (
     <>
@@ -57,7 +62,50 @@ export default function ComparePage() {
           }
         />
       ) : (
-        <div className="card animate-fade-in-up overflow-x-auto p-2">
+        <div className="space-y-6">
+          {/* Responsive mobile stacked comparison cards */}
+          {isMobile && (
+            <div className="grid gap-4 md:hidden" aria-label="Mobile scholarship comparison cards">
+              {items.map((s) => {
+                const m = matches.get(s.id);
+                const r = computeDocumentReadiness(s, ownedDocs);
+                return (
+                  <article key={s.id} className="card space-y-3 p-5">
+                    <div className="flex items-start justify-between gap-2">
+                      <Link to={`/scholarships/${s.id}`} className="text-[16px] font-medium text-ink hover:underline">
+                        {s.title}
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => toggle(s.id)}
+                        aria-label={`Remove ${s.title} from comparison`}
+                        className="glass-subtle rounded-full p-1.5 text-ink-muted hover:text-ink"
+                      >
+                        <X aria-hidden="true" className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                    <p className="text-xs text-ink-muted">{s.provider}</p>
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                      {m && <MatchBadge match={m} />}
+                      <CountdownBadge deadline={s.deadline} />
+                    </div>
+                    <dl className="grid grid-cols-2 gap-2 pt-2 text-xs">
+                      <div className="glass-subtle rounded-xl p-2.5">
+                        <dt className="text-ink-muted">Award</dt>
+                        <dd className="mt-0.5 font-semibold text-ink">{formatINR(s.amount)}</dd>
+                      </div>
+                      <div className="glass-subtle rounded-xl p-2.5">
+                        <dt className="text-ink-muted">Docs ready</dt>
+                        <dd className="mt-0.5 font-semibold text-ink">{r.percent}%</dd>
+                      </div>
+                    </dl>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="card animate-fade-in-up overflow-x-auto p-2">
           <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
             <thead>
               <tr className="border-b border-ink/10">
@@ -168,6 +216,7 @@ export default function ComparePage() {
               </Row>
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </>

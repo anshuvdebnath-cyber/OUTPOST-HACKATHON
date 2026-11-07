@@ -46,6 +46,7 @@ export function SortDropdown({ value, onChange, options, className }: SortDropdo
         onClick={() => setOpen((prev) => !prev)}
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-controls="sort-options-listbox"
         aria-label={`Sort by: ${selectedLabel}`}
         className={cn(
           'glass-pill flex h-12 w-full items-center justify-between gap-3 rounded-full px-4 text-sm font-medium text-ink transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] sm:w-64 sm:px-5',
@@ -68,6 +69,7 @@ export function SortDropdown({ value, onChange, options, className }: SortDropdo
 
       {open && (
         <ul
+          id="sort-options-listbox"
           role="listbox"
           aria-label="Sort options"
           className="glass-popover animate-fade-in-up absolute right-0 top-[calc(100%+0.5rem)] z-50 w-full min-w-[16rem] origin-top-right space-y-1 rounded-2xl p-2 sm:w-64"
