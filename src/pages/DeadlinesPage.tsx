@@ -23,7 +23,7 @@ const URGENCY_SECTIONS: { key: Exclude<Urgency, 'closed'>; title: string; subtit
   { key: 'later', title: 'More than 30 days away', subtitle: 'Plan ahead and gather recommendations' },
 ];
 
-/** Chronological deadline radar with urgency buckets and one-click .ics calendar export. */
+/** Monochrome frosted-glass deadline timeline. */
 export default function DeadlinesPage() {
   useDocumentTitle('Scholarship deadlines');
   const applications = useApplicationStore((s) => s.applications);
@@ -55,14 +55,14 @@ export default function DeadlinesPage() {
         description="Never miss a submission window. Deadlines are grouped by urgency and can be exported to Google, Apple or Outlook Calendar."
         actions={
           <>
-            <div className="inline-flex rounded-xl border border-line bg-surface p-1" role="group" aria-label="Deadline scope">
+            <div className="glass-pill inline-flex rounded-full p-1" role="group" aria-label="Deadline scope">
               <button
                 type="button"
                 aria-pressed={scope === 'all'}
                 onClick={() => setScope('all')}
                 className={cn(
-                  'rounded-lg px-3 py-1.5 text-xs font-semibold transition',
-                  scope === 'all' ? 'bg-brand-600 text-white' : 'text-ink-muted hover:text-ink',
+                  'rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-300',
+                  scope === 'all' ? 'bg-ink text-surface' : 'text-ink-muted hover:text-ink',
                 )}
               >
                 All open ({SCHOLARSHIPS.length})
@@ -72,8 +72,8 @@ export default function DeadlinesPage() {
                 aria-pressed={scope === 'tracked'}
                 onClick={() => setScope('tracked')}
                 className={cn(
-                  'rounded-lg px-3 py-1.5 text-xs font-semibold transition',
-                  scope === 'tracked' ? 'bg-brand-600 text-white' : 'text-ink-muted hover:text-ink',
+                  'rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-300',
+                  scope === 'tracked' ? 'bg-ink text-surface' : 'text-ink-muted hover:text-ink',
                 )}
               >
                 My tracked ({trackedIds.size})
@@ -100,7 +100,7 @@ export default function DeadlinesPage() {
           title="No tracked deadlines yet"
           description="Save scholarships from Discover or switch to 'All open' to view every upcoming deadline."
           action={
-            <div className="flex flex-wrap justify-center gap-2">
+            <div className="flex flex-wrap justify-center gap-2.5">
               <Button variant="secondary" onClick={() => setScope('all')}>
                 Show all open deadlines
               </Button>
@@ -117,11 +117,10 @@ export default function DeadlinesPage() {
             if (items.length === 0) return null;
             return (
               <section key={sec.key} aria-labelledby={`urgency-${sec.key}`}>
-                <div className="mb-3">
-                  <h2 id={`urgency-${sec.key}`} className="text-lg font-semibold text-ink">
-                    {sec.title}
+                <div className="glass-pill mb-4 inline-block rounded-full px-5 py-2">
+                  <h2 id={`urgency-${sec.key}`} className="text-sm font-medium text-ink">
+                    {sec.title} <span className="ml-2 text-xs text-ink-muted">· {sec.subtitle}</span>
                   </h2>
-                  <p className="text-xs text-ink-muted">{sec.subtitle}</p>
                 </div>
                 <ol className="space-y-3">
                   {items.map((s) => {
@@ -129,7 +128,7 @@ export default function DeadlinesPage() {
                     return (
                       <li
                         key={s.id}
-                        className="card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5"
+                        className="card animate-fade-in-up flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6 hover:-translate-y-0.5"
                       >
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
@@ -139,7 +138,7 @@ export default function DeadlinesPage() {
                           </div>
                           <Link
                             to={`/scholarships/${s.id}`}
-                            className="mt-1.5 block text-base font-semibold text-ink hover:text-brand-600"
+                            className="mt-2 block text-lg font-normal tracking-[-0.02em] text-ink hover:underline"
                           >
                             {s.title}
                           </Link>
@@ -156,7 +155,7 @@ export default function DeadlinesPage() {
                               toast('Calendar invite downloaded');
                             }}
                           >
-                            <CalendarPlus aria-hidden="true" className="h-4 w-4" /> .ics
+                            <CalendarPlus aria-hidden="true" className="h-3.5 w-3.5" /> .ics
                           </Button>
                           <Link to={`/scholarships/${s.id}`} className={buttonClasses('primary', 'sm')}>
                             View details
@@ -174,4 +173,3 @@ export default function DeadlinesPage() {
     </>
   );
 }
-

@@ -67,13 +67,14 @@ export const DOCUMENT_LABELS: Record<DocumentType, string> = {
   'research-proposal': 'Research proposal',
 };
 
+/** Strictly monochrome black & white status styles for glassmorphism UI. */
 export const STATUS_META: Record<ApplicationStatus, { label: string; tone: string; dot: string }> = {
-  saved: { label: 'Saved', tone: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200', dot: 'bg-slate-400' },
-  preparing: { label: 'Preparing', tone: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200', dot: 'bg-amber-500' },
-  submitted: { label: 'Submitted', tone: 'bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-200', dot: 'bg-sky-500' },
-  interview: { label: 'Interview', tone: 'bg-violet-100 text-violet-800 dark:bg-violet-900/40 dark:text-violet-200', dot: 'bg-violet-500' },
-  awarded: { label: 'Awarded', tone: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200', dot: 'bg-emerald-500' },
-  rejected: { label: 'Not selected', tone: 'bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-200', dot: 'bg-rose-500' },
+  saved: { label: 'Saved', tone: 'text-ink', dot: 'bg-ink/40' },
+  preparing: { label: 'Preparing', tone: 'text-ink', dot: 'bg-ink/60' },
+  submitted: { label: 'Submitted', tone: 'text-ink', dot: 'bg-ink/75' },
+  interview: { label: 'Interview', tone: 'text-ink', dot: 'bg-ink/85' },
+  awarded: { label: 'Awarded', tone: 'bg-ink text-surface font-semibold', dot: 'bg-ink' },
+  rejected: { label: 'Not selected', tone: 'text-ink-muted line-through', dot: 'bg-ink/25' },
 };
 
 export const APPLICATION_STATUSES: ApplicationStatus[] = [
@@ -105,4 +106,3 @@ export const INDIAN_STATES = [
   'Uttar Pradesh',
   'West Bengal',
 ] as const;
-

@@ -23,7 +23,7 @@ const SORT_LABELS: Record<SortOption, string> = {
   newest: 'Deadline (latest)',
 };
 
-/** Scholarship discovery: search, filter, sort and personalised match scores. */
+/** Monochrome glassmorphism scholarship discovery page. */
 export default function DiscoverPage() {
   useDocumentTitle('Discover scholarships');
   const { filters, setFilter, resetFilters } = useFilterStore();
@@ -37,7 +37,6 @@ export default function DiscoverPage() {
 
   useEffect(() => setFilter('query', debouncedQuery), [debouncedQuery, setFilter]);
 
-  // Drawer: focus the close button on open, close on Escape, lock background scroll.
   useEffect(() => {
     if (!drawerOpen) return;
     drawerCloseRef.current?.focus();
@@ -60,24 +59,27 @@ export default function DiscoverPage() {
         description="Search every opportunity in one place. Each scholarship is scored against your profile so the best fits rise to the top."
       />
 
-      {/* Search + sort toolbar */}
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+      {/* Search + sort glass toolbar */}
+      <div className="card mb-6 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:p-5">
         <div className="relative flex-1">
           <label htmlFor="scholarship-search" className="sr-only">
             Search scholarships
           </label>
-          <Search aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-muted" />
+          <Search
+            aria-hidden="true"
+            className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted"
+          />
           <input
             id="scholarship-search"
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by name, provider or keyword (e.g. women, engineering, research)"
-            className="input h-12 pl-11 text-base"
+            className="input h-12 rounded-full pl-11 text-sm"
             autoComplete="off"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2.5">
           <label htmlFor="sort" className="sr-only">
             Sort scholarships
           </label>
@@ -85,7 +87,7 @@ export default function DiscoverPage() {
             id="sort"
             value={filters.sort}
             onChange={(e) => setFilter('sort', e.target.value as SortOption)}
-            className="input h-12 flex-1 sm:w-52"
+            className="input h-12 flex-1 rounded-full px-5 sm:w-52"
           >
             {(Object.keys(SORT_LABELS) as SortOption[]).map((k) => (
               <option key={k} value={k}>
@@ -103,16 +105,16 @@ export default function DiscoverPage() {
             <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
             Filters
             {activeCount > 0 && (
-              <span className="rounded-full bg-brand-600 px-1.5 text-xs text-white">{activeCount}</span>
+              <span className="rounded-full bg-ink px-2 py-0.5 text-xs text-surface">{activeCount}</span>
             )}
           </Button>
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[17rem_1fr]">
+      <div className="grid gap-6 lg:grid-cols-[18rem_1fr]">
         {/* Desktop filter sidebar */}
         <aside aria-label="Scholarship filters" className="hidden lg:block">
-          <div className="card sticky top-6 p-5">
+          <div className="card sticky top-24 p-6">
             <FilterPanel />
           </div>
         </aside>
@@ -121,9 +123,9 @@ export default function DiscoverPage() {
           <h2 id="results-heading" className="sr-only">
             Results
           </h2>
-          <p aria-live="polite" className="mb-4 text-sm text-ink-muted">
-            Showing <strong className="text-ink">{results.length}</strong> of {SCHOLARSHIPS.length} open scholarships
-          </p>
+          <div className="glass-pill mb-4 inline-flex rounded-full px-4 py-1.5 text-xs text-ink-muted" aria-live="polite">
+            Showing <strong className="mx-1 text-ink">{results.length}</strong> of {SCHOLARSHIPS.length} open scholarships
+          </div>
 
           {results.length === 0 ? (
             <EmptyState
@@ -143,7 +145,7 @@ export default function DiscoverPage() {
               }
             />
           ) : (
-            <ul className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+            <ul className="grid gap-5 sm:grid-cols-2 2xl:grid-cols-3">
               {results.map(({ scholarship, match }) => (
                 <li key={scholarship.id}>
                   <ScholarshipCard scholarship={scholarship} match={match} />
@@ -156,9 +158,9 @@ export default function DiscoverPage() {
 
       {/* Floating compare tray */}
       {compareCount > 0 && (
-        <div className="fixed inset-x-0 bottom-20 z-20 flex justify-center px-4 lg:bottom-6 lg:pl-64">
+        <div className="fixed inset-x-0 bottom-24 z-30 flex justify-center px-4 lg:bottom-8">
           <Link to="/compare" className={buttonClasses('primary', 'lg', 'shadow-lift')}>
-            <GitCompareArrows aria-hidden="true" className="h-5 w-5" />
+            <GitCompareArrows aria-hidden="true" className="h-4 w-4" />
             Compare {compareCount} selected
           </Link>
         </div>
@@ -171,12 +173,12 @@ export default function DiscoverPage() {
             type="button"
             aria-label="Close filters"
             tabIndex={-1}
-            className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             onClick={() => setDrawerOpen(false)}
           />
-          <div className="absolute inset-x-0 bottom-0 max-h-[85dvh] animate-fade-in-up overflow-y-auto rounded-t-3xl bg-surface p-5 pb-8">
+          <div className="card absolute inset-x-3 bottom-3 max-h-[85dvh] animate-fade-in-up overflow-y-auto p-6">
             <div className="mb-4 flex items-center justify-between">
-              <h2 id="drawer-title" className="text-lg font-semibold text-ink">
+              <h2 id="drawer-title" className="text-lg font-normal text-ink">
                 Filter scholarships
               </h2>
               <button
@@ -184,9 +186,9 @@ export default function DiscoverPage() {
                 type="button"
                 onClick={() => setDrawerOpen(false)}
                 aria-label="Close filters"
-                className="rounded-lg p-2 text-ink-muted hover:bg-surface-muted"
+                className="glass-subtle rounded-full p-2 text-ink"
               >
-                <X aria-hidden="true" className="h-5 w-5" />
+                <X aria-hidden="true" className="h-4 w-4" />
               </button>
             </div>
             <FilterPanel />
@@ -199,4 +201,3 @@ export default function DiscoverPage() {
     </>
   );
 }
-

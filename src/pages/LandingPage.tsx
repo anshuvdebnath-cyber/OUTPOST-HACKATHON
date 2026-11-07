@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import {
   ArrowRight,
   CalendarClock,
@@ -8,10 +8,8 @@ import {
   GitCompareArrows,
   KanbanSquare,
   ShieldCheck,
-  Sparkles,
 } from 'lucide-react';
-import { Logo } from '@/components/layout/Logo';
-import { SkipLink } from '@/components/layout/SkipLink';
+import { NAV_ITEMS } from '@/components/layout/navItems';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { buttonClasses } from '@/components/ui/Button';
 import { SCHOLARSHIPS } from '@/data/scholarships';
@@ -41,7 +39,7 @@ const FEATURES = [
     icon: CalendarClock,
     title: 'Urgency Radar & .ics Calendar Export',
     description:
-      'Colour-coded countdowns highlight applications closing in 3, 10 or 30 days, with one-click export to Google, Apple or Outlook Calendar.',
+      'Countdowns highlight applications closing in 3, 10 or 30 days, with one-click export to Google, Apple or Outlook Calendar.',
   },
   {
     icon: GitCompareArrows,
@@ -57,123 +55,129 @@ const FEATURES = [
   },
 ];
 
-/** Marketing & onboarding landing page for Grantly. */
+/** Editorial monochrome glassmorphism landing page set over the live WebGL wave shader. */
 export default function LandingPage() {
   useDocumentTitle('Rethinking the Scholarship Experience');
   const totalPool = SCHOLARSHIPS.reduce((sum, s) => sum + s.amount, 0);
 
   return (
     <div className="min-h-dvh flex flex-col">
-      <SkipLink />
-      <header className="sticky top-0 z-30 border-b border-line bg-surface/90 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Logo to="/" />
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Link to="/discover" className={buttonClasses('ghost', 'sm')}>
-              Browse scholarships
-            </Link>
+      {/* Floating glassmorphism pill navbar — no icon box logo */}
+      <header className="sticky top-4 z-40 mx-auto w-full max-w-6xl px-4 sm:top-6 sm:px-6">
+        <div className="glass-pill flex items-center justify-between gap-4 rounded-full px-5 py-2.5 sm:px-7 sm:py-3">
+          <Link
+            to="/"
+            className="font-display text-base font-medium tracking-[-0.03em] text-ink transition hover:opacity-75 sm:text-lg"
+          >
+            Grantly
+          </Link>
+          <nav aria-label="Landing navigation" className="hidden items-center gap-1 md:flex">
+            {NAV_ITEMS.map(({ to, label }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className="rounded-full px-4 py-1.5 text-sm font-medium text-ink-muted transition hover:bg-ink/10 hover:text-ink"
+              >
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+          <div className="flex items-center gap-2.5">
             <ThemeToggle />
             <Link to="/dashboard" className={buttonClasses('primary', 'sm')}>
-              Open app <ArrowRight aria-hidden="true" className="h-4 w-4" />
+              Open workspace <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
             </Link>
           </div>
         </div>
       </header>
 
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="animate-page-enter flex-1">
         {/* Hero */}
-        <section className="relative overflow-hidden py-16 sm:py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-3xl text-center">
-              <span className="chip bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-200">
-                <Sparkles aria-hidden="true" className="h-3.5 w-3.5" /> Unified Scholarship Discovery &amp; Management
-              </span>
-              <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-ink sm:text-5xl lg:text-6xl">
-                Find scholarships you <span className="gradient-text">actually qualify for</span> — and never miss a deadline.
-              </h1>
-              <p className="mt-5 text-base leading-relaxed text-ink-muted sm:text-lg">
-                Grantly turns a confusing maze of portals, PDFs and spreadsheets into one calm workspace: discover opportunities,
-                see why you match, check document readiness and track every application from saved to awarded.
-              </p>
-              <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <Link to="/discover" className={buttonClasses('primary', 'lg')}>
-                  Discover scholarships <ArrowRight aria-hidden="true" className="h-5 w-5" />
-                </Link>
-                <Link to="/profile" className={buttonClasses('secondary', 'lg')}>
-                  Build your profile (60 sec)
-                </Link>
-              </div>
+        <section className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:px-6 sm:pt-20 lg:px-8">
+          <div className="card mx-auto max-w-5xl px-6 py-14 text-center sm:px-14 sm:py-20">
+            <span className="chip text-ink">Unified Scholarship Discovery &amp; Management</span>
+            <h1 className="mx-auto mt-6 max-w-4xl font-display text-4xl font-light tracking-[-0.035em] text-ink sm:text-6xl lg:text-[4.25rem]">
+              Everything intelligent adapts.
+              <br />
+              So should scholarship discovery.
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
+              Bridging scattered financial-aid portals, explainable eligibility matching, and high-confidence application workflows in one calm workspace.
+            </p>
+            <div className="mt-9 flex flex-wrap justify-center gap-3">
+              <Link to="/discover" className={buttonClasses('primary', 'lg')}>
+                Discover scholarships <ArrowRight aria-hidden="true" className="h-4 w-4" />
+              </Link>
+              <Link to="/profile" className={buttonClasses('secondary', 'lg')}>
+                Build your profile (60 sec)
+              </Link>
             </div>
-
-            {/* Live stats strip */}
-            <dl className="mx-auto mt-14 grid max-w-4xl grid-cols-2 gap-4 sm:grid-cols-4">
-              <Stat label="Open scholarships" value={String(SCHOLARSHIPS.length)} />
-              <Stat label="Total award pool" value={formatINRCompact(totalPool)} />
-              <Stat label="Eligibility criteria explained" value="7 checks" />
-              <Stat label="Account required" value="None — 100% private" />
-            </dl>
           </div>
+
+          {/* Live stats strip */}
+          <dl className="mx-auto mt-8 grid max-w-5xl grid-cols-2 gap-4 sm:grid-cols-4">
+            <Stat label="Open scholarships" value={String(SCHOLARSHIPS.length)} />
+            <Stat label="Total award pool" value={formatINRCompact(totalPool)} />
+            <Stat label="Eligibility criteria explained" value="7 checks" />
+            <Stat label="Account required" value="None · 100% private" />
+          </dl>
         </section>
 
-        {/* How it works */}
-        <section aria-labelledby="journey-heading" className="border-y border-line bg-surface py-16">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 id="journey-heading" className="text-2xl font-bold text-ink sm:text-3xl">
-                Every stage of the scholarship journey, in one place
-              </h2>
-              <p className="mt-2 text-sm text-ink-muted sm:text-base">
-                Designed around the four biggest barriers students face when seeking financial aid.
-              </p>
-            </div>
-            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {FEATURES.map(({ icon: Icon, title, description }) => (
-                <article key={title} className="card p-6">
-                  <div className="inline-flex rounded-2xl bg-brand-50 p-3 text-brand-600 dark:bg-brand-900/30 dark:text-brand-300">
-                    <Icon aria-hidden="true" className="h-6 w-6" />
-                  </div>
-                  <h3 className="mt-4 text-base font-semibold text-ink">{title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-muted">{description}</p>
-                </article>
-              ))}
-            </div>
+        {/* Capabilities */}
+        <section aria-labelledby="journey-heading" className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="card mb-8 p-8 text-center sm:p-10">
+            <h2 id="journey-heading" className="text-3xl font-light tracking-[-0.03em] text-ink sm:text-4xl">
+              Every stage of the scholarship journey, in one place.
+            </h2>
+            <p className="mx-auto mt-2.5 max-w-xl text-sm text-ink-muted sm:text-base">
+              Designed around the four biggest barriers students face when seeking educational financial assistance.
+            </p>
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map(({ icon: Icon, title, description }) => (
+              <article key={title} className="card animate-fade-in-up p-7 hover:-translate-y-1 hover:shadow-lift">
+                <div className="glass-pill inline-flex rounded-2xl p-3 text-ink">
+                  <Icon aria-hidden="true" className="h-5 w-5 stroke-[1.5]" />
+                </div>
+                <h3 className="mt-5 text-lg font-normal tracking-[-0.02em] text-ink">{title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-ink-muted">{description}</p>
+              </article>
+            ))}
           </div>
         </section>
 
         {/* CTA */}
-        <section aria-labelledby="cta-heading" className="py-16">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-3xl bg-gradient-to-br from-brand-600 via-violet-600 to-fuchsia-600 p-8 text-center text-white sm:p-12">
-              <h2 id="cta-heading" className="text-2xl font-bold sm:text-3xl">
-                Ready to see your personalised scholarship matches?
-              </h2>
-              <p className="mx-auto mt-2 max-w-xl text-sm text-white/85 sm:text-base">
-                Try one of our built-in student personas with a single click, or enter your own details. Everything stays in your browser.
-              </p>
-              <ul className="mt-6 flex flex-wrap justify-center gap-4 text-xs text-white/90 sm:text-sm">
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 aria-hidden="true" className="h-4 w-4" /> Instant match scores
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 aria-hidden="true" className="h-4 w-4" /> Step-by-step checklists
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 aria-hidden="true" className="h-4 w-4" /> Calendar export (.ics)
-                </li>
-              </ul>
-              <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <Link to="/dashboard" className={buttonClasses('secondary', 'lg', 'bg-white text-brand-700 hover:bg-white/90')}>
-                  Launch Grantly <ArrowRight aria-hidden="true" className="h-5 w-5" />
-                </Link>
-              </div>
+        <section aria-labelledby="cta-heading" className="mx-auto max-w-5xl px-4 pb-20 pt-8 sm:px-6 lg:px-8">
+          <div className="card p-8 text-center sm:p-14">
+            <h2 id="cta-heading" className="text-3xl font-light tracking-[-0.03em] text-ink sm:text-4xl">
+              Ready to see your personalised scholarship matches?
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm text-ink-muted sm:text-base">
+              Try one of our built-in student personas with a single click, or enter your own details. Everything stays in your browser.
+            </p>
+            <ul className="mt-6 flex flex-wrap justify-center gap-3 text-xs text-ink">
+              <li className="chip">
+                <CheckCircle2 aria-hidden="true" className="h-3.5 w-3.5" /> Instant match scores
+              </li>
+              <li className="chip">
+                <CheckCircle2 aria-hidden="true" className="h-3.5 w-3.5" /> Step-by-step checklists
+              </li>
+              <li className="chip">
+                <CheckCircle2 aria-hidden="true" className="h-3.5 w-3.5" /> Calendar export (.ics)
+              </li>
+            </ul>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <Link to="/dashboard" className={buttonClasses('primary', 'lg')}>
+                Launch Grantly <ArrowRight aria-hidden="true" className="h-4 w-4" />
+              </Link>
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-line bg-surface py-8 text-center text-xs text-ink-muted">
-        <div className="mx-auto max-w-7xl px-4">
-          <p>Grantly — Unified Scholarship Discovery &amp; Management Platform. All scholarship entries are sample data for demonstration.</p>
+      <footer className="mx-auto mb-6 w-full max-w-6xl px-4 sm:px-6">
+        <div className="glass-pill rounded-full px-6 py-4 text-center text-xs text-ink-muted">
+          Grantly — Unified Scholarship Discovery &amp; Management Platform. All scholarship entries are sample data for demonstration.
         </div>
       </footer>
     </div>
@@ -182,10 +186,9 @@ export default function LandingPage() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="card p-4 text-center">
+    <div className="card animate-fade-in-up p-5 text-center hover:-translate-y-0.5">
       <dt className="text-xs text-ink-muted">{label}</dt>
-      <dd className="mt-1 text-xl font-extrabold text-ink sm:text-2xl">{value}</dd>
+      <dd className="mt-1.5 font-display text-2xl font-normal tracking-[-0.03em] text-ink sm:text-3xl">{value}</dd>
     </div>
   );
 }
-

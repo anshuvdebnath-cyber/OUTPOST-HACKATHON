@@ -14,9 +14,7 @@ import type { Application, ApplicationStatus } from '@/types/scholarship';
 const DRAG_TYPE = 'application/x-grantly-scholarship';
 
 /**
- * Kanban board of applications grouped by status.
- * - Mouse/trackpad: drag cards between columns (HTML5 drag & drop).
- * - Keyboard/touch/screen readers: change status with the select on each card.
+ * Monochrome frosted-glass Kanban board of applications grouped by status.
  */
 export function KanbanBoard({ applications }: { applications: Application[] }) {
   const moveApplication = useApplicationStore((s) => s.moveApplication);
@@ -34,7 +32,7 @@ export function KanbanBoard({ applications }: { applications: Application[] }) {
 
   return (
     <div className="scrollbar-thin -mx-4 overflow-x-auto px-4 pb-4 sm:mx-0 sm:px-0">
-      <div className="grid min-w-max auto-cols-[17rem] grid-flow-col gap-4 xl:min-w-0 xl:auto-cols-auto xl:grid-flow-row xl:grid-cols-6">
+      <div className="grid min-w-max auto-cols-[17.5rem] grid-flow-col gap-4 xl:min-w-0 xl:auto-cols-auto xl:grid-flow-row xl:grid-cols-6">
         {APPLICATION_STATUSES.map((status) => {
           const items = applications.filter((a) => a.status === status);
           const meta = STATUS_META[status];
@@ -49,16 +47,18 @@ export function KanbanBoard({ applications }: { applications: Application[] }) {
               onDragLeave={() => setDragOver((s) => (s === status ? null : s))}
               onDrop={onDrop(status)}
               className={cn(
-                'flex min-h-[16rem] flex-col rounded-2xl border border-dashed p-3 transition',
-                dragOver === status ? 'border-brand-500 bg-brand-50/60 dark:bg-brand-900/20' : 'border-transparent bg-surface-muted/60',
+                'card flex min-h-[18rem] flex-col p-3.5 transition-all duration-300',
+                dragOver === status && 'scale-[1.01] shadow-lift',
               )}
             >
               <header className="mb-3 flex items-center justify-between px-1">
-                <h2 id={`col-${status}`} className="flex items-center gap-2 text-sm font-semibold text-ink">
-                  <span className={cn('h-2.5 w-2.5 rounded-full', meta.dot)} aria-hidden="true" />
+                <h2 id={`col-${status}`} className="flex items-center gap-2 text-sm font-medium tracking-tight text-ink">
+                  <span className={cn('h-2 w-2 rounded-full', meta.dot)} aria-hidden="true" />
                   {meta.label}
                 </h2>
-                <span className="rounded-full bg-surface px-2 py-0.5 text-xs font-medium text-ink-muted">{items.length}</span>
+                <span className="glass-subtle rounded-full px-2.5 py-0.5 text-xs font-medium text-ink">
+                  {items.length}
+                </span>
               </header>
               <ul className="flex flex-1 flex-col gap-3">
                 {items.map((app) => (
@@ -67,7 +67,7 @@ export function KanbanBoard({ applications }: { applications: Application[] }) {
                   </li>
                 ))}
                 {items.length === 0 && (
-                  <li className="grid flex-1 place-items-center rounded-xl p-4 text-center text-xs text-ink-muted">
+                  <li className="glass-subtle grid flex-1 place-items-center rounded-2xl p-4 text-center text-xs text-ink-muted">
                     Drop applications here
                   </li>
                 )}
@@ -94,20 +94,20 @@ const ApplicationCard = memo(function ApplicationCard({ app }: { app: Applicatio
         e.dataTransfer.setData(DRAG_TYPE, s.id);
         e.dataTransfer.effectAllowed = 'move';
       }}
-      className="card cursor-grab p-3.5 active:cursor-grabbing"
+      className="glass-pill animate-fade-in-up cursor-grab rounded-2xl p-4 transition hover:-translate-y-0.5 active:cursor-grabbing"
       aria-label={s.title}
     >
       <div className="flex items-start gap-2">
         <GripVertical aria-hidden="true" className="mt-0.5 hidden h-4 w-4 shrink-0 text-ink-muted sm:block" />
         <div className="min-w-0 flex-1">
-          <Link to={`/scholarships/${s.id}`} className="line-clamp-2 text-sm font-semibold text-ink hover:text-brand-600">
+          <Link to={`/scholarships/${s.id}`} className="line-clamp-2 text-sm font-medium text-ink hover:underline">
             {s.title}
           </Link>
           <p className="mt-0.5 truncate text-xs text-ink-muted">{s.provider}</p>
         </div>
       </div>
       <div className="mt-3 flex items-center justify-between gap-2">
-        <span className="text-sm font-bold text-ink">{formatINRCompact(s.amount)}</span>
+        <span className="font-display text-sm font-medium text-ink">{formatINRCompact(s.amount)}</span>
         {app.status !== 'awarded' && app.status !== 'rejected' && <CountdownBadge deadline={s.deadline} />}
       </div>
       <ProgressBar className="mt-3" value={progress} label={`${s.title} checklist progress`} />
@@ -126,7 +126,7 @@ const ApplicationCard = memo(function ApplicationCard({ app }: { app: Applicatio
             moveApplication(s.id, status);
             toast(`Moved to ${STATUS_META[status].label}`);
           }}
-          className="input h-9 flex-1 py-1 text-xs"
+          className="input h-9 flex-1 rounded-full py-1 text-xs"
         >
           {APPLICATION_STATUSES.map((st) => (
             <option key={st} value={st}>
@@ -141,7 +141,7 @@ const ApplicationCard = memo(function ApplicationCard({ app }: { app: Applicatio
             toast('Application removed', 'info');
           }}
           aria-label={`Remove ${s.title} from tracker`}
-          className="grid h-9 w-9 place-items-center rounded-xl text-ink-muted hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-900/30"
+          className="glass-subtle grid h-9 w-9 place-items-center rounded-full text-ink-muted transition hover:text-ink"
         >
           <Trash2 aria-hidden="true" className="h-4 w-4" />
         </button>
@@ -149,4 +149,3 @@ const ApplicationCard = memo(function ApplicationCard({ app }: { app: Applicatio
     </article>
   );
 });
-

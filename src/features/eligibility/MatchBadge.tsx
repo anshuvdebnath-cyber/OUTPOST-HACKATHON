@@ -2,9 +2,9 @@ import { cn } from '@/lib/cn';
 import type { MatchResult } from './matchEngine';
 
 const VERDICT_META = {
-  eligible: { label: 'Eligible', ring: 'text-emerald-500', chip: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' },
-  likely: { label: 'Likely eligible', ring: 'text-amber-500', chip: 'bg-amber-50 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200' },
-  ineligible: { label: 'Not eligible', ring: 'text-rose-500', chip: 'bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300' },
+  eligible: { label: 'Eligible', ring: 'text-ink', chip: 'bg-ink text-surface' },
+  likely: { label: 'Likely eligible', ring: 'text-ink/75', chip: 'text-ink' },
+  ineligible: { label: 'Not eligible', ring: 'text-ink/35', chip: 'text-ink-muted' },
 } as const;
 
 interface MatchBadgeProps {
@@ -12,11 +12,11 @@ interface MatchBadgeProps {
   size?: 'sm' | 'lg';
 }
 
-/** Circular match-score gauge with a verdict label. */
+/** Monochrome circular match-score gauge with frosted glass verdict label. */
 export function MatchBadge({ match, size = 'sm' }: MatchBadgeProps) {
   const meta = VERDICT_META[match.verdict];
   const dim = size === 'lg' ? 88 : 48;
-  const stroke = size === 'lg' ? 8 : 5;
+  const stroke = size === 'lg' ? 6 : 4;
   const r = (dim - stroke) / 2;
   const circumference = 2 * Math.PI * r;
   const offset = circumference * (1 - match.score / 100);
@@ -25,7 +25,7 @@ export function MatchBadge({ match, size = 'sm' }: MatchBadgeProps) {
     <div className="flex items-center gap-3">
       <div className="relative" style={{ width: dim, height: dim }}>
         <svg width={dim} height={dim} className="-rotate-90" aria-hidden="true">
-          <circle cx={dim / 2} cy={dim / 2} r={r} strokeWidth={stroke} className="fill-none stroke-surface-muted" />
+          <circle cx={dim / 2} cy={dim / 2} r={r} strokeWidth={stroke} className="fill-none stroke-ink/15" />
           <circle
             cx={dim / 2}
             cy={dim / 2}
@@ -39,7 +39,7 @@ export function MatchBadge({ match, size = 'sm' }: MatchBadgeProps) {
         </svg>
         <span
           className={cn(
-            'absolute inset-0 grid place-items-center font-bold text-ink',
+            'absolute inset-0 grid place-items-center font-medium tracking-tight text-ink',
             size === 'lg' ? 'text-xl' : 'text-xs',
           )}
         >
@@ -54,4 +54,3 @@ export function MatchBadge({ match, size = 'sm' }: MatchBadgeProps) {
     </div>
   );
 }
-

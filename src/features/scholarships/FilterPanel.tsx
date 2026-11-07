@@ -13,30 +13,30 @@ const DEADLINE_OPTIONS: { label: string; value: number | null }[] = [
   { label: '60 days', value: 60 },
 ];
 
-/** Faceted filter panel for the Discover page (sidebar on desktop, drawer on mobile). */
+/** Monochrome glassmorphism filter panel for the Discover page. */
 export function FilterPanel() {
   const { filters, setFilter, toggleInList, resetFilters } = useFilterStore();
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-semibold text-ink">Filters</h2>
+        <h2 className="text-base font-normal tracking-[-0.02em] text-ink">Filters</h2>
         <button
           type="button"
           onClick={resetFilters}
-          className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-brand-600 hover:bg-brand-50 dark:text-brand-300 dark:hover:bg-brand-900/30"
+          className="glass-subtle inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium text-ink transition hover:scale-105"
         >
-          <RotateCcw aria-hidden="true" className="h-3.5 w-3.5" /> Reset
+          <RotateCcw aria-hidden="true" className="h-3 w-3" /> Reset
         </button>
       </div>
 
-      <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl bg-brand-50 p-3 dark:bg-brand-900/20">
-        <span className="text-sm font-medium text-ink">Only show scholarships I can apply for</span>
+      <label className="glass-subtle flex cursor-pointer items-center justify-between gap-3 rounded-2xl p-3.5 transition hover:scale-[1.01]">
+        <span className="text-xs font-medium text-ink">Only show scholarships I qualify for</span>
         <input
           type="checkbox"
           checked={filters.eligibleOnly}
           onChange={(e) => setFilter('eligibleOnly', e.target.checked)}
-          className="h-5 w-5 rounded accent-brand-600"
+          className="h-4 w-4 rounded accent-ink"
         />
       </label>
 
@@ -70,7 +70,7 @@ export function FilterPanel() {
           onChange={(e) => setFilter('minAmount', AMOUNT_STEPS[Number(e.target.value)])}
           aria-valuetext={filters.minAmount ? `At least ${formatINRCompact(filters.minAmount)}` : 'Any amount'}
           aria-label="Minimum award amount"
-          className="w-full accent-brand-600"
+          className="w-full accent-ink"
         />
         <p className="mt-1 text-xs text-ink-muted">
           {filters.minAmount ? `At least ${formatINRCompact(filters.minAmount)}` : 'Any amount'}
@@ -87,10 +87,10 @@ export function FilterPanel() {
               aria-pressed={filters.deadlineWithinDays === o.value}
               onClick={() => setFilter('deadlineWithinDays', o.value)}
               className={cn(
-                'rounded-xl border px-3 py-2 text-sm transition',
+                'rounded-full px-3 py-2 text-xs font-medium transition-all duration-300',
                 filters.deadlineWithinDays === o.value
-                  ? 'border-brand-600 bg-brand-600 text-white'
-                  : 'border-line text-ink-muted hover:text-ink',
+                  ? 'bg-ink text-surface shadow-sm'
+                  : 'glass-subtle text-ink-muted hover:text-ink',
               )}
             >
               {o.label}
@@ -113,7 +113,7 @@ function ChipGroup<T extends string>({ legend, options, selected, onToggle }: Ch
   return (
     <fieldset>
       <legend className="label">{legend}</legend>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5">
         {(Object.keys(options) as T[]).map((key) => {
           const active = selected.includes(key);
           return (
@@ -123,10 +123,10 @@ function ChipGroup<T extends string>({ legend, options, selected, onToggle }: Ch
               aria-pressed={active}
               onClick={() => onToggle(key)}
               className={cn(
-                'rounded-full border px-3 py-1.5 text-xs font-medium transition',
+                'rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-300',
                 active
-                  ? 'border-brand-600 bg-brand-600 text-white'
-                  : 'border-line bg-surface text-ink-muted hover:border-brand-300 hover:text-ink',
+                  ? 'bg-ink text-surface shadow-sm'
+                  : 'glass-subtle text-ink-muted hover:text-ink',
               )}
             >
               {options[key]}
@@ -137,4 +137,3 @@ function ChipGroup<T extends string>({ legend, options, selected, onToggle }: Ch
     </fieldset>
   );
 }
-

@@ -71,7 +71,7 @@ const PERSONA_PRESETS: { label: string; tagline: string; profile: StudentProfile
   },
 ];
 
-/** Student profile & document vault — drives the explainable eligibility engine. */
+/** Monochrome frosted-glass student profile & document vault. */
 export default function ProfilePage() {
   useDocumentTitle('Your student profile');
   const { profile, updateProfile, toggleDocument, completeOnboarding, resetProfile } = useProfileStore();
@@ -84,7 +84,7 @@ export default function ProfilePage() {
         description="Your profile stays in your browser and powers instant eligibility scores across every scholarship."
         actions={
           <Button
-            variant="ghost"
+            variant="secondary"
             onClick={() => {
               resetProfile();
               toast('Profile cleared', 'info');
@@ -96,15 +96,15 @@ export default function ProfilePage() {
       />
 
       {/* Quick-fill persona bar */}
-      <section aria-labelledby="presets-heading" className="card mb-6 p-4 sm:p-5">
+      <section aria-labelledby="presets-heading" className="card mb-6 p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 id="presets-heading" className="flex items-center gap-2 text-sm font-semibold text-ink">
-            <Wand2 aria-hidden="true" className="h-4 w-4 text-brand-600 dark:text-brand-300" />
+          <h2 id="presets-heading" className="flex items-center gap-2 text-base font-normal text-ink">
+            <Wand2 aria-hidden="true" className="h-4 w-4 text-ink" />
             Try a sample student persona
           </h2>
           <span className="text-xs text-ink-muted">Instant one-click fill for testing match scores</span>
         </div>
-        <div className="mt-3 grid gap-2 sm:grid-cols-3">
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
           {PERSONA_PRESETS.map((p) => (
             <button
               key={p.label}
@@ -114,27 +114,27 @@ export default function ProfilePage() {
                 completeOnboarding();
                 toast(`Loaded persona: ${p.label}`);
               }}
-              className="rounded-xl border border-line bg-surface-muted/50 p-3 text-left transition hover:border-brand-400 hover:bg-surface"
+              className="glass-subtle rounded-2xl p-4 text-left transition duration-300 hover:-translate-y-0.5 hover:shadow-card"
             >
-              <p className="text-sm font-semibold text-ink">{p.label}</p>
+              <p className="text-sm font-medium text-ink">{p.label}</p>
               <p className="mt-0.5 text-xs text-ink-muted">{p.tagline}</p>
             </button>
           ))}
         </div>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_22rem]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_23rem]">
         <form
           onSubmit={(e) => {
             e.preventDefault();
             completeOnboarding();
             toast('Profile saved — match scores updated!');
           }}
-          className="card space-y-5 p-5 sm:p-6"
+          className="card space-y-5 p-6 sm:p-8"
         >
           <div className="flex items-center justify-between gap-4">
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-ink">
-              <Sparkles aria-hidden="true" className="h-5 w-5 text-brand-600 dark:text-brand-300" /> Academic & personal details
+            <h2 className="flex items-center gap-2 text-xl font-normal tracking-[-0.02em] text-ink">
+              <Sparkles aria-hidden="true" className="h-5 w-5 text-ink" /> Academic & personal details
             </h2>
             <div className="w-36">
               <ProgressBar value={completeness} label="Profile completeness" showValue />
@@ -298,17 +298,17 @@ export default function ProfilePage() {
         </form>
 
         {/* Document Vault */}
-        <section aria-labelledby="vault-heading" className="card p-5 sm:p-6">
+        <section aria-labelledby="vault-heading" className="card p-6 sm:p-7">
           <div className="flex items-center gap-2">
-            <FileCheck2 aria-hidden="true" className="h-5 w-5 text-brand-600 dark:text-brand-300" />
-            <h2 id="vault-heading" className="text-lg font-semibold text-ink">
+            <FileCheck2 aria-hidden="true" className="h-5 w-5 text-ink" />
+            <h2 id="vault-heading" className="text-xl font-normal tracking-[-0.02em] text-ink">
               Document vault
             </h2>
           </div>
-          <p className="mt-1 text-sm text-ink-muted">
+          <p className="mt-1.5 text-xs text-ink-muted">
             Tick the documents you already have scanned. Every scholarship will show how ready you are to apply.
           </p>
-          <ul className="mt-4 space-y-1">
+          <ul className="mt-4 space-y-1.5">
             {(Object.keys(DOCUMENT_LABELS) as DocumentType[]).map((doc) => {
               const has = profile.documents.includes(doc);
               return (
@@ -317,12 +317,12 @@ export default function ProfilePage() {
                     type="button"
                     aria-pressed={has}
                     onClick={() => toggleDocument(doc)}
-                    className="flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left text-sm transition hover:bg-surface-muted"
+                    className="glass-subtle flex w-full items-center gap-3 rounded-2xl px-3.5 py-2.5 text-left text-xs transition duration-300 hover:scale-[1.01]"
                   >
                     {has ? (
-                      <CheckCircle2 aria-hidden="true" className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                      <CheckCircle2 aria-hidden="true" className="h-4 w-4 shrink-0 text-ink" />
                     ) : (
-                      <Circle aria-hidden="true" className="h-5 w-5 shrink-0 text-ink-muted" />
+                      <Circle aria-hidden="true" className="h-4 w-4 shrink-0 text-ink-muted" />
                     )}
                     <span className={has ? 'font-medium text-ink' : 'text-ink-muted'}>{DOCUMENT_LABELS[doc]}</span>
                   </button>
@@ -335,4 +335,3 @@ export default function ProfilePage() {
     </>
   );
 }
-

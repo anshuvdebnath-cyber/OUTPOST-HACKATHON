@@ -1,9 +1,9 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * Grantly design system.
- * Colours reference CSS variables (see src/styles/index.css) so that
- * light / dark themes can be switched without re-rendering components.
+ * Grantly Monochrome Glassmorphism Design System.
+ * All UI tokens are strictly black, white, and translucent monochrome shades.
+ * Colour exists exclusively in the live WebGL shader background.
  */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
@@ -15,17 +15,18 @@ export default {
     },
     extend: {
       colors: {
+        // Remap brand scale to pure monochrome so every utility is strictly B&W
         brand: {
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
+          50: '#fafafa',
+          100: '#f4f4f5',
+          200: '#e4e4e7',
+          300: '#d4d4d8',
+          400: '#a1a1aa',
+          500: '#52525b',
+          600: '#18181b',
+          700: '#09090b',
+          800: '#050505',
+          900: '#000000',
         },
         surface: 'rgb(var(--color-surface) / <alpha-value>)',
         'surface-muted': 'rgb(var(--color-surface-muted) / <alpha-value>)',
@@ -35,28 +36,39 @@ export default {
         'ink-muted': 'rgb(var(--color-ink-muted) / <alpha-value>)',
       },
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
-        display: ['"Plus Jakarta Sans"', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['"DM Sans"', 'Outfit', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Outfit', '"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        card: '0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px -4px rgb(15 23 42 / 0.08)',
-        lift: '0 10px 30px -10px rgb(79 70 229 / 0.35)',
+        card: '0 20px 50px -12px rgb(0 0 0 / 0.16), inset 0 1px 1px 0 rgb(255 255 255 / 0.8), inset 0 -1px 1px 0 rgb(255 255 255 / 0.25)',
+        lift: '0 28px 65px -12px rgb(0 0 0 / 0.28), inset 0 1.5px 2px 0 rgb(255 255 255 / 0.92), inset 0 -1px 1px 0 rgb(255 255 255 / 0.35)',
+        glass:
+          '0 24px 60px -15px rgb(0 0 0 / 0.22), inset 0 1.5px 1.5px 0 rgb(255 255 255 / 0.85), inset 1px 0 1px 0 rgb(255 255 255 / 0.45), inset 0 -1px 1px 0 rgb(255 255 255 / 0.2)',
       },
       keyframes: {
         'fade-in-up': {
-          '0%': { opacity: '0', transform: 'translateY(8px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
+          '0%': { opacity: '0', transform: 'translate3d(0, 14px, 0) scale(0.985)', filter: 'blur(6px)' },
+          '100%': { opacity: '1', transform: 'translate3d(0, 0, 0) scale(1)', filter: 'blur(0px)' },
+        },
+        'page-enter': {
+          '0%': { opacity: '0', transform: 'translate3d(0, 18px, 0) scale(0.99)', filter: 'blur(8px)' },
+          '100%': { opacity: '1', transform: 'translate3d(0, 0, 0) scale(1)', filter: 'blur(0px)' },
         },
         shimmer: {
           '100%': { transform: 'translateX(100%)' },
         },
+        'pulse-glass': {
+          '0%, 100%': { opacity: '0.55', transform: 'scale(1)' },
+          '50%': { opacity: '0.9', transform: 'scale(1.01)' },
+        },
       },
       animation: {
-        'fade-in-up': 'fade-in-up 0.4s ease-out both',
-        shimmer: 'shimmer 1.5s infinite',
+        'fade-in-up': 'fade-in-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both',
+        'page-enter': 'page-enter 0.6s cubic-bezier(0.22, 1, 0.36, 1) both',
+        shimmer: 'shimmer 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite',
+        'pulse-glass': 'pulse-glass 2.2s ease-in-out infinite',
       },
     },
   },
   plugins: [],
 } satisfies Config;
-

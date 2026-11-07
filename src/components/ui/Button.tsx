@@ -11,20 +11,23 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANTS: Record<Variant, string> = {
   primary:
-    'bg-brand-600 text-white shadow-sm hover:bg-brand-700 active:bg-brand-800 disabled:bg-brand-600/50 hover:shadow-lift',
-  secondary: 'border border-line bg-surface text-ink hover:bg-surface-muted',
-  ghost: 'text-ink-muted hover:bg-surface-muted hover:text-ink',
-  danger: 'bg-rose-600 text-white hover:bg-rose-700',
+    'bg-ink text-surface shadow-card hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50',
+  secondary:
+    'glass-pill text-ink hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0',
+  ghost:
+    'text-ink-muted hover:bg-ink/10 hover:text-ink',
+  danger:
+    'bg-ink text-surface border border-ink/40 hover:opacity-85',
 };
 
 const SIZES: Record<Size, string> = {
-  sm: 'h-9 px-3 text-sm gap-1.5',
-  md: 'h-10 px-4 text-sm gap-2',
-  lg: 'h-12 px-6 text-base gap-2',
+  sm: 'h-9 px-4 text-xs gap-1.5',
+  md: 'h-10 px-5 text-sm gap-2',
+  lg: 'h-12 px-7 text-sm gap-2.5',
   icon: 'h-10 w-10 justify-center',
 };
 
-/** Accessible button with consistent variants. Always renders a native <button>. */
+/** Accessible monochrome glass button with fluid motion. */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   { variant = 'primary', size = 'md', className, type = 'button', ...props },
   ref,
@@ -34,7 +37,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       ref={ref}
       type={type}
       className={cn(
-        'inline-flex shrink-0 items-center justify-center rounded-xl font-semibold transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-60',
+        'inline-flex shrink-0 items-center justify-center rounded-full font-medium tracking-tight transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50',
         VARIANTS[variant],
         SIZES[size],
         className,
@@ -44,14 +47,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   );
 });
 
-/** Shared class list so <Link> elements can look like buttons. */
+/** Shared class list so <Link> elements can look like monochrome glass buttons. */
 // eslint-disable-next-line react-refresh/only-export-components
 export function buttonClasses(variant: Variant = 'primary', size: Size = 'md', className?: string): string {
   return cn(
-    'inline-flex shrink-0 items-center justify-center rounded-xl font-semibold transition-all duration-150',
+    'inline-flex shrink-0 items-center justify-center rounded-full font-medium tracking-tight transition-all duration-300',
     VARIANTS[variant],
     SIZES[size],
     className,
   );
 }
-

@@ -1,123 +1,125 @@
-import { Link, NavLink, Outlet } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
+import { useEffect } from 'react';
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { NAV_ITEMS } from './navItems';
-import { Logo } from './Logo';
 import { ThemeToggle } from './ThemeToggle';
 import { cn } from '@/lib/cn';
 import { useApplicationStore } from '@/store/useApplicationStore';
 import { profileCompleteness, useProfileStore } from '@/store/useProfileStore';
 import { useCompareStore } from '@/store/useCompareStore';
-import { ProgressBar } from '@/components/ui/ProgressBar';
 
 /**
- * Application shell:
- *  - Desktop (lg+): fixed left sidebar navigation
- *  - Mobile/tablet: sticky top bar + bottom tab bar
+ * Floating glassmorphism navigation shell:
+ *  - Suspended frosted-glass pill navbar at top with generous spacing & no logo icon box
+ *  - Smooth route & scroll transitions on every tab/page change
+ *  - Floating frosted-glass bottom dock on mobile screens
  */
 export function AppShell() {
+  const location = useLocation();
   const appCount = useApplicationStore((s) => Object.keys(s.applications).length);
   const compareCount = useCompareStore((s) => s.ids.length);
   const profile = useProfileStore((s) => s.profile);
   const completeness = profileCompleteness(profile);
 
+  // Smooth scroll to top on route transitions
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.pathname]);
+
   const badgeFor = (to: string) => (to === '/tracker' ? appCount : to === '/compare' ? compareCount : 0);
 
   return (
-    <div className="min-h-dvh lg:pl-64">
-      {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-line bg-surface lg:flex">
-        <div className="flex h-16 items-center px-6">
-          <Logo to="/dashboard" />
-        </div>
-        <nav aria-label="Main navigation" className="flex-1 space-y-1 px-3 py-4">
-          {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                cn(
-                  'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition',
-                  isActive
-                    ? 'bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-200'
-                    : 'text-ink-muted hover:bg-surface-muted hover:text-ink',
-                )
-              }
-            >
-              <Icon aria-hidden="true" className="h-5 w-5" />
-              <span className="flex-1">{label}</span>
-              {badgeFor(to) > 0 && (
-                <span className="rounded-full bg-brand-600 px-2 py-0.5 text-xs font-semibold text-white">
-                  {badgeFor(to)}
-                </span>
-              )}
-            </NavLink>
-          ))}
-        </nav>
+    <div className="min-h-dvh flex flex-col">
+      {/* Floating glassmorphism pill navbar */}
+      <header className="sticky top-4 z-40 mx-auto w-full max-w-6xl px-4 sm:top-6 sm:px-6">
+        <div className="glass-pill flex items-center justify-between gap-3 rounded-full px-4 py-2.5 sm:px-6 sm:py-3">
+          <Link
+            to="/"
+            className="px-2 font-display text-base font-medium tracking-[-0.03em] text-ink transition hover:opacity-70 sm:text-lg"
+          >
+            Grantly
+          </Link>
 
-        {completeness < 100 && (
-          <div className="m-3 rounded-2xl bg-gradient-to-br from-brand-600 to-violet-600 p-4 text-white">
-            <p className="flex items-center gap-1.5 text-sm font-semibold">
-              <Sparkles aria-hidden="true" className="h-4 w-4" /> Sharpen your matches
-            </p>
-            <p className="mt-1 text-xs text-white/85">A complete profile unlocks accurate eligibility scores.</p>
-            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/25">
-              <div className="h-full rounded-full bg-white" style={{ width: `${completeness}%` }} />
-            </div>
-            <Link to="/profile" className="mt-3 inline-block text-xs font-semibold underline underline-offset-2">
-              Profile {completeness}% complete →
-            </Link>
+          <nav aria-label="Main navigation" className="hidden items-center gap-1.5 lg:flex">
+            {NAV_ITEMS.map(({ to, label }) => {
+              const count = badgeFor(to);
+              return (
+                <NavLink
+                  key={to}
+                  to={to}
+                  className={({ isActive }) =>
+                    cn(
+                      'relative inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium tracking-tight transition-all duration-300',
+                      isActive
+                        ? 'bg-ink text-surface shadow-sm scale-[1.02]'
+                        : 'text-ink-muted hover:bg-ink/10 hover:text-ink',
+                    )
+                  }
+                >
+                  <span>{label}</span>
+                  {count > 0 && (
+                    <span className="rounded-full bg-ink/15 px-2 py-0.5 text-[11px] font-semibold leading-none text-current">
+                      {count}
+                    </span>
+                  )}
+                </NavLink>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-2.5">
+            {completeness < 100 && (
+              <Link
+                to="/profile"
+                className="glass-subtle hidden items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium text-ink transition hover:scale-[1.02] sm:inline-flex"
+              >
+                <span>Profile</span>
+                <span className="font-semibold">{completeness}%</span>
+              </Link>
+            )}
+            <ThemeToggle />
           </div>
-        )}
-        <div className="flex items-center justify-between border-t border-line px-6 py-4">
-          <span className="text-xs text-ink-muted">Theme</span>
-          <ThemeToggle />
-        </div>
-      </aside>
-
-      {/* Mobile top bar */}
-      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-line bg-surface/90 px-4 backdrop-blur lg:hidden">
-        <Logo to="/dashboard" />
-        <div className="flex items-center gap-2">
-          {completeness < 100 && (
-            <Link
-              to="/profile"
-              className="hidden w-32 sm:block"
-              aria-label={`Profile ${completeness}% complete — open profile`}
-            >
-              <ProgressBar value={completeness} label="Profile completeness" />
-            </Link>
-          )}
-          <ThemeToggle />
         </div>
       </header>
 
-      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-7xl px-4 pb-28 pt-6 focus:outline-none sm:px-6 lg:px-8 lg:pb-12 lg:pt-10">
-        <Outlet />
+      {/* Animated route stage */}
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-7xl flex-1 px-4 pb-32 pt-8 focus:outline-none sm:px-6 lg:px-8 lg:pb-16 lg:pt-12"
+      >
+        <div key={location.pathname} className="animate-page-enter">
+          <Outlet />
+        </div>
       </main>
 
-      {/* Mobile bottom tab bar */}
+      {/* Mobile floating glassmorphism dock */}
       <nav
         aria-label="Mobile navigation"
-        className="pb-safe fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-line bg-surface/95 backdrop-blur lg:hidden"
+        className="pb-safe fixed inset-x-4 bottom-3 z-40 lg:hidden"
       >
-        {NAV_ITEMS.filter((n) => n.mobile).map(({ to, label, icon: Icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) =>
-              cn(
-                'relative flex flex-col items-center gap-0.5 py-2 text-[11px] font-medium transition',
-                isActive ? 'text-brand-600 dark:text-brand-300' : 'text-ink-muted',
-              )
-            }
-          >
-            <Icon aria-hidden="true" className="h-5 w-5" />
-            <span>{label}</span>
-            {badgeFor(to) > 0 && (
-              <span className="absolute right-1/4 top-1 h-2 w-2 rounded-full bg-brand-600" aria-hidden="true" />
-            )}
-          </NavLink>
-        ))}
+        <div className="glass-pill mx-auto grid max-w-md grid-cols-5 items-center gap-1 rounded-full p-1.5">
+          {NAV_ITEMS.filter((n) => n.mobile).map(({ to, label, icon: Icon }) => {
+            const count = badgeFor(to);
+            return (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  cn(
+                    'relative flex flex-col items-center gap-0.5 rounded-full py-2 text-[11px] font-medium transition-all duration-300',
+                    isActive ? 'bg-ink text-surface shadow-sm' : 'text-ink-muted hover:text-ink',
+                  )
+                }
+              >
+                <Icon aria-hidden="true" className="h-4 w-4" />
+                <span>{label}</span>
+                {count > 0 && (
+                  <span className="absolute right-1/4 top-1.5 h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
+                )}
+              </NavLink>
+            );
+          })}
+        </div>
       </nav>
     </div>
   );

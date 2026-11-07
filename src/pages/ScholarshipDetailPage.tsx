@@ -27,7 +27,13 @@ import { MatchBadge } from '@/features/eligibility/MatchBadge';
 import { MatchReasons } from '@/features/eligibility/MatchReasons';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useMatch } from '@/hooks/useMatch';
-import { CATEGORY_LABELS, EDUCATION_LEVEL_LABELS, FIELD_LABELS, SCHOLARSHIP_TYPE_LABELS, STATUS_META } from '@/lib/constants';
+import {
+  CATEGORY_LABELS,
+  EDUCATION_LEVEL_LABELS,
+  FIELD_LABELS,
+  SCHOLARSHIP_TYPE_LABELS,
+  STATUS_META,
+} from '@/lib/constants';
 import { formatINR } from '@/lib/currency';
 import { formatDate } from '@/lib/date';
 import { cn } from '@/lib/cn';
@@ -36,7 +42,7 @@ import { MAX_COMPARE, useCompareStore } from '@/store/useCompareStore';
 import { toast } from '@/store/useToastStore';
 import type { Scholarship } from '@/types/scholarship';
 
-/** Full scholarship details: eligibility explanation, documents, and step-by-step application guide. */
+/** Monochrome frosted-glass scholarship detail workspace. */
 export default function ScholarshipDetailPage() {
   const { id = '' } = useParams();
   const scholarship = getScholarshipById(id);
@@ -62,27 +68,27 @@ export default function ScholarshipDetailPage() {
     <article className="animate-fade-in-up">
       <Link
         to="/discover"
-        className="mb-4 inline-flex items-center gap-1.5 rounded-lg text-sm font-medium text-ink-muted hover:text-ink"
+        className="glass-pill mb-5 inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-medium text-ink transition hover:scale-105"
       >
-        <ArrowLeft aria-hidden="true" className="h-4 w-4" /> Back to discover
+        <ArrowLeft aria-hidden="true" className="h-3.5 w-3.5" /> Back to discover
       </Link>
 
       <Hero scholarship={scholarship} />
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_22rem]">
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_23rem]">
         <div className="space-y-6">
-          <section aria-labelledby="about-heading" className="card p-5 sm:p-6">
-            <h2 id="about-heading" className="text-lg font-semibold text-ink">
+          <section aria-labelledby="about-heading" className="card p-6 sm:p-7">
+            <h2 id="about-heading" className="text-xl font-normal tracking-[-0.02em] text-ink">
               About this scholarship
             </h2>
-            <p className="mt-2 leading-relaxed text-ink-muted">{scholarship.description}</p>
-            <h3 className="mt-6 flex items-center gap-2 font-semibold text-ink">
-              <Gift aria-hidden="true" className="h-5 w-5 text-brand-600 dark:text-brand-300" /> What you get
+            <p className="mt-2.5 leading-relaxed text-ink-muted">{scholarship.description}</p>
+            <h3 className="mt-6 flex items-center gap-2 text-base font-normal text-ink">
+              <Gift aria-hidden="true" className="h-4 w-4 text-ink" /> What you get
             </h3>
-            <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            <ul className="mt-3 grid gap-2.5 sm:grid-cols-2">
               {scholarship.benefits.map((b) => (
-                <li key={b} className="flex items-start gap-2 rounded-xl bg-surface-muted p-3 text-sm text-ink">
-                  <CheckCircle2 aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                <li key={b} className="glass-subtle flex items-start gap-2.5 rounded-2xl p-3.5 text-sm text-ink">
+                  <CheckCircle2 aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ink" />
                   {b}
                 </li>
               ))}
@@ -94,12 +100,12 @@ export default function ScholarshipDetailPage() {
         </div>
 
         <aside className="space-y-6" aria-label="Your eligibility and readiness">
-          <section aria-labelledby="match-heading" className="card p-5 sm:p-6">
-            <h2 id="match-heading" className="mb-4 flex items-center gap-2 text-lg font-semibold text-ink">
-              <ShieldCheck aria-hidden="true" className="h-5 w-5 text-brand-600 dark:text-brand-300" /> Your match
+          <section aria-labelledby="match-heading" className="card p-6">
+            <h2 id="match-heading" className="mb-4 flex items-center gap-2 text-lg font-normal tracking-[-0.02em] text-ink">
+              <ShieldCheck aria-hidden="true" className="h-5 w-5 text-ink" /> Your match
             </h2>
             <MatchBadge match={match} size="lg" />
-            <div className="mt-5 border-t border-line pt-5">
+            <div className="mt-5 pt-2">
               <MatchReasons checks={match.checks} />
             </div>
             {match.verdict === 'likely' && (
@@ -123,25 +129,29 @@ function Hero({ scholarship: s }: { scholarship: Scholarship }) {
   const toggleCompare = useCompareStore((st) => st.toggle);
 
   return (
-    <header className="card overflow-hidden">
-      <div className="bg-gradient-to-br from-brand-600 via-violet-600 to-fuchsia-600 p-5 text-white sm:p-8">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="chip bg-white/20 text-white">{SCHOLARSHIP_TYPE_LABELS[s.type]}</span>
-          <span className="chip bg-white/20 capitalize text-white">{s.providerType}</span>
-          <CountdownBadge deadline={s.deadline} />
-        </div>
-        <h1 className="mt-3 text-2xl font-bold sm:text-3xl lg:text-4xl">{s.title}</h1>
-        <p className="mt-2 flex items-center gap-1.5 text-white/85">
-          <Building2 aria-hidden="true" className="h-4 w-4" /> {s.provider}
-        </p>
+    <header className="card overflow-hidden p-6 sm:p-9">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="chip text-ink">{SCHOLARSHIP_TYPE_LABELS[s.type]}</span>
+        <span className="chip capitalize text-ink-muted">{s.providerType}</span>
+        <CountdownBadge deadline={s.deadline} />
       </div>
-      <div className="grid grid-cols-2 gap-px bg-line sm:grid-cols-4">
+      <h1 className="mt-4 text-3xl font-light tracking-[-0.03em] text-ink sm:text-4xl lg:text-5xl">{s.title}</h1>
+      <p className="mt-2 flex items-center gap-1.5 text-sm text-ink-muted">
+        <Building2 aria-hidden="true" className="h-4 w-4" /> {s.provider}
+      </p>
+
+      <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Stat label="Award" value={formatINR(s.amount)} hint={s.frequency === 'annual' ? 'per year' : 'one-time'} />
         <Stat label="Deadline" value={formatDate(s.deadline)} />
-        <Stat label="Awards available" value={s.seats.toLocaleString('en-IN')} icon={<Users aria-hidden="true" className="h-4 w-4" />} />
+        <Stat
+          label="Awards available"
+          value={s.seats.toLocaleString('en-IN')}
+          icon={<Users aria-hidden="true" className="h-4 w-4" />}
+        />
         <Stat label="Documents" value={`${s.requiredDocuments.length} required`} />
       </div>
-      <div className="flex flex-wrap gap-2 p-4 sm:p-5">
+
+      <div className="mt-6 flex flex-wrap gap-2.5">
         <Button
           onClick={() => {
             saveScholarship(s);
@@ -171,7 +181,7 @@ function Hero({ scholarship: s }: { scholarship: Scholarship }) {
         >
           <GitCompareArrows aria-hidden="true" className="h-4 w-4" /> {isComparing ? 'Comparing' : 'Compare'}
         </Button>
-        <a href={s.officialUrl} target="_blank" rel="noopener noreferrer" className={buttonClasses('ghost')}>
+        <a href={s.officialUrl} target="_blank" rel="noopener noreferrer" className={buttonClasses('secondary')}>
           Official website <ExternalLink aria-hidden="true" className="h-4 w-4" />
           <span className="sr-only">(opens in a new tab)</span>
         </a>
@@ -182,9 +192,9 @@ function Hero({ scholarship: s }: { scholarship: Scholarship }) {
 
 function Stat({ label, value, hint, icon }: { label: string; value: string; hint?: string; icon?: ReactNode }) {
   return (
-    <div className="bg-surface p-4 sm:p-5">
+    <div className="glass-subtle rounded-2xl p-4">
       <p className="text-xs text-ink-muted">{label}</p>
-      <p className="mt-0.5 flex items-center gap-1.5 font-semibold text-ink">
+      <p className="mt-1 flex items-center gap-1.5 font-display text-lg font-medium text-ink">
         {icon}
         {value}
       </p>
@@ -204,14 +214,14 @@ function EligibilityRules({ scholarship: { eligibility: e } }: { scholarship: Sc
     ['Category', e.categories?.length ? e.categories.map((c) => CATEGORY_LABELS[c]).join(', ') : 'All categories'],
   ];
   return (
-    <section aria-labelledby="elig-heading" className="card p-5 sm:p-6">
-      <h2 id="elig-heading" className="text-lg font-semibold text-ink">
+    <section aria-labelledby="elig-heading" className="card p-6 sm:p-7">
+      <h2 id="elig-heading" className="text-xl font-normal tracking-[-0.02em] text-ink">
         Eligibility criteria
       </h2>
-      <dl className="mt-4 divide-y divide-line">
+      <dl className="mt-4 space-y-2">
         {rows.map(([k, v]) => (
-          <div key={k} className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3">
-            <dt className="text-sm text-ink-muted">{k}</dt>
+          <div key={k} className="glass-subtle grid grid-cols-1 gap-1 rounded-2xl px-4 py-3 sm:grid-cols-3">
+            <dt className="text-xs text-ink-muted">{k}</dt>
             <dd className="text-sm font-medium capitalize text-ink sm:col-span-2">{v}</dd>
           </div>
         ))}
@@ -225,17 +235,17 @@ function ApplicationSteps({ scholarship: s }: { scholarship: Scholarship }) {
   const toggleStep = useApplicationStore((st) => st.toggleStep);
 
   return (
-    <section aria-labelledby="steps-heading" className="card p-5 sm:p-6">
+    <section aria-labelledby="steps-heading" className="card p-6 sm:p-7">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 id="steps-heading" className="flex items-center gap-2 text-lg font-semibold text-ink">
-          <ListChecks aria-hidden="true" className="h-5 w-5 text-brand-600 dark:text-brand-300" /> How to apply
+        <h2 id="steps-heading" className="flex items-center gap-2 text-xl font-normal tracking-[-0.02em] text-ink">
+          <ListChecks aria-hidden="true" className="h-5 w-5 text-ink" /> How to apply
         </h2>
         {app && <span className={cn('chip', STATUS_META[app.status].tone)}>{STATUS_META[app.status].label}</span>}
       </div>
       {app ? (
         <ProgressBar className="mt-4" value={applicationProgress(app)} label="Application progress" showValue />
       ) : (
-        <p className="mt-2 text-sm text-ink-muted">Start the application to turn these steps into a checklist you can tick off.</p>
+        <p className="mt-2 text-xs text-ink-muted">Start the application to turn these steps into an interactive checklist.</p>
       )}
       <ol className="mt-4 space-y-2">
         {s.applicationSteps.map((label, i) => {
@@ -244,8 +254,8 @@ function ApplicationSteps({ scholarship: s }: { scholarship: Scholarship }) {
             <>
               <span
                 className={cn(
-                  'grid h-7 w-7 shrink-0 place-items-center rounded-full text-xs font-bold',
-                  step?.done ? 'bg-emerald-500 text-white' : 'bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-200',
+                  'grid h-7 w-7 shrink-0 place-items-center rounded-full text-xs font-semibold',
+                  step?.done ? 'bg-ink text-surface' : 'glass-subtle text-ink',
                 )}
                 aria-hidden="true"
               >
@@ -262,17 +272,17 @@ function ApplicationSteps({ scholarship: s }: { scholarship: Scholarship }) {
                   role="checkbox"
                   aria-checked={step.done}
                   onClick={() => toggleStep(s.id, step.id)}
-                  className="flex w-full items-center gap-3 rounded-xl p-2 text-left transition hover:bg-surface-muted"
+                  className="glass-subtle flex w-full items-center gap-3 rounded-2xl p-3 text-left transition duration-300 hover:scale-[1.01]"
                 >
                   {content}
                   {step.done ? (
-                    <CheckCircle2 aria-hidden="true" className="ml-auto h-5 w-5 text-emerald-500" />
+                    <CheckCircle2 aria-hidden="true" className="ml-auto h-4 w-4 text-ink" />
                   ) : (
-                    <Circle aria-hidden="true" className="ml-auto h-5 w-5 text-ink-muted" />
+                    <Circle aria-hidden="true" className="ml-auto h-4 w-4 text-ink-muted" />
                   )}
                 </button>
               ) : (
-                <div className="flex items-center gap-3 p-2">{content}</div>
+                <div className="glass-subtle flex items-center gap-3 rounded-2xl p-3">{content}</div>
               )}
             </li>
           );

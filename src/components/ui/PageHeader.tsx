@@ -6,16 +6,15 @@ interface PageHeaderProps {
   actions?: ReactNode;
 }
 
-/** Consistent page heading — renders the page's single <h1>. */
+/** Editorial geometric heading inside a frosted glass header card. */
 export function PageHeader({ title, description, actions }: PageHeaderProps) {
   return (
-    <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+    <div className="card mb-8 flex flex-col gap-4 p-6 sm:flex-row sm:items-end sm:justify-between sm:p-8">
       <div>
-        <h1 className="text-2xl font-bold text-ink sm:text-3xl">{title}</h1>
-        {description && <p className="mt-1.5 max-w-2xl text-sm text-ink-muted sm:text-base">{description}</p>}
+        <h1 className="text-3xl font-light tracking-[-0.03em] text-ink sm:text-4xl">{title}</h1>
+        {description && <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-muted sm:text-base">{description}</p>}
       </div>
-      {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+      {actions && <div className="flex flex-wrap items-center gap-2.5">{actions}</div>}
     </div>
   );
 }
-

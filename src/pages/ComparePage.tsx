@@ -17,7 +17,7 @@ import { useCompareStore } from '@/store/useCompareStore';
 import { useProfileStore } from '@/store/useProfileStore';
 import type { Scholarship } from '@/types/scholarship';
 
-/** Side-by-side comparison of up to 3 selected scholarships. */
+/** Monochrome frosted-glass side-by-side comparison of up to 3 selected scholarships. */
 export default function ComparePage() {
   useDocumentTitle('Compare scholarships');
   const { ids, toggle, clear } = useCompareStore();
@@ -37,7 +37,7 @@ export default function ComparePage() {
               <Link to="/discover" className={buttonClasses('secondary')}>
                 <Compass aria-hidden="true" className="h-4 w-4" /> Add more
               </Link>
-              <Button variant="ghost" onClick={clear}>
+              <Button variant="secondary" onClick={clear}>
                 <Trash2 aria-hidden="true" className="h-4 w-4" /> Clear all
               </Button>
             </>
@@ -57,34 +57,34 @@ export default function ComparePage() {
           }
         />
       ) : (
-        <div className="card overflow-x-auto">
+        <div className="card animate-fade-in-up overflow-x-auto p-2">
           <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
             <thead>
-              <tr className="border-b border-line bg-surface-muted/60">
-                <th scope="col" className="w-44 p-4 font-semibold text-ink-muted">
+              <tr className="border-b border-ink/10">
+                <th scope="col" className="w-44 p-4 font-medium text-ink-muted">
                   Attribute
                 </th>
                 {items.map((s) => (
                   <th key={s.id} scope="col" className="p-4 align-top">
                     <div className="flex items-start justify-between gap-2">
-                      <Link to={`/scholarships/${s.id}`} className="font-semibold text-ink hover:text-brand-600">
+                      <Link to={`/scholarships/${s.id}`} className="font-normal text-base tracking-[-0.02em] text-ink hover:underline">
                         {s.title}
                       </Link>
                       <button
                         type="button"
                         onClick={() => toggle(s.id)}
                         aria-label={`Remove ${s.title} from comparison`}
-                        className="rounded-lg p-1 text-ink-muted hover:bg-surface hover:text-ink"
+                        className="glass-subtle rounded-full p-1.5 text-ink-muted hover:text-ink"
                       >
-                        <X aria-hidden="true" className="h-4 w-4" />
+                        <X aria-hidden="true" className="h-3.5 w-3.5" />
                       </button>
                     </div>
-                    <p className="mt-0.5 text-xs font-normal text-ink-muted">{s.provider}</p>
+                    <p className="mt-1 text-xs font-normal text-ink-muted">{s.provider}</p>
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-line">
+            <tbody className="divide-y divide-ink/10">
               <Row label="Your match">
                 {items.map((s) => {
                   const m = matches.get(s.id);
@@ -93,9 +93,9 @@ export default function ComparePage() {
               </Row>
               <Row label="Award amount">
                 {items.map((s) => (
-                  <td key={s.id} className="p-4 font-bold text-ink">
+                  <td key={s.id} className="p-4 font-display text-lg font-medium text-ink">
                     {formatINR(s.amount)}{' '}
-                    <span className="text-xs font-normal text-ink-muted">
+                    <span className="font-sans text-xs font-normal text-ink-muted">
                       ({s.frequency === 'annual' ? 'annual' : 'one-time'})
                     </span>
                   </td>
@@ -177,7 +177,7 @@ export default function ComparePage() {
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
     <tr>
-      <th scope="row" className="bg-surface-muted/30 p-4 font-medium text-ink-muted">
+      <th scope="row" className="p-4 font-medium text-ink-muted">
         {label}
       </th>
       {children}
