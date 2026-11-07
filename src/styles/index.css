@@ -9,46 +9,50 @@
  * ------------------------------------------------------------------ */
 @layer base {
   :root {
-    --color-base: 215 232 247;
+    --color-canvas: 215 232 247;
+    --color-base: 28 43 66;
     --color-surface: 244 250 255;
     --color-surface-muted: 226 239 252;
     --color-line: 255 255 255;
-    --color-ink: 15 23 42;
-    --color-ink-muted: 71 85 105;
+    --color-ink: 9 18 36;
+    --color-ink-muted: 28 45 70;
     --color-accent: 18 58 106;
     --color-accent-ink: 245 251 255;
-    --glass-bg: rgba(244, 250, 255, 0.28);
-    --glass-bg-strong: rgba(246, 251, 255, 0.42);
-    --glass-bg-subtle: rgba(255, 255, 255, 0.20);
-    --glass-border: rgba(255, 255, 255, 0.58);
+    --glass-bg: rgba(244, 250, 255, 0.48);
+    --glass-bg-strong: rgba(246, 251, 255, 0.64);
+    --glass-bg-subtle: rgba(255, 255, 255, 0.34);
+    --glass-popover-bg: rgba(244, 249, 255, 0.94);
+    --glass-border: rgba(255, 255, 255, 0.68);
     --glass-sheen: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.38) 0%,
-      rgba(214, 240, 255, 0.14) 38%,
-      rgba(255, 255, 255, 0.01) 65%,
-      rgba(255, 240, 218, 0.18) 100%
+      rgba(255, 255, 255, 0.48) 0%,
+      rgba(214, 240, 255, 0.20) 38%,
+      rgba(255, 255, 255, 0.06) 65%,
+      rgba(255, 240, 218, 0.24) 100%
     );
     --glass-shadow:
-      0 20px 48px -12px rgba(12, 34, 66, 0.14),
-      inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.75),
-      inset 1px 0 0.5px 0 rgba(255, 255, 255, 0.40),
-      inset 0 -1px 1px 0 rgba(255, 242, 224, 0.24);
+      0 20px 48px -12px rgba(12, 34, 66, 0.16),
+      inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.82),
+      inset 1px 0 0.5px 0 rgba(255, 255, 255, 0.45),
+      inset 0 -1px 1px 0 rgba(255, 242, 224, 0.28);
     color-scheme: light;
   }
 
   .dark {
-    --color-base: 4 30 28;
+    --color-canvas: 4 30 28;
+    --color-base: 205 238 225;
     --color-surface: 7 42 35;
     --color-surface-muted: 12 58 47;
     --color-line: 167 243 208;
     --color-ink: 248 250 252;
-    --color-ink-muted: 195 232 218;
+    --color-ink-muted: 202 238 223;
     --color-accent: 180 246 216;
     --color-accent-ink: 4 34 26;
-    --glass-bg: rgba(4, 30, 24, 0.38);
-    --glass-bg-strong: rgba(6, 38, 30, 0.52);
-    --glass-bg-subtle: rgba(14, 68, 52, 0.28);
-    --glass-border: rgba(180, 246, 216, 0.32);
+    --glass-bg: rgba(4, 30, 24, 0.42);
+    --glass-bg-strong: rgba(6, 38, 30, 0.56);
+    --glass-bg-subtle: rgba(14, 68, 52, 0.32);
+    --glass-popover-bg: rgba(5, 34, 27, 0.95);
+    --glass-border: rgba(180, 246, 216, 0.34);
     --glass-sheen: linear-gradient(
       135deg,
       rgba(209, 250, 229, 0.26) 0%,
@@ -71,7 +75,7 @@
 
   body {
     @apply font-sans text-ink antialiased;
-    background-color: rgb(var(--color-base));
+    background-color: rgb(var(--color-canvas));
     min-height: 100dvh;
     overflow-x: hidden;
     transition:
@@ -128,6 +132,17 @@
       border-color 0.55s cubic-bezier(0.22, 1, 0.36, 1),
       box-shadow 0.4s ease,
       transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .glass-popover {
+    background-color: var(--glass-popover-bg);
+    background-image: var(--glass-sheen);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      0 28px 64px -12px rgba(4, 18, 36, 0.42),
+      inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(32px) saturate(185%) contrast(105%);
+    -webkit-backdrop-filter: blur(32px) saturate(185%) contrast(105%);
   }
 
   .glass-subtle {

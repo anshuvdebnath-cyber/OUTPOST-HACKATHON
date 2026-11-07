@@ -142,7 +142,7 @@ export function AppShell() {
       <main
         id="main-content"
         tabIndex={-1}
-        className="mx-auto w-full max-w-7xl flex-1 overflow-x-clip px-4 pb-32 pt-8 focus:outline-none sm:px-6 lg:px-8 lg:pb-16 lg:pt-10"
+        className="mx-auto w-full max-w-7xl flex-1 overflow-x-clip px-4 pb-8 pt-8 focus:outline-none sm:px-6 lg:px-8 lg:pt-10"
       >
         <div
           key={location.pathname}
@@ -151,6 +151,16 @@ export function AppShell() {
           <Outlet />
         </div>
       </main>
+
+      {/* Aligned glassmorphism brand footer */}
+      <footer className="no-print mx-auto w-full max-w-7xl px-4 pb-28 sm:px-6 lg:px-8 lg:pb-10">
+        <div className="glass-subtle flex flex-col items-center justify-between gap-3 rounded-2xl px-5 py-3.5 text-xs text-ink-muted sm:flex-row">
+          <Logo to="/" size="sm" />
+          <p className="text-center sm:text-right">
+            Unified Scholarship Discovery, Explainable Eligibility Matching &amp; Application Management
+          </p>
+        </div>
+      </footer>
 
       {/* Mobile floating glassmorphism dock */}
       <nav aria-label="Mobile navigation" className="pb-safe fixed inset-x-4 bottom-3 z-40 lg:hidden">

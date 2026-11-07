@@ -124,7 +124,7 @@ export function KanbanBoard({ applications }: { applications: Application[] }) {
                 <header className="mb-4 flex items-center justify-between border-b border-line/15 pb-3">
                   <div className="flex items-center gap-2.5">
                     <span className={cn('h-2.5 w-2.5 rounded-full', meta.dot)} aria-hidden="true" />
-                    <h2 id={`col-${status}`} className="text-base font-medium tracking-tight text-ink">
+                    <h2 id={`col-${status}`} className="text-[16px] font-medium tracking-tight text-ink">
                       {meta.label}
                     </h2>
                   </div>
@@ -234,7 +234,7 @@ function SingleStagePanel({
           <div className="glass-pill mb-3 grid h-11 w-11 place-items-center rounded-2xl text-ink">
             <FolderKanban aria-hidden="true" className="h-5 w-5" />
           </div>
-          <h3 className="text-base font-medium text-ink">No applications in {meta.label} yet</h3>
+          <h3 className="text-[16px] font-medium text-ink">No applications in {meta.label} yet</h3>
           <p className="mt-1 max-w-md text-xs leading-relaxed text-ink-muted">
             Switch to &ldquo;All stages&rdquo; to drag an existing application into {meta.label}, or explore new scholarships to add to your tracker.
           </p>
@@ -297,7 +297,10 @@ const ApplicationCard = memo(function ApplicationCard({ app }: { app: Applicatio
         e.dataTransfer.setData(DRAG_TYPE, s.id);
         e.dataTransfer.effectAllowed = 'move';
       }}
-      className="glass-pill animate-fade-in-up flex cursor-grab flex-col justify-between rounded-2xl p-4 transition hover:-translate-y-0.5 active:cursor-grabbing"
+      className={cn(
+        'glass-pill animate-fade-in-up relative flex cursor-grab flex-col justify-between rounded-2xl p-4 transition hover:-translate-y-0.5 active:cursor-grabbing',
+        menuOpen && 'z-30',
+      )}
       aria-label={s.title}
     >
       <div>
@@ -315,7 +318,7 @@ const ApplicationCard = memo(function ApplicationCard({ app }: { app: Applicatio
         </div>
 
         <div className="mt-3.5 flex items-center justify-between gap-2">
-          <span className="font-display text-base font-semibold text-ink">{formatINRCompact(s.amount)}</span>
+          <span className="font-display text-[16px] font-semibold text-ink">{formatINRCompact(s.amount)}</span>
           {app.status !== 'awarded' && app.status !== 'rejected' && <CountdownBadge deadline={s.deadline} />}
         </div>
 
@@ -350,7 +353,7 @@ const ApplicationCard = memo(function ApplicationCard({ app }: { app: Applicatio
             <ul
               role="listbox"
               aria-label={`Change status for ${s.title}`}
-              className="glass-pill animate-fade-in-up absolute bottom-full left-0 z-50 mb-1.5 w-full min-w-[11rem] space-y-1 rounded-2xl p-1.5 shadow-2xl backdrop-blur-2xl"
+              className="glass-popover animate-fade-in-up absolute bottom-full left-0 z-50 mb-1.5 w-full min-w-[11rem] space-y-1 rounded-2xl p-1.5"
             >
               {APPLICATION_STATUSES.map((st) => {
                 const selected = st === app.status;

@@ -67,7 +67,7 @@ export default function ComparePage() {
                 {items.map((s) => (
                   <th key={s.id} scope="col" className="p-4 align-top">
                     <div className="flex items-start justify-between gap-2">
-                      <Link to={`/scholarships/${s.id}`} className="font-normal text-base tracking-[-0.02em] text-ink hover:underline">
+                      <Link to={`/scholarships/${s.id}`} className="font-normal text-[16px] tracking-[-0.02em] text-ink hover:underline">
                         {s.title}
                       </Link>
                       <button

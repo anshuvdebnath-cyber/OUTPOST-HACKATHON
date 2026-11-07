@@ -98,7 +98,7 @@ export default function ProfilePage() {
       {/* Quick-fill persona bar */}
       <section aria-labelledby="presets-heading" className="card mb-6 p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 id="presets-heading" className="flex items-center gap-2 text-base font-normal text-ink">
+          <h2 id="presets-heading" className="flex items-center gap-2 text-[16px] font-normal text-ink">
             <Wand2 aria-hidden="true" className="h-4 w-4 text-ink" />
             Try a sample student persona
           </h2>

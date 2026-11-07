@@ -22,7 +22,7 @@ export function FilterPanel() {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-medium tracking-[-0.02em] text-ink">Filters</h2>
+        <h2 className="text-[16px] font-medium tracking-[-0.02em] text-ink">Filters</h2>
         <button
           type="button"
           onClick={resetFilters}

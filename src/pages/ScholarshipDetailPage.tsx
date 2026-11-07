@@ -82,7 +82,7 @@ export default function ScholarshipDetailPage() {
               About this scholarship
             </h2>
             <p className="mt-2.5 leading-relaxed text-ink-muted">{scholarship.description}</p>
-            <h3 className="mt-6 flex items-center gap-2 text-base font-normal text-ink">
+            <h3 className="mt-6 flex items-center gap-2 text-[16px] font-normal text-ink">
               <Gift aria-hidden="true" className="h-4 w-4 text-ink" /> What you get
             </h3>
             <ul className="mt-3 grid gap-2.5 sm:grid-cols-2">

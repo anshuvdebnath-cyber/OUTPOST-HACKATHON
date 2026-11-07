@@ -60,8 +60,8 @@ export default function DiscoverPage() {
         description="Search every opportunity in one place. Each scholarship is scored against your profile so the best fits rise to the top."
       />
 
-      {/* Search + sort glass toolbar */}
-      <div className="card mb-6 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:p-5">
+      {/* Search + sort glass toolbar (z-30 so the sort dropdown floats above scholarship cards) */}
+      <div className="card relative z-30 mb-6 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:p-5">
         <div className="relative flex-1">
           <label htmlFor="scholarship-search" className="sr-only">
             Search scholarships
@@ -102,7 +102,7 @@ export default function DiscoverPage() {
         </div>
       </div>
 
-      <div className="grid items-start gap-6 lg:grid-cols-[19rem_1fr]">
+      <div className="relative z-10 grid items-start gap-6 lg:grid-cols-[19rem_1fr]">
         {/* Desktop filter sidebar — scrolls naturally with the page so all filters are reachable */}
         <aside aria-label="Scholarship filters" className="hidden lg:block">
           <div className="card p-6">
