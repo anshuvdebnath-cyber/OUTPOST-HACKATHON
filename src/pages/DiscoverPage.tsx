@@ -1,20 +1,21 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { GitCompareArrows, Search, SearchX, SlidersHorizontal, X } from 'lucide-react';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { Button, buttonClasses } from '@/components/ui/Button';
-import { SortDropdown } from '@/components/ui/SortDropdown';
-import { SCHOLARSHIPS } from '@/data/scholarships';
-import { FilterPanel } from '@/features/scholarships/FilterPanel';
-import { ScholarshipCard } from '@/features/scholarships/ScholarshipCard';
-import { countActiveFilters, filterScholarships } from '@/features/scholarships/filterScholarships';
-import { useDebounce } from '@/hooks/useDebounce';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
-import { useCompareStore } from '@/store/useCompareStore';
-import { useFilterStore } from '@/store/useFilterStore';
-import { useProfileStore } from '@/store/useProfileStore';
-import type { SortOption } from '@/types/scholarship';
+import { PageHeader } from '../components/ui/PageHeader';
+import { EmptyState } from '../components/ui/EmptyState';
+import { Button, buttonClasses } from '../components/ui/Button';
+import { SortDropdown } from '../components/ui/SortDropdown';
+import { SCHOLARSHIPS } from '../data/scholarships';
+import { FilterPanel } from '../features/scholarships/FilterPanel';
+import { ScholarshipCard } from '../features/scholarships/ScholarshipCard';
+import { countActiveFilters, filterScholarships } from '../features/scholarships/filterScholarships';
+import { useDebounce } from '../hooks/useDebounce';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useCompareStore } from '../store/useCompareStore';
+import { useFilterStore } from '../store/useFilterStore';
+import { useProfileStore } from '../store/useProfileStore';
+import type { SortOption } from '../types/scholarship';
+import { sanitizeSearchQuery } from '../utils/security';
 
 const SORT_LABELS: Record<SortOption, string> = {
   'best-match': 'Best match',
@@ -90,7 +91,7 @@ export default function DiscoverPage() {
             id="scholarship-search"
             type="search"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => setQuery(sanitizeSearchQuery(e.target.value))}
             placeholder="Search by name, provider or keyword (e.g. women, engineering, research)"
             className="input h-12 rounded-full pl-11 text-sm"
             autoComplete="off"

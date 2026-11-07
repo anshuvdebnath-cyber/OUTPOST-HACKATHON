@@ -1,5 +1,5 @@
 import { CheckCircle2, Info, X, XCircle } from 'lucide-react';
-import { useToastStore } from '@/store/useToastStore';
+import { useToastStore } from '../../store/useToastStore';
 
 const ICONS = { success: CheckCircle2, info: Info, error: XCircle };
 

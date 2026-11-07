@@ -1,6 +1,6 @@
-import type { Scholarship, ScholarshipFilters, StudentProfile } from '@/types/scholarship';
-import { computeMatch, type MatchResult } from '@/features/eligibility/matchEngine';
-import { daysUntil } from '@/lib/date';
+import type { Scholarship, ScholarshipFilters, StudentProfile } from '../../types/scholarship';
+import { computeMatch, type MatchResult } from '../eligibility/matchEngine';
+import { daysUntil } from '../../lib/date';
 
 export const DEFAULT_FILTERS: ScholarshipFilters = {
   query: '',

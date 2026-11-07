@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { DocumentType, StudentProfile } from '@/types/scholarship';
+import type { DocumentType, StudentProfile } from '../types/scholarship';
 
 export const EMPTY_PROFILE: StudentProfile = {
   name: '',

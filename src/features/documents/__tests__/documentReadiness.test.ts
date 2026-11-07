@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { computeDocumentReadiness } from '@/features/documents/documentReadiness';
-import { SCHOLARSHIPS } from '@/data/scholarships';
+import { computeDocumentReadiness } from '../documentReadiness';
+import { SCHOLARSHIPS } from '../../../data/scholarships';
 
 describe('computeDocumentReadiness', () => {
   const s = SCHOLARSHIPS[0];

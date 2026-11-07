@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUpDown, Check, ChevronDown } from 'lucide-react';
-import { cn } from '@/lib/cn';
-import type { SortOption } from '@/types/scholarship';
+import { cn } from '../../lib/cn';
+import type { SortOption } from '../../types/scholarship';
 
 interface SortDropdownProps {
   value: SortOption;

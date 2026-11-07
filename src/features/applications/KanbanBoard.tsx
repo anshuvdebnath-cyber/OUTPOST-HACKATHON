@@ -1,16 +1,16 @@
 import { memo, useEffect, useRef, useState, type DragEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, ChevronDown, Compass, FolderKanban, GripVertical, Trash2 } from 'lucide-react';
-import { buttonClasses } from '@/components/ui/Button';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-import { getScholarshipById } from '@/data/scholarships';
-import { CountdownBadge } from '@/features/deadlines/CountdownBadge';
-import { APPLICATION_STATUSES, STATUS_META } from '@/lib/constants';
-import { formatINRCompact } from '@/lib/currency';
-import { cn } from '@/lib/cn';
-import { applicationProgress, useApplicationStore } from '@/store/useApplicationStore';
-import { toast } from '@/store/useToastStore';
-import type { Application, ApplicationStatus } from '@/types/scholarship';
+import { buttonClasses } from '../../components/ui/Button';
+import { ProgressBar } from '../../components/ui/ProgressBar';
+import { getScholarshipById } from '../../data/scholarships';
+import { CountdownBadge } from '../deadlines/CountdownBadge';
+import { APPLICATION_STATUSES, STATUS_META } from '../../lib/constants';
+import { formatINRCompact } from '../../lib/currency';
+import { cn } from '../../lib/cn';
+import { applicationProgress, useApplicationStore } from '../../store/useApplicationStore';
+import { toast } from '../../store/useToastStore';
+import type { Application, ApplicationStatus } from '../../types/scholarship';
 
 const DRAG_TYPE = 'application/x-grantly-scholarship';
 

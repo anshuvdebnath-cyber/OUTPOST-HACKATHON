@@ -10,20 +10,20 @@ import {
   Sparkles,
   UserRound,
 } from 'lucide-react';
-import { buttonClasses } from '@/components/ui/Button';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-import { getScholarshipById, SCHOLARSHIPS } from '@/data/scholarships';
-import { CountdownBadge } from '@/features/deadlines/CountdownBadge';
-import { ScholarshipCard } from '@/features/scholarships/ScholarshipCard';
-import { DEFAULT_FILTERS, filterScholarships } from '@/features/scholarships/filterScholarships';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
-import { STATUS_META } from '@/lib/constants';
-import { formatINR, formatINRCompact } from '@/lib/currency';
-import { daysUntil, formatDate } from '@/lib/date';
-import { cn } from '@/lib/cn';
-import { useApplicationStore } from '@/store/useApplicationStore';
-import { profileCompleteness, useProfileStore } from '@/store/useProfileStore';
+import { buttonClasses } from '../components/ui/Button';
+import { PageHeader } from '../components/ui/PageHeader';
+import { ProgressBar } from '../components/ui/ProgressBar';
+import { getScholarshipById, SCHOLARSHIPS } from '../data/scholarships';
+import { CountdownBadge } from '../features/deadlines/CountdownBadge';
+import { ScholarshipCard } from '../features/scholarships/ScholarshipCard';
+import { DEFAULT_FILTERS, filterScholarships } from '../features/scholarships/filterScholarships';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { STATUS_META } from '../lib/constants';
+import { formatINR, formatINRCompact } from '../lib/currency';
+import { daysUntil, formatDate } from '../lib/date';
+import { cn } from '../lib/cn';
+import { useApplicationStore } from '../store/useApplicationStore';
+import { profileCompleteness, useProfileStore } from '../store/useProfileStore';
 
 /** Monochrome glassmorphism student command centre. */
 export default function DashboardPage() {

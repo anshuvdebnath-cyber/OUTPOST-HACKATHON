@@ -1,4 +1,4 @@
-import { cn } from '@/lib/cn';
+import { cn } from '../../lib/cn';
 
 /** Frosted glass shimmering loader block with fluid motion. */
 export function Skeleton({ className }: { className?: string }) {

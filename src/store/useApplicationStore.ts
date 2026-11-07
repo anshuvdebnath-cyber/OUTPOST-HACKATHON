@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Application, ApplicationStatus, Scholarship } from '@/types/scholarship';
+import type { Application, ApplicationStatus, Scholarship } from '../types/scholarship';
 
 interface ApplicationState {
   /** Applications keyed by scholarship id. */

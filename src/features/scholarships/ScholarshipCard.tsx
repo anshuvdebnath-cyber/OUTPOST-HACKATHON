@@ -1,16 +1,16 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { Bookmark, BookmarkCheck, Building2, GitCompareArrows, IndianRupee } from 'lucide-react';
-import { cn } from '@/lib/cn';
-import { formatINR } from '@/lib/currency';
-import { SCHOLARSHIP_TYPE_LABELS } from '@/lib/constants';
-import { CountdownBadge } from '@/features/deadlines/CountdownBadge';
-import { MatchBadge } from '@/features/eligibility/MatchBadge';
-import type { MatchResult } from '@/features/eligibility/matchEngine';
-import { useApplicationStore } from '@/store/useApplicationStore';
-import { MAX_COMPARE, useCompareStore } from '@/store/useCompareStore';
-import { toast } from '@/store/useToastStore';
-import type { Scholarship } from '@/types/scholarship';
+import { cn } from '../../lib/cn';
+import { formatINR } from '../../lib/currency';
+import { SCHOLARSHIP_TYPE_LABELS } from '../../lib/constants';
+import { CountdownBadge } from '../deadlines/CountdownBadge';
+import { MatchBadge } from '../eligibility/MatchBadge';
+import type { MatchResult } from '../eligibility/matchEngine';
+import { useApplicationStore } from '../../store/useApplicationStore';
+import { MAX_COMPARE, useCompareStore } from '../../store/useCompareStore';
+import { toast } from '../../store/useToastStore';
+import type { Scholarship } from '../../types/scholarship';
 
 interface ScholarshipCardProps {
   scholarship: Scholarship;

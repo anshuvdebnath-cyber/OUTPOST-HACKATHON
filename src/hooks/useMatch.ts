@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { SCHOLARSHIPS } from '@/data/scholarships';
-import { computeMatch, type MatchResult } from '@/features/eligibility/matchEngine';
-import { useProfileStore } from '@/store/useProfileStore';
-import type { Scholarship } from '@/types/scholarship';
+import { SCHOLARSHIPS } from '../data/scholarships';
+import { computeMatch, type MatchResult } from '../features/eligibility/matchEngine';
+import { useProfileStore } from '../store/useProfileStore';
+import type { Scholarship } from '../types/scholarship';
 
 /** Memoised match result for a single scholarship against the current profile. */
 export function useMatch(scholarship: Scholarship | undefined): MatchResult | null {

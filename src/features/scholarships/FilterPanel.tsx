@@ -1,9 +1,9 @@
 import { Check, RotateCcw } from 'lucide-react';
-import { EDUCATION_LEVEL_LABELS, FIELD_LABELS, SCHOLARSHIP_TYPE_LABELS } from '@/lib/constants';
-import { formatINRCompact } from '@/lib/currency';
-import { cn } from '@/lib/cn';
-import { useFilterStore } from '@/store/useFilterStore';
-import type { EducationLevel, FieldOfStudy, ScholarshipType } from '@/types/scholarship';
+import { EDUCATION_LEVEL_LABELS, FIELD_LABELS, SCHOLARSHIP_TYPE_LABELS } from '../../lib/constants';
+import { formatINRCompact } from '../../lib/currency';
+import { cn } from '../../lib/cn';
+import { useFilterStore } from '../../store/useFilterStore';
+import type { EducationLevel, FieldOfStudy, ScholarshipType } from '../../types/scholarship';
 
 const MAX_AWARD = 200000;
 const AMOUNT_PRESETS = [0, 25000, 50000, 100000, 200000];

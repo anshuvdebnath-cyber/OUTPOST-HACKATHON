@@ -16,31 +16,31 @@ import {
   SearchX,
   Users,
 } from 'lucide-react';
-import { Button, buttonClasses } from '@/components/ui/Button';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-import { getScholarshipById } from '@/data/scholarships';
-import { CountdownBadge } from '@/features/deadlines/CountdownBadge';
-import { downloadIcs } from '@/features/deadlines/generateIcs';
-import { DocumentReadinessMeter } from '@/features/documents/DocumentReadinessMeter';
-import { MatchBadge } from '@/features/eligibility/MatchBadge';
-import { MatchReasons } from '@/features/eligibility/MatchReasons';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
-import { useMatch } from '@/hooks/useMatch';
+import { Button, buttonClasses } from '../components/ui/Button';
+import { EmptyState } from '../components/ui/EmptyState';
+import { ProgressBar } from '../components/ui/ProgressBar';
+import { getScholarshipById } from '../data/scholarships';
+import { CountdownBadge } from '../features/deadlines/CountdownBadge';
+import { downloadIcs } from '../features/deadlines/generateIcs';
+import { DocumentReadinessMeter } from '../features/documents/DocumentReadinessMeter';
+import { MatchBadge } from '../features/eligibility/MatchBadge';
+import { MatchReasons } from '../features/eligibility/MatchReasons';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useMatch } from '../hooks/useMatch';
 import {
   CATEGORY_LABELS,
   EDUCATION_LEVEL_LABELS,
   FIELD_LABELS,
   SCHOLARSHIP_TYPE_LABELS,
   STATUS_META,
-} from '@/lib/constants';
-import { formatINR } from '@/lib/currency';
-import { formatDate } from '@/lib/date';
-import { cn } from '@/lib/cn';
-import { applicationProgress, useApplicationStore } from '@/store/useApplicationStore';
-import { MAX_COMPARE, useCompareStore } from '@/store/useCompareStore';
-import { toast } from '@/store/useToastStore';
-import type { Scholarship } from '@/types/scholarship';
+} from '../lib/constants';
+import { formatINR } from '../lib/currency';
+import { formatDate } from '../lib/date';
+import { cn } from '../lib/cn';
+import { applicationProgress, useApplicationStore } from '../store/useApplicationStore';
+import { MAX_COMPARE, useCompareStore } from '../store/useCompareStore';
+import { toast } from '../store/useToastStore';
+import type { Scholarship } from '../types/scholarship';
 
 /** Monochrome frosted-glass scholarship detail workspace. */
 export default function ScholarshipDetailPage() {

@@ -1,6 +1,6 @@
 import { Clock } from 'lucide-react';
-import { cn } from '@/lib/cn';
-import { formatCountdown, formatDate, getUrgency, type Urgency } from '@/lib/date';
+import { cn } from '../../lib/cn';
+import { formatCountdown, formatDate, getUrgency, type Urgency } from '../../lib/date';
 
 const URGENCY_STYLES: Record<Urgency, string> = {
   closed: 'opacity-50 text-ink-muted',

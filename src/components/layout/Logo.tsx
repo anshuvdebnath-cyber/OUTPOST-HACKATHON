@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import { Link } from 'react-router-dom';
-import { cn } from '@/lib/cn';
+import { cn } from '../../lib/cn';
 
 /**
  * Grantly Adaptive Refractive-Prism Crest Logo:

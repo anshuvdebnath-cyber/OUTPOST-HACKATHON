@@ -1,8 +1,8 @@
 import { CheckCircle2, Circle, FileCheck2, RotateCcw, Sparkles, Wand2 } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { Button } from '../components/ui/Button';
+import { PageHeader } from '../components/ui/PageHeader';
+import { ProgressBar } from '../components/ui/ProgressBar';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import {
   CATEGORY_LABELS,
   DOCUMENT_LABELS,
@@ -10,9 +10,9 @@ import {
   FIELD_LABELS,
   GENDER_LABELS,
   INDIAN_STATES,
-} from '@/lib/constants';
-import { profileCompleteness, useProfileStore } from '@/store/useProfileStore';
-import { toast } from '@/store/useToastStore';
+} from '../lib/constants';
+import { profileCompleteness, useProfileStore } from '../store/useProfileStore';
+import { toast } from '../store/useToastStore';
 import type {
   DocumentType,
   EducationLevel,
@@ -20,7 +20,8 @@ import type {
   Gender,
   SocialCategory,
   StudentProfile,
-} from '@/types/scholarship';
+} from '../types/scholarship';
+import { sanitizeNumericInput, sanitizeTextInput } from '../utils/security';
 
 /** Sample personas so evaluators and students can test matching with one click. */
 const PERSONA_PRESETS: { label: string; tagline: string; profile: StudentProfile }[] = [
@@ -150,7 +151,7 @@ export default function ProfilePage() {
                 id="prof-name"
                 type="text"
                 value={profile.name}
-                onChange={(e) => updateProfile({ name: e.target.value })}
+                onChange={(e) => updateProfile({ name: sanitizeTextInput(e.target.value, 80) })}
                 placeholder="e.g. Aarav Verma"
                 className="input"
               />
@@ -207,7 +208,7 @@ export default function ProfilePage() {
                 max={100}
                 value={profile.percentage ?? ''}
                 onChange={(e) =>
-                  updateProfile({ percentage: e.target.value === '' ? null : Number(e.target.value) })
+                  updateProfile({ percentage: sanitizeNumericInput(e.target.value, 0, 100) })
                 }
                 placeholder="e.g. 84"
                 className="input"
@@ -225,7 +226,7 @@ export default function ProfilePage() {
                 step={10000}
                 value={profile.familyIncome ?? ''}
                 onChange={(e) =>
-                  updateProfile({ familyIncome: e.target.value === '' ? null : Number(e.target.value) })
+                  updateProfile({ familyIncome: sanitizeNumericInput(e.target.value, 0, 50000000) })
                 }
                 placeholder="e.g. 350000"
                 className="input"

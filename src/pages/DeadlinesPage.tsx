@@ -1,20 +1,20 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CalendarClock, CalendarPlus, Compass } from 'lucide-react';
-import { Button, buttonClasses } from '@/components/ui/Button';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { SCHOLARSHIPS } from '@/data/scholarships';
-import { CountdownBadge } from '@/features/deadlines/CountdownBadge';
-import { downloadIcs } from '@/features/deadlines/generateIcs';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
-import { STATUS_META } from '@/lib/constants';
-import { formatINR } from '@/lib/currency';
-import { daysUntil, formatDate, getUrgency, type Urgency } from '@/lib/date';
-import { cn } from '@/lib/cn';
-import { useApplicationStore } from '@/store/useApplicationStore';
-import { toast } from '@/store/useToastStore';
-import type { Scholarship } from '@/types/scholarship';
+import { Button, buttonClasses } from '../components/ui/Button';
+import { EmptyState } from '../components/ui/EmptyState';
+import { PageHeader } from '../components/ui/PageHeader';
+import { SCHOLARSHIPS } from '../data/scholarships';
+import { CountdownBadge } from '../features/deadlines/CountdownBadge';
+import { downloadIcs } from '../features/deadlines/generateIcs';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { STATUS_META } from '../lib/constants';
+import { formatINR } from '../lib/currency';
+import { daysUntil, formatDate, getUrgency, type Urgency } from '../lib/date';
+import { cn } from '../lib/cn';
+import { useApplicationStore } from '../store/useApplicationStore';
+import { toast } from '../store/useToastStore';
+import type { Scholarship } from '../types/scholarship';
 
 const URGENCY_SECTIONS: { key: Exclude<Urgency, 'closed'>; title: string; subtitle: string }[] = [
   { key: 'critical', title: 'Urgent — due in 3 days or less', subtitle: 'Submit these applications first' },

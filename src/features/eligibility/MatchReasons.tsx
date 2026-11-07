@@ -1,5 +1,5 @@
 import { CheckCircle2, HelpCircle, XCircle } from 'lucide-react';
-import { cn } from '@/lib/cn';
+import { cn } from '../../lib/cn';
 import type { MatchCheck } from './matchEngine';
 
 const OUTCOME_META = {

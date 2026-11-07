@@ -1,14 +1,14 @@
 import { useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Compass, Download, KanbanSquare } from 'lucide-react';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { Button, buttonClasses } from '@/components/ui/Button';
-import { KanbanBoard } from '@/features/applications/KanbanBoard';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
-import { downloadApplicationsCsv } from '@/services/scholarshipService';
-import { useApplicationStore } from '@/store/useApplicationStore';
-import { toast } from '@/store/useToastStore';
+import { PageHeader } from '../components/ui/PageHeader';
+import { EmptyState } from '../components/ui/EmptyState';
+import { Button, buttonClasses } from '../components/ui/Button';
+import { KanbanBoard } from '../features/applications/KanbanBoard';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { downloadApplicationsCsv } from '../services/scholarshipService';
+import { useApplicationStore } from '../store/useApplicationStore';
+import { toast } from '../store/useToastStore';
 
 /** Application tracker — every saved scholarship on a status board with CSV export. */
 export default function TrackerPage() {

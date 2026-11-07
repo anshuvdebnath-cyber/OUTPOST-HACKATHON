@@ -6,7 +6,7 @@ import type {
   Gender,
   ScholarshipType,
   SocialCategory,
-} from '@/types/scholarship';
+} from '../types/scholarship';
 
 /** Human-readable labels for domain enums, used across the UI. */
 

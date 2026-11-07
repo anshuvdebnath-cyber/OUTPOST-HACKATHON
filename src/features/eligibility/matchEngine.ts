@@ -1,6 +1,6 @@
-import type { Scholarship, StudentProfile } from '@/types/scholarship';
-import { CATEGORY_LABELS, EDUCATION_LEVEL_LABELS, FIELD_LABELS } from '@/lib/constants';
-import { formatINR } from '@/lib/currency';
+import type { Scholarship, StudentProfile } from '../../types/scholarship';
+import { CATEGORY_LABELS, EDUCATION_LEVEL_LABELS, FIELD_LABELS } from '../../lib/constants';
+import { formatINR } from '../../lib/currency';
 
 /**
  * Explainable Eligibility Match Engine

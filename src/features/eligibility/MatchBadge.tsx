@@ -1,4 +1,4 @@
-import { cn } from '@/lib/cn';
+import { cn } from '../../lib/cn';
 import type { MatchResult } from './matchEngine';
 
 const VERDICT_META = {

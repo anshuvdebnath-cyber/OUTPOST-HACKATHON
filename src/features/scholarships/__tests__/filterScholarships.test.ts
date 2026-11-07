@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { countActiveFilters, DEFAULT_FILTERS, filterScholarships } from '@/features/scholarships/filterScholarships';
-import { SCHOLARSHIPS } from '@/data/scholarships';
-import { EMPTY_PROFILE } from '@/store/useProfileStore';
+import { countActiveFilters, DEFAULT_FILTERS, filterScholarships } from '../filterScholarships';
+import { SCHOLARSHIPS } from '../../../data/scholarships';
+import { EMPTY_PROFILE } from '../../../store/useProfileStore';
 
 describe('filterScholarships', () => {
   it('returns all open scholarships when default filters are used', () => {

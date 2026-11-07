@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { computeMatch } from '@/features/eligibility/matchEngine';
-import { SCHOLARSHIPS } from '@/data/scholarships';
-import { EMPTY_PROFILE } from '@/store/useProfileStore';
-import type { StudentProfile } from '@/types/scholarship';
+import { computeMatch } from '../matchEngine';
+import { SCHOLARSHIPS } from '../../../data/scholarships';
+import { EMPTY_PROFILE } from '../../../store/useProfileStore';
+import type { StudentProfile } from '../../../types/scholarship';
 
 describe('computeMatch — Explainable Eligibility Match Engine', () => {
   const shakti = SCHOLARSHIPS.find((s) => s.id === 'shakti-women-stem')!;

@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Compass } from 'lucide-react';
-import { buttonClasses } from '@/components/ui/Button';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { buttonClasses } from '../components/ui/Button';
+import { EmptyState } from '../components/ui/EmptyState';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 /** Accessible 404 fallback route. */
 export default function NotFoundPage() {

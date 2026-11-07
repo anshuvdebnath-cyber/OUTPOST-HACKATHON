@@ -1,9 +1,9 @@
-import { getScholarshipById, SCHOLARSHIPS } from '@/data/scholarships';
-import { computeMatch } from '@/features/eligibility/matchEngine';
-import { STATUS_META } from '@/lib/constants';
-import { daysUntil } from '@/lib/date';
-import { applicationProgress } from '@/store/useApplicationStore';
-import type { Application, Scholarship, StudentProfile } from '@/types/scholarship';
+import { getScholarshipById, SCHOLARSHIPS } from '../data/scholarships';
+import { computeMatch } from '../features/eligibility/matchEngine';
+import { STATUS_META } from '../lib/constants';
+import { daysUntil } from '../lib/date';
+import { applicationProgress } from '../store/useApplicationStore';
+import type { Application, Scholarship, StudentProfile } from '../types/scholarship';
 
 export interface PortfolioAnalytics {
   totalScholarships: number;

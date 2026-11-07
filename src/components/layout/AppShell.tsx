@@ -3,10 +3,10 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Logo } from './Logo';
 import { NAV_ITEMS } from './navItems';
 import { ThemeToggle } from './ThemeToggle';
-import { cn } from '@/lib/cn';
-import { useApplicationStore } from '@/store/useApplicationStore';
-import { profileCompleteness, useProfileStore } from '@/store/useProfileStore';
-import { useCompareStore } from '@/store/useCompareStore';
+import { cn } from '../../lib/cn';
+import { useApplicationStore } from '../../store/useApplicationStore';
+import { profileCompleteness, useProfileStore } from '../../store/useProfileStore';
+import { useCompareStore } from '../../store/useCompareStore';
 
 function getTabIndex(pathname: string): number {
   const idx = NAV_ITEMS.findIndex((n) => pathname === n.to || pathname.startsWith(`${n.to}/`));

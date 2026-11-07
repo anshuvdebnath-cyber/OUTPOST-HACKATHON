@@ -1,8 +1,8 @@
 import { CheckCircle2, Circle, FileCheck2 } from 'lucide-react';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-import { DOCUMENT_LABELS } from '@/lib/constants';
-import { useProfileStore } from '@/store/useProfileStore';
-import type { Scholarship } from '@/types/scholarship';
+import { ProgressBar } from '../../components/ui/ProgressBar';
+import { DOCUMENT_LABELS } from '../../lib/constants';
+import { useProfileStore } from '../../store/useProfileStore';
+import type { Scholarship } from '../../types/scholarship';
 import { computeDocumentReadiness } from './documentReadiness';
 
 /**

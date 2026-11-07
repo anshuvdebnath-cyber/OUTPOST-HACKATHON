@@ -1,4 +1,4 @@
-import type { DocumentType, Scholarship } from '@/types/scholarship';
+import type { DocumentType, Scholarship } from '../../types/scholarship';
 
 export interface DocumentReadiness {
   /** 0–100 percentage of required documents the student already has. */

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import type { ScholarshipFilters } from '@/types/scholarship';
-import { DEFAULT_FILTERS } from '@/features/scholarships/filterScholarships';
+import type { ScholarshipFilters } from '../types/scholarship';
+import { DEFAULT_FILTERS } from '../features/scholarships/filterScholarships';
 
 interface FilterState {
   filters: ScholarshipFilters;

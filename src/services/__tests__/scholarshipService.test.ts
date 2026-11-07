@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { SCHOLARSHIPS } from '@/data/scholarships';
-import { computePortfolioAnalytics, serializeApplicationsToCsv } from '@/services/scholarshipService';
-import { createApplication } from '@/store/useApplicationStore';
-import type { StudentProfile } from '@/types/scholarship';
+import { SCHOLARSHIPS } from '../../data/scholarships';
+import { computePortfolioAnalytics, serializeApplicationsToCsv } from '../scholarshipService';
+import { createApplication } from '../../store/useApplicationStore';
+import type { StudentProfile } from '../../types/scholarship';
 
 const SAMPLE_PROFILE: StudentProfile = {
   name: 'Ananya Sharma',

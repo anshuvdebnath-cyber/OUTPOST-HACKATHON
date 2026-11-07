@@ -1,12 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Compass } from 'lucide-react';
 import { describe, expect, it, vi } from 'vitest';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-import { SortDropdown } from '@/components/ui/SortDropdown';
-import type { SortOption } from '@/types/scholarship';
+import { EmptyState } from '../EmptyState';
+import { ErrorBoundary } from '../ErrorBoundary';
+import { PageHeader } from '../PageHeader';
+import { ProgressBar } from '../ProgressBar';
+import { SortDropdown } from '../SortDropdown';
+import type { SortOption } from '../../../types/scholarship';
 
 const SORT_OPTIONS: Record<SortOption, string> = {
   'best-match': 'Best match',

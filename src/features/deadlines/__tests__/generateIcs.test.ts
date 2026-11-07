@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { generateIcs } from '@/features/deadlines/generateIcs';
-import { SCHOLARSHIPS } from '@/data/scholarships';
+import { generateIcs } from '../generateIcs';
+import { SCHOLARSHIPS } from '../../../data/scholarships';
 
 describe('generateIcs', () => {
   it('creates a valid VCALENDAR with VEVENT and VALARM blocks', () => {

@@ -1,22 +1,22 @@
 import { type ReactNode, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Compass, GitCompareArrows, Trash2, X } from 'lucide-react';
-import { Button, buttonClasses } from '@/components/ui/Button';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { getScholarshipById } from '@/data/scholarships';
-import { CountdownBadge } from '@/features/deadlines/CountdownBadge';
-import { computeDocumentReadiness } from '@/features/documents/documentReadiness';
-import { MatchBadge } from '@/features/eligibility/MatchBadge';
-import { useDocumentTitle } from '@/hooks/useDocumentTitle';
-import { useAllMatches } from '@/hooks/useMatch';
-import { useViewportBreakpoints } from '@/hooks/useMediaQuery';
-import { DOCUMENT_LABELS, EDUCATION_LEVEL_LABELS, FIELD_LABELS, SCHOLARSHIP_TYPE_LABELS } from '@/lib/constants';
-import { formatINR } from '@/lib/currency';
-import { formatDate } from '@/lib/date';
-import { useCompareStore } from '@/store/useCompareStore';
-import { useProfileStore } from '@/store/useProfileStore';
-import type { Scholarship } from '@/types/scholarship';
+import { Button, buttonClasses } from '../components/ui/Button';
+import { EmptyState } from '../components/ui/EmptyState';
+import { PageHeader } from '../components/ui/PageHeader';
+import { getScholarshipById } from '../data/scholarships';
+import { CountdownBadge } from '../features/deadlines/CountdownBadge';
+import { computeDocumentReadiness } from '../features/documents/documentReadiness';
+import { MatchBadge } from '../features/eligibility/MatchBadge';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useAllMatches } from '../hooks/useMatch';
+import { useViewportBreakpoints } from '../hooks/useMediaQuery';
+import { DOCUMENT_LABELS, EDUCATION_LEVEL_LABELS, FIELD_LABELS, SCHOLARSHIP_TYPE_LABELS } from '../lib/constants';
+import { formatINR } from '../lib/currency';
+import { formatDate } from '../lib/date';
+import { useCompareStore } from '../store/useCompareStore';
+import { useProfileStore } from '../store/useProfileStore';
+import type { Scholarship } from '../types/scholarship';
 
 /** Monochrome frosted-glass side-by-side comparison of up to 3 selected scholarships. */
 export default function ComparePage() {

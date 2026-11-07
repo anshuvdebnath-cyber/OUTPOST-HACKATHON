@@ -1,5 +1,5 @@
-import type { Scholarship } from '@/types/scholarship';
-import { addDaysISO } from '@/lib/date';
+import type { Scholarship } from '../types/scholarship';
+import { addDaysISO } from '../lib/date';
 
 /**
  * Sample scholarship dataset for Grantly.

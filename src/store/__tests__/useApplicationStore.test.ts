@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { applicationProgress, useApplicationStore } from '@/store/useApplicationStore';
-import { SCHOLARSHIPS } from '@/data/scholarships';
+import { applicationProgress, useApplicationStore } from '../useApplicationStore';
+import { SCHOLARSHIPS } from '../../data/scholarships';
 
 describe('useApplicationStore', () => {
   const s = SCHOLARSHIPS[0];

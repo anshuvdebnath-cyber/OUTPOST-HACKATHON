@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useThemeStore } from '@/store/useThemeStore';
+import { useThemeStore } from '../../store/useThemeStore';
 
 const VERTEX_SHADER = `
   attribute vec2 a_position;

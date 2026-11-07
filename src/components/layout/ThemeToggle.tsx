@@ -1,5 +1,5 @@
 import { Moon, Sun } from 'lucide-react';
-import { useThemeStore } from '@/store/useThemeStore';
+import { useThemeStore } from '../../store/useThemeStore';
 
 /** Toggles between light and dark monochrome glass themes. */
 export function ThemeToggle() {

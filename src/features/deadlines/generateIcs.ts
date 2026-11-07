@@ -1,4 +1,4 @@
-import type { Scholarship } from '@/types/scholarship';
+import type { Scholarship } from '../../types/scholarship';
 
 /**
  * Generates an iCalendar (.ics) file so students can add scholarship deadlines
