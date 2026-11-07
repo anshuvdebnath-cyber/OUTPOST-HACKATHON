@@ -11,14 +11,15 @@ const VERTEX_SHADER = `
 `;
 
 /**
- * True Physical Refracted Fluted-Glass WebGL Fragment Shader:
- *  - Straight parallel cylindrical glass lenses (fract(uv.x * strips))
- *  - Uses GLSL physical Snell's law `refract(I, N, eta)` (crown glass IOR = 1.52)
- *    with multi-tap frosted blur and RGB chromatic dispersion to slice, bend,
- *    and refract the animated diagonal colour waves behind the glass panel.
+ * Optical Refracted Fluted-Glass WebGL Fragment Shader:
+ *  - Faithfully reproduces the reeded-glass reference photo:
+ *    * Vertical cylindrical glass ribs with physical Snell's refraction
+ *    * Crisp vertical specular pinstripe & groove seam highlights
+ *    * Tapered luminous caustic beams channeled vertically through each flute
+ *    * Chromatic dispersion & soft multi-sample frosted blur
  *  - Dual-mode:
- *      Light mode (u_dark = 0): Periwinkle blue, icy aqua-mint & warm champagne-peach beam
- *      Night mode (u_dark = 1): Deep sapphire-teal, forest emerald & luminous mint-jade beam
+ *    * Light Mode: Rich periwinkle blue, soft lavender, icy aqua & glowing champagne sunlight beam
+ *    * Night Mode: Deep abyssal teal, forest emerald & brilliant mint-jade light beam
  */
 const FRAGMENT_SHADER = `
   precision highp float;
@@ -27,51 +28,53 @@ const FRAGMENT_SHADER = `
   uniform vec2 u_resolution;
   uniform float u_dark;
 
-  // Smooth procedural hash for subtle frosted diffusion inside the glass
   float hash(vec2 p) {
     vec3 p3 = fract(vec3(p.xyx) * 0.1031);
     p3 += dot(p3, p3.yzx + 33.33);
     return fract((p3.x + p3.y) * p3.z);
   }
 
-  // Light Mode underlying flowing wave scene (matches light reference image)
+  // Light Mode scene: Periwinkle blue, lavender, icy aqua & glowing champagne-peach sunlight
   vec3 sampleLightScene(vec2 p, float t) {
-    // Flowing diagonal waves behind the glass
-    float wave1 = sin(p.x * 3.2 + p.y * 2.4 - t * 0.85 + sin(p.y * 2.0 + t * 0.5) * 0.6);
-    float wave2 = cos(p.x * 2.4 - p.y * 2.8 + t * 0.68);
-    float ribbon = exp(-pow((p.x * 0.85 + p.y * 0.75 - 0.82 + sin(p.y * 2.6 - t * 0.75) * 0.28) * 2.4, 2.0));
-    float ribbon2 = exp(-pow((p.x * 0.7 - p.y * 0.65 - 0.15 + cos(p.x * 2.2 + t * 0.6) * 0.25) * 2.6, 2.0));
+    // Flowing diagonal light waves behind the glass
+    float w1 = sin(p.x * 2.8 + p.y * 2.2 - t * 0.75 + sin(p.y * 2.4 + t * 0.45) * 0.55);
+    float w2 = cos(p.x * 2.2 - p.y * 2.6 + t * 0.62);
 
-    vec3 deepPeriwinkle = vec3(0.35, 0.49, 0.80);
-    vec3 lavenderBlue   = vec3(0.64, 0.71, 0.90);
-    vec3 seafoamAqua    = vec3(0.72, 0.89, 0.90);
-    vec3 champagneGlow  = vec3(1.00, 0.89, 0.76);
-    vec3 icyWhite       = vec3(0.96, 0.99, 1.00);
+    // Warm champagne sunlight beam pouring diagonally from top right
+    float sunBeam = exp(-pow((p.x * 0.72 + p.y * 0.78 - 0.92 + sin(p.y * 2.2 - t * 0.65) * 0.22) * 2.2, 2.0));
+    float softFill = exp(-pow((p.x * 0.65 - p.y * 0.55 - 0.2 + cos(p.x * 2.0 + t * 0.5) * 0.2) * 2.4, 2.0));
 
-    vec3 col = mix(deepPeriwinkle, lavenderBlue, smoothstep(-0.8, 0.8, wave1));
-    col = mix(col, seafoamAqua, smoothstep(-0.3, 0.85, (p.x - 0.25) * 1.4 + wave2 * 0.45));
-    col = mix(col, champagneGlow, clamp(ribbon * 0.95 + ribbon2 * 0.45, 0.0, 1.0));
-    col = mix(col, icyWhite, smoothstep(0.55, 1.0, wave2 * 0.5 + 0.5) * 0.35);
+    vec3 periwinkleDeep = vec3(0.32, 0.47, 0.82);
+    vec3 lavender       = vec3(0.58, 0.68, 0.90);
+    vec3 icyAqua        = vec3(0.70, 0.88, 0.91);
+    vec3 champagneWarm  = vec3(1.00, 0.90, 0.78);
+    vec3 pureLight      = vec3(0.98, 0.99, 1.00);
+
+    vec3 col = mix(periwinkleDeep, lavender, smoothstep(-0.75, 0.75, w1 * 0.65 + (p.x - 0.35) * 0.7));
+    col = mix(col, icyAqua, smoothstep(-0.25, 0.85, (p.x - 0.2) * 1.2 + w2 * 0.4));
+    col = mix(col, champagneWarm, clamp(sunBeam * 1.05 + softFill * 0.35, 0.0, 1.0));
+    col = mix(col, pureLight, smoothstep(0.65, 0.98, sunBeam) * 0.45);
     return col;
   }
 
-  // Night Mode underlying flowing wave scene (matches dark green reference image)
+  // Night Mode scene: Deep teal-sapphire, rich forest emerald & brilliant mint-jade beam
   vec3 sampleDarkScene(vec2 p, float t) {
-    float wave1 = sin(p.x * 3.0 + p.y * 2.2 - t * 0.82 + cos(p.y * 2.4 + t * 0.55) * 0.65);
-    float wave2 = cos(p.x * 2.6 - p.y * 2.5 + t * 0.64);
-    float beam1 = exp(-pow((p.x * 0.9 + p.y * 0.6 - 0.78 + sin(p.y * 2.8 - t * 0.72) * 0.3) * 2.5, 2.0));
-    float beam2 = exp(-pow((p.x * 0.75 - p.y * 0.55 - 0.1 + cos(p.x * 2.5 + t * 0.58) * 0.26) * 2.8, 2.0));
+    float w1 = sin(p.x * 2.6 + p.y * 2.0 - t * 0.72 + cos(p.y * 2.2 + t * 0.5) * 0.55);
+    float w2 = cos(p.x * 2.4 - p.y * 2.4 + t * 0.6);
 
-    vec3 deepAbyss    = vec3(0.01, 0.11, 0.18);
-    vec3 darkForest   = vec3(0.02, 0.22, 0.16);
-    vec3 richEmerald  = vec3(0.04, 0.50, 0.34);
-    vec3 luminousJade = vec3(0.18, 0.78, 0.53);
-    vec3 mintHighlight = vec3(0.84, 0.99, 0.89);
+    float mintBeam = exp(-pow((p.x * 0.75 + p.y * 0.72 - 0.88 + sin(p.y * 2.4 - t * 0.62) * 0.24) * 2.3, 2.0));
+    float tealFill = exp(-pow((p.x * 0.7 - p.y * 0.5 - 0.15 + cos(p.x * 2.2 + t * 0.52) * 0.22) * 2.5, 2.0));
 
-    vec3 col = mix(deepAbyss, darkForest, smoothstep(-0.7, 0.7, wave2 + p.x * 0.5));
-    col = mix(col, richEmerald, smoothstep(-0.6, 0.75, wave1 * 0.7 + (p.x - 0.2) * 0.8));
-    col = mix(col, luminousJade, clamp(beam2 * 0.85 + smoothstep(0.1, 0.9, wave1) * 0.55, 0.0, 1.0));
-    col = mix(col, mintHighlight, clamp(beam1 * 0.88, 0.0, 1.0));
+    vec3 deepAbyss      = vec3(0.01, 0.10, 0.17);
+    vec3 forestPine     = vec3(0.02, 0.21, 0.15);
+    vec3 richEmerald    = vec3(0.04, 0.48, 0.33);
+    vec3 vibrantJade    = vec3(0.16, 0.76, 0.51);
+    vec3 mintHighlight  = vec3(0.82, 0.98, 0.87);
+
+    vec3 col = mix(deepAbyss, forestPine, smoothstep(-0.7, 0.7, w2 + p.x * 0.45));
+    col = mix(col, richEmerald, smoothstep(-0.55, 0.7, w1 * 0.65 + (p.x - 0.25) * 0.7));
+    col = mix(col, vibrantJade, clamp(mintBeam * 0.95 + tealFill * 0.4, 0.0, 1.0));
+    col = mix(col, mintHighlight, smoothstep(0.6, 0.98, mintBeam) * 0.52);
     return col;
   }
 
@@ -83,66 +86,64 @@ const FRAGMENT_SHADER = `
     vec2 uv = v_uv;
     float t = u_time * 1.15;
 
-    // Number of vertical cylindrical glass strips across the viewport
-    float strips = floor(clamp(u_resolution.x / 28.0, 26.0, 64.0));
+    // Number of vertical fluted cylindrical reeds (matching the reference photo density)
+    float fluteWidth = clamp(u_resolution.x / 26.0, 32.0, 52.0);
+    float strips = floor(u_resolution.x / fluteWidth);
     float stripPos = uv.x * strips;
-    // Local coordinate inside each cylindrical flute: -1.0 (left edge) to +1.0 (right edge)
-    float localX = fract(stripPos) * 2.0 - 1.0;
+    // Local coordinate inside each cylindrical flute: -1.0 (left seam) to +1.0 (right seam)
+    float x = fract(stripPos) * 2.0 - 1.0;
 
-    // Smooth cylindrical lens profile & 3D surface normal
-    float curvature = 0.86;
-    float nx = localX * curvature;
-    float nz = sqrt(max(0.05, 1.0 - nx * nx));
-    vec3 normal = normalize(vec3(nx, 0.0, nz));
+    // True physical cylindrical glass lens profile & normal vector
+    float r = x * 0.94;
+    float arc = sqrt(max(0.001, 1.0 - r * r));
+    vec3 normal = normalize(vec3(r * 1.35, 0.0, arc));
 
-    // Physical Snell's-law refraction of the incident eye ray through crown glass (IOR = 1.52)
+    // Snell's-law refraction through crown glass (IOR = 1.52)
     vec3 incident = vec3(0.0, 0.0, -1.0);
-    float eta = 1.0 / 1.52;
-    vec3 refracted = refract(incident, normal, eta);
+    vec3 refr = refract(incident, normal, 1.0 / 1.52);
 
-    // Refracted UV displacement: bends both horizontally across the flute and diagonally along the wave
-    vec2 refractShift = vec2(
-      refracted.x * 0.14,
-      refracted.x * 0.095 + (1.0 - nz) * 0.04
-    );
+    // Refracted UV displacement: horizontal lens magnification & slight vertical tilt
+    vec2 refractShift = vec2(refr.x * 0.082, refr.x * 0.024);
 
-    // Multi-tap frosted refraction sampling + RGB chromatic dispersion inside the glass
-    vec2 dispersion = vec2(refracted.x * 0.009, refracted.x * 0.004);
-    float jitter = (hash(gl_FragCoord.xy) - 0.5) * 0.004;
+    // Multi-tap frosted sampling with RGB chromatic dispersion inside the glass flute
+    vec2 dispersion = vec2(refr.x * 0.0055, 0.0);
+    float jitter = (hash(gl_FragCoord.xy) - 0.5) * 0.003;
 
     vec3 accum = vec3(0.0);
     const int TAPS = 5;
     for (int i = -2; i <= 2; i++) {
-      float fi = float(i) * 0.0065 + jitter;
-      vec2 sampleUv = uv + refractShift + vec2(fi * 0.6, fi * 1.4);
+      float fi = float(i) * 0.005 + jitter;
+      vec2 sampleUv = uv + refractShift + vec2(fi * 0.35, fi * 1.1);
 
-      float r = sampleBackdrop(sampleUv + dispersion, t, u_dark).r;
-      float g = sampleBackdrop(sampleUv, t, u_dark).g;
-      float b = sampleBackdrop(sampleUv - dispersion, t, u_dark).b;
-      accum += vec3(r, g, b);
+      float cr = sampleBackdrop(sampleUv + dispersion, t, u_dark).r;
+      float cg = sampleBackdrop(sampleUv, t, u_dark).g;
+      float cb = sampleBackdrop(sampleUv - dispersion, t, u_dark).b;
+      accum += vec3(cr, cg, cb);
     }
     vec3 refractedColor = accum / float(TAPS);
 
-    // Physical Fresnel & cylindrical specular reflection (glossiness = 0.8)
-    // Coupled to the refracted wave luminance so the glass itself stays transparent
+    // Optical Caustic channeling: the cylindrical lens concentrates passing light waves into vertical bars
     float waveLuma = dot(refractedColor, vec3(0.299, 0.587, 0.114));
-    vec3 lightDir = normalize(vec3(-0.52, 0.25, 0.82));
-    vec3 viewDir  = vec3(0.0, 0.0, 1.0);
-    vec3 halfVec  = normalize(lightDir + viewDir);
+    float lensCore = exp(-pow(x * 1.7, 2.0));
+    float causticBar = lensCore * smoothstep(0.35, 0.95, waveLuma) * 0.38;
 
-    float glossiness = 0.8;
-    float spec = pow(max(dot(normal, halfVec), 0.0), 64.0) * glossiness;
-    float fresnel = pow(1.0 - nz, 3.2) * glossiness;
+    // Distinct vertical specular pinstripe along the bevel curve (exact look of reference image)
+    float pinstripe = exp(-pow((x - 0.28) * 11.0, 2.0));
+    float pinstripeSecondary = exp(-pow((x + 0.35) * 16.0, 2.0)) * 0.35;
+    float specHighlight = (pinstripe + pinstripeSecondary) * (0.35 + 0.65 * waveLuma);
 
-    // Soft cylindrical internal transmittance (slightly deeper at flute seam, brighter at lens apex)
-    float transmittance = mix(0.90, 1.04, nz);
-    // Antialiased micro-seam between adjacent glass cylinders
-    float seam = smoothstep(0.0, 0.06, 1.0 - abs(localX));
-    transmittance *= mix(0.92, 1.0, seam);
+    // Seam groove shading and edge rim light between adjacent glass flutes
+    float seamEdge = smoothstep(0.0, 0.14, 1.0 - abs(x));
+    float grooveShadow = mix(0.85, 1.0, seamEdge);
+    float grooveGlint = exp(-pow((abs(x) - 0.94) * 22.0, 2.0)) * 0.28;
 
-    vec3 specColor = mix(vec3(1.0, 0.97, 0.92), vec3(0.82, 0.99, 0.90), u_dark);
-    vec3 finalColor = refractedColor * transmittance
-                    + specColor * (spec * (0.18 + 0.32 * waveLuma) + fresnel * 0.12 * waveLuma);
+    // Transmittance depth across the glass flute (slightly richer at the sides, luminous in center)
+    float lensProfile = mix(0.92, 1.04, arc);
+
+    vec3 specColor = mix(vec3(1.0, 0.98, 0.94), vec3(0.84, 0.99, 0.91), u_dark);
+    vec3 finalColor = refractedColor * lensProfile * grooveShadow
+                    + refractedColor * causticBar
+                    + specColor * (specHighlight * 0.42 + grooveGlint);
 
     gl_FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
   }
