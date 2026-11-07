@@ -62,7 +62,7 @@ export default function DeadlinesPage() {
                 onClick={() => setScope('all')}
                 className={cn(
                   'rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-300',
-                  scope === 'all' ? 'bg-ink text-surface' : 'text-ink-muted hover:text-ink',
+                  scope === 'all' ? 'bg-accent text-accent-ink' : 'text-ink-muted hover:text-ink',
                 )}
               >
                 All open ({SCHOLARSHIPS.length})
@@ -73,7 +73,7 @@ export default function DeadlinesPage() {
                 onClick={() => setScope('tracked')}
                 className={cn(
                   'rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-300',
-                  scope === 'tracked' ? 'bg-ink text-surface' : 'text-ink-muted hover:text-ink',
+                  scope === 'tracked' ? 'bg-accent text-accent-ink' : 'text-ink-muted hover:text-ink',
                 )}
               >
                 My tracked ({trackedIds.size})

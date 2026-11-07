@@ -3,58 +3,64 @@
 @tailwind utilities;
 
 /* ------------------------------------------------------------------
- * Monochrome Physical Glassmorphism Design System (Glossiness: 0.8)
+ * Shader-Harmonized Physical Glassmorphism System (Glossiness: 0.8)
+ *  - Light Mode: Periwinkle-sky, seafoam-aqua & warm champagne glass
+ *  - Night Mode: Deep forest-emerald, teal-sapphire & luminous mint glass
  * ------------------------------------------------------------------ */
 @layer base {
   :root {
-    --color-base: 250 250 250;
-    --color-surface: 255 255 255;
-    --color-surface-muted: 245 245 245;
+    --color-base: 215 232 247;
+    --color-surface: 244 250 255;
+    --color-surface-muted: 226 239 252;
     --color-line: 255 255 255;
-    --color-ink: 12 12 14;
-    --color-ink-muted: 64 64 72;
-    --glass-bg: rgba(255, 255, 255, 0.52);
-    --glass-bg-strong: rgba(255, 255, 255, 0.72);
-    --glass-bg-subtle: rgba(255, 255, 255, 0.36);
-    --glass-border: rgba(255, 255, 255, 0.68);
+    --color-ink: 14 33 58;
+    --color-ink-muted: 52 82 118;
+    --color-accent: 21 65 116;
+    --color-accent-ink: 245 251 255;
+    --glass-bg: rgba(236, 246, 255, 0.48);
+    --glass-bg-strong: rgba(244, 250, 255, 0.68);
+    --glass-bg-subtle: rgba(255, 255, 255, 0.38);
+    --glass-border: rgba(255, 255, 255, 0.72);
     --glass-sheen: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.8) 0%,
-      rgba(255, 255, 255, 0.28) 38%,
-      rgba(255, 255, 255, 0.04) 68%,
-      rgba(255, 255, 255, 0.35) 100%
+      rgba(255, 255, 255, 0.82) 0%,
+      rgba(214, 240, 255, 0.32) 42%,
+      rgba(255, 236, 212, 0.18) 74%,
+      rgba(255, 255, 255, 0.42) 100%
     );
     --glass-shadow:
-      0 20px 48px -12px rgba(0, 0, 0, 0.16),
-      inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.88),
-      inset 1px 0 1px 0 rgba(255, 255, 255, 0.55),
-      inset 0 -1px 1.5px 0 rgba(255, 255, 255, 0.28);
+      0 20px 48px -12px rgba(15, 38, 72, 0.16),
+      inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.9),
+      inset 1px 0 1px 0 rgba(255, 255, 255, 0.58),
+      inset 0 -1px 1.5px 0 rgba(255, 242, 224, 0.35);
     color-scheme: light;
   }
 
   .dark {
-    --color-base: 8 8 10;
-    --color-surface: 18 18 22;
-    --color-surface-muted: 28 28 34;
-    --color-line: 255 255 255;
-    --color-ink: 250 250 252;
-    --color-ink-muted: 190 190 200;
-    --glass-bg: rgba(14, 14, 18, 0.54);
-    --glass-bg-strong: rgba(18, 18, 24, 0.74);
-    --glass-bg-subtle: rgba(255, 255, 255, 0.08);
-    --glass-border: rgba(255, 255, 255, 0.24);
+    --color-base: 4 30 28;
+    --color-surface: 7 42 35;
+    --color-surface-muted: 12 58 47;
+    --color-line: 167 243 208;
+    --color-ink: 234 253 245;
+    --color-ink-muted: 156 218 197;
+    --color-accent: 176 245 214;
+    --color-accent-ink: 5 36 28;
+    --glass-bg: rgba(6, 38, 31, 0.52);
+    --glass-bg-strong: rgba(8, 48, 39, 0.72);
+    --glass-bg-subtle: rgba(20, 88, 68, 0.32);
+    --glass-border: rgba(167, 243, 208, 0.28);
     --glass-sheen: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.28) 0%,
-      rgba(255, 255, 255, 0.08) 40%,
-      rgba(255, 255, 255, 0.01) 70%,
-      rgba(255, 255, 255, 0.14) 100%
+      rgba(199, 249, 224, 0.26) 0%,
+      rgba(16, 152, 104, 0.1) 42%,
+      rgba(4, 36, 44, 0.04) 72%,
+      rgba(253, 230, 138, 0.14) 100%
     );
     --glass-shadow:
-      0 24px 56px -12px rgba(0, 0, 0, 0.55),
-      inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.38),
-      inset 1px 0 1px 0 rgba(255, 255, 255, 0.18),
-      inset 0 -1px 1.5px 0 rgba(255, 255, 255, 0.1);
+      0 24px 56px -12px rgba(1, 14, 12, 0.58),
+      inset 0 1.5px 1.5px 0 rgba(209, 250, 229, 0.38),
+      inset 1px 0 1px 0 rgba(167, 243, 208, 0.2),
+      inset 0 -1px 1.5px 0 rgba(16, 185, 129, 0.14);
     color-scheme: dark;
   }
 
@@ -68,9 +74,11 @@
     background-color: rgb(var(--color-base));
     min-height: 100dvh;
     overflow-x: hidden;
+    transition:
+      background-color 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+      color 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  /* Editorial geometric typography inspired by reference image */
   h1,
   h2,
   h3 {
@@ -79,13 +87,12 @@
     line-height: 1.12;
   }
 
-  /* High-contrast monochrome keyboard focus indicator */
   :focus-visible {
-    @apply outline-none ring-2 ring-ink ring-offset-2 ring-offset-transparent;
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-transparent;
   }
 
   ::selection {
-    @apply bg-ink text-surface;
+    @apply bg-accent text-accent-ink;
   }
 }
 
@@ -95,68 +102,77 @@
   .glass-box {
     position: relative;
     border-radius: 1.5rem;
-    background: var(--glass-bg);
+    background-color: var(--glass-bg);
     background-image: var(--glass-sheen);
     border: 1px solid var(--glass-border);
     box-shadow: var(--glass-shadow);
-    backdrop-filter: blur(28px) saturate(185%);
-    -webkit-backdrop-filter: blur(28px) saturate(185%);
+    backdrop-filter: blur(26px) saturate(180%);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
     transition:
-      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-      border-color 0.35s ease,
-      background-color 0.35s ease;
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      color 0.45s ease;
   }
 
   .glass-pill {
-    background: var(--glass-bg-strong);
+    background-color: var(--glass-bg-strong);
     background-image: var(--glass-sheen);
     border: 1px solid var(--glass-border);
     box-shadow: var(--glass-shadow);
-    backdrop-filter: blur(32px) saturate(195%);
-    -webkit-backdrop-filter: blur(32px) saturate(195%);
+    backdrop-filter: blur(30px) saturate(190%);
+    -webkit-backdrop-filter: blur(30px) saturate(190%);
+    transition:
+      background-color 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s ease,
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .glass-subtle {
-    background: var(--glass-bg-subtle);
+    background-color: var(--glass-bg-subtle);
     border: 1px solid var(--glass-border);
-    backdrop-filter: blur(18px) saturate(160%);
-    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    transition:
+      background-color 0.5s ease,
+      border-color 0.5s ease,
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .chip {
     @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium tracking-tight;
-    background: var(--glass-bg-subtle);
+    background-color: var(--glass-bg-subtle);
     border: 1px solid var(--glass-border);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
+    transition: background-color 0.45s ease, border-color 0.45s ease, color 0.45s ease;
   }
 
   .input {
-    @apply w-full rounded-2xl px-4 py-2.5 text-sm text-ink placeholder:text-ink-muted/75 transition duration-300;
-    background: var(--glass-bg-strong);
+    @apply w-full rounded-2xl px-4 py-2.5 text-sm text-ink placeholder:text-ink-muted/75;
+    background-color: var(--glass-bg-strong);
     border: 1px solid var(--glass-border);
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.65), 0 4px 14px -4px rgba(0, 0, 0, 0.08);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.55), 0 4px 14px -4px rgba(0, 0, 0, 0.08);
     backdrop-filter: blur(20px) saturate(170%);
     -webkit-backdrop-filter: blur(20px) saturate(170%);
+    transition:
+      background-color 0.5s ease,
+      border-color 0.35s ease,
+      box-shadow 0.35s ease;
   }
 
   .input:focus {
     outline: none;
-    border-color: rgb(var(--color-ink) / 0.65);
+    border-color: rgb(var(--color-accent) / 0.7);
     box-shadow:
-      inset 0 1px 2px rgba(255, 255, 255, 0.9),
-      0 0 0 3px rgb(var(--color-ink) / 0.12);
+      inset 0 1px 2px rgba(255, 255, 255, 0.75),
+      0 0 0 3px rgb(var(--color-accent) / 0.18);
   }
 
   .label {
     @apply mb-1.5 block text-sm font-medium tracking-tight text-ink;
-  }
-
-  /* Pure monochrome glass text highlight */
-  .gradient-text {
-    @apply font-normal text-ink;
-    text-shadow: 0 1px 24px rgba(255, 255, 255, 0.55);
   }
 }
 
@@ -166,18 +182,6 @@
   }
   .pb-safe {
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-  }
-  .stagger-1 {
-    animation-delay: 50ms;
-  }
-  .stagger-2 {
-    animation-delay: 100ms;
-  }
-  .stagger-3 {
-    animation-delay: 150ms;
-  }
-  .stagger-4 {
-    animation-delay: 200ms;
   }
 }
 

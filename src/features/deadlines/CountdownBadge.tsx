@@ -4,13 +4,13 @@ import { formatCountdown, formatDate, getUrgency, type Urgency } from '@/lib/dat
 
 const URGENCY_STYLES: Record<Urgency, string> = {
   closed: 'opacity-50 text-ink-muted',
-  critical: 'bg-ink text-surface font-semibold',
+  critical: 'bg-accent text-accent-ink font-semibold',
   soon: 'text-ink font-medium',
   upcoming: 'text-ink',
   later: 'text-ink-muted',
 };
 
-/** Monochrome glass deadline countdown chip. */
+/** Shader-matched glass deadline countdown chip. */
 export function CountdownBadge({ deadline, className }: { deadline: string; className?: string }) {
   const urgency = getUrgency(deadline);
   return (

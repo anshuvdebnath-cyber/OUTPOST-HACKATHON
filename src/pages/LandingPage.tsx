@@ -9,6 +9,7 @@ import {
   KanbanSquare,
   ShieldCheck,
 } from 'lucide-react';
+import { Logo } from '@/components/layout/Logo';
 import { NAV_ITEMS } from '@/components/layout/navItems';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { buttonClasses } from '@/components/ui/Button';
@@ -55,28 +56,23 @@ const FEATURES = [
   },
 ];
 
-/** Editorial monochrome glassmorphism landing page set over the live WebGL wave shader. */
+/** Editorial glassmorphism landing page set over the dual-mode fluted WebGL wave shader. */
 export default function LandingPage() {
   useDocumentTitle('Rethinking the Scholarship Experience');
   const totalPool = SCHOLARSHIPS.reduce((sum, s) => sum + s.amount, 0);
 
   return (
-    <div className="min-h-dvh flex flex-col">
-      {/* Floating glassmorphism pill navbar — no icon box logo */}
+    <div className="flex min-h-dvh flex-col">
+      {/* Floating glassmorphism pill navbar with new Fluted-Prism Logo */}
       <header className="sticky top-4 z-40 mx-auto w-full max-w-6xl px-4 sm:top-6 sm:px-6">
-        <div className="glass-pill flex items-center justify-between gap-4 rounded-full px-5 py-2.5 sm:px-7 sm:py-3">
-          <Link
-            to="/"
-            className="font-display text-base font-medium tracking-[-0.03em] text-ink transition hover:opacity-75 sm:text-lg"
-          >
-            Grantly
-          </Link>
+        <div className="glass-pill flex items-center justify-between gap-4 rounded-full px-3.5 py-2 sm:px-5 sm:py-2.5">
+          <Logo to="/" />
           <nav aria-label="Landing navigation" className="hidden items-center gap-1 md:flex">
             {NAV_ITEMS.map(({ to, label }) => (
               <NavLink
                 key={to}
                 to={to}
-                className="rounded-full px-4 py-1.5 text-sm font-medium text-ink-muted transition hover:bg-ink/10 hover:text-ink"
+                className="rounded-full px-4 py-2 text-sm font-medium text-ink-muted transition-colors duration-300 hover:bg-accent/15 hover:text-ink"
               >
                 {label}
               </NavLink>
@@ -91,9 +87,9 @@ export default function LandingPage() {
         </div>
       </header>
 
-      <main id="main-content" className="animate-page-enter flex-1">
+      <main id="main-content" className="animate-fade-in-up flex-1">
         {/* Hero */}
-        <section className="mx-auto max-w-6xl px-4 pb-12 pt-14 sm:px-6 sm:pt-20 lg:px-8">
+        <section className="mx-auto max-w-6xl px-4 pb-12 pt-12 sm:px-6 sm:pt-16 lg:px-8">
           <div className="card mx-auto max-w-5xl px-6 py-14 text-center sm:px-14 sm:py-20">
             <span className="chip text-ink">Unified Scholarship Discovery &amp; Management</span>
             <h1 className="mx-auto mt-6 max-w-4xl font-display text-4xl font-light tracking-[-0.035em] text-ink sm:text-6xl lg:text-[4.25rem]">

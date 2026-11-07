@@ -11,13 +11,13 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANTS: Record<Variant, string> = {
   primary:
-    'bg-ink text-surface shadow-card hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50',
+    'bg-accent text-accent-ink shadow-card hover:opacity-92 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50',
   secondary:
     'glass-pill text-ink hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0',
   ghost:
-    'text-ink-muted hover:bg-ink/10 hover:text-ink',
+    'text-ink-muted hover:bg-accent/15 hover:text-ink',
   danger:
-    'bg-ink text-surface border border-ink/40 hover:opacity-85',
+    'bg-accent text-accent-ink border border-accent/40 hover:opacity-85',
 };
 
 const SIZES: Record<Size, string> = {
@@ -27,7 +27,7 @@ const SIZES: Record<Size, string> = {
   icon: 'h-10 w-10 justify-center',
 };
 
-/** Accessible monochrome glass button with fluid motion. */
+/** Accessible shader-harmonized glass button with fluid motion. */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   { variant = 'primary', size = 'md', className, type = 'button', ...props },
   ref,
@@ -47,7 +47,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   );
 });
 
-/** Shared class list so <Link> elements can look like monochrome glass buttons. */
+/** Shared class list so <Link> elements can look like shader-matched glass buttons. */
 // eslint-disable-next-line react-refresh/only-export-components
 export function buttonClasses(variant: Variant = 'primary', size: Size = 'md', className?: string): string {
   return cn(

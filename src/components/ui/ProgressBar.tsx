@@ -8,7 +8,7 @@ interface ProgressBarProps {
   className?: string;
 }
 
-/** Accessible monochrome glass progress bar with smooth spring width transition. */
+/** Accessible shader-harmonized glass progress bar with smooth spring width transition. */
 export function ProgressBar({ value, label, showValue = false, className }: ProgressBarProps) {
   const clamped = Math.max(0, Math.min(100, Math.round(value)));
   return (
@@ -28,7 +28,7 @@ export function ProgressBar({ value, label, showValue = false, className }: Prog
         className="glass-subtle h-2 w-full overflow-hidden rounded-full"
       >
         <div
-          className="h-full rounded-full bg-ink transition-[width] duration-700 ease-out"
+          className="h-full rounded-full bg-accent transition-[width] duration-700 ease-out"
           style={{ width: `${clamped}%` }}
         />
       </div>

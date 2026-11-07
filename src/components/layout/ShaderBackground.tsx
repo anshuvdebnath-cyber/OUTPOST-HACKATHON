@@ -11,19 +11,20 @@ const VERTEX_SHADER = `
 `;
 
 /**
- * Fragment shader inspired by the reference frosted metallic-rose wave texture:
- *  - Domain-warped organic liquid wave heightfield
- *  - High-frequency frosted micro-grain normal perturbation
- *  - Blinn-Phong + Fresnel physical specular lighting with glossiness = 0.8
+ * Dual-Mode Fluted / Reeded Glass WebGL Fragment Shader:
+ *  - Non-interactive (purely autonomous time-driven wave motion)
+ *  - Light mode (u_dark = 0): Periwinkle blue, icy seafoam-aqua, warm champagne sunlight
+ *  - Night mode (u_dark = 1): Deep sapphire-teal, rich forest emerald, luminous mint-jade
+ *  - Vertical cylindrical glass flutes refract the underlying wave field with 0.8 specular glossiness
  */
 const FRAGMENT_SHADER = `
   precision highp float;
   varying vec2 v_uv;
   uniform float u_time;
   uniform vec2 u_resolution;
-  uniform vec2 u_mouse;
   uniform float u_dark;
 
+  // Smooth procedural noise for subtle glass grain
   float hash(vec2 p) {
     vec3 p3 = fract(vec3(p.xyx) * 0.1031);
     p3 += dot(p3, p3.yzx + 33.33);
@@ -41,80 +42,88 @@ const FRAGMENT_SHADER = `
     );
   }
 
-  // Layered flowing silk wave heightfield
-  float waveHeight(vec2 p, float t) {
-    vec2 q = vec2(
-      sin(p.x * 1.7 + t * 0.55 + cos(p.y * 1.4 - t * 0.35)),
-      cos(p.y * 1.6 - t * 0.45 + sin(p.x * 1.3 + t * 0.4))
-    );
-    float w1 = sin(p.x * 2.4 + p.y * 1.9 + q.x * 1.6 + t * 0.7);
-    float w2 = cos(p.x * 1.5 - p.y * 2.8 + q.y * 1.5 - t * 0.5);
-    float w3 = sin((p.x + p.y) * 3.6 - t * 0.65) * 0.38;
-    float n = noise(p * 2.4 + q * 0.65 + t * 0.2) * 0.65;
-    return (w1 * 0.42 + w2 * 0.38 + w3 + n);
+  // Light Mode: Periwinkle blue + icy aqua-mint + warm champagne sunlight wave field
+  vec3 sampleLightPalette(vec2 uv, float t) {
+    float w1 = sin(uv.x * 2.6 - uv.y * 2.1 + t * 0.45);
+    float w2 = cos(uv.x * 1.9 + uv.y * 2.8 - t * 0.38);
+    float diag = sin((uv.x * 1.4 + uv.y * 1.8) * 2.2 - t * 0.5);
+
+    vec3 periwinkle = vec3(0.42, 0.56, 0.84);
+    vec3 softLavender = vec3(0.72, 0.77, 0.93);
+    vec3 icyAqua    = vec3(0.75, 0.90, 0.92);
+    vec3 champagne  = vec3(0.99, 0.89, 0.78);
+    vec3 pearlWhite = vec3(0.95, 0.98, 1.00);
+
+    vec3 col = mix(periwinkle, icyAqua, smoothstep(-0.7, 0.7, w1 * 0.6 + (uv.x - 0.5) * 0.9));
+    col = mix(col, softLavender, smoothstep(0.1, 0.9, (1.0 - uv.y) * 0.8 + w2 * 0.25));
+    float sunBand = smoothstep(0.18, 0.85, diag * 0.5 + uv.x * 0.45 + uv.y * 0.35);
+    col = mix(col, champagne, sunBand * 0.78);
+    col = mix(col, pearlWhite, smoothstep(0.55, 0.98, w2 * 0.5 + 0.5) * 0.35);
+    return col;
+  }
+
+  // Night Mode: Deep teal-sapphire + rich forest emerald + luminous mint-jade wave field
+  vec3 sampleDarkPalette(vec2 uv, float t) {
+    float w1 = sin(uv.x * 2.4 + uv.y * 1.7 - t * 0.42);
+    float w2 = cos(uv.x * 3.1 - uv.y * 2.0 + t * 0.36);
+    float crest = sin((uv.x * 2.0 - uv.y * 1.3) * 2.0 + t * 0.48);
+
+    vec3 abyssTeal     = vec3(0.02, 0.14, 0.22);
+    vec3 deepPine      = vec3(0.02, 0.24, 0.18);
+    vec3 richEmerald   = vec3(0.05, 0.48, 0.34);
+    vec3 vibrantJade   = vec3(0.16, 0.72, 0.50);
+    vec3 champagneMint = vec3(0.78, 0.96, 0.84);
+
+    vec3 col = mix(abyssTeal, deepPine, smoothstep(0.0, 0.65, uv.x + w1 * 0.22));
+    col = mix(col, richEmerald, smoothstep(-0.5, 0.65, w1 * 0.55 + w2 * 0.45));
+    col = mix(col, vibrantJade, smoothstep(0.15, 0.88, crest * 0.5 + 0.5) * 0.75);
+    col = mix(col, champagneMint, pow(clamp(crest * 0.5 + 0.5, 0.0, 1.0), 4.0) * 0.48);
+    return col;
   }
 
   void main() {
-    vec2 aspect = vec2(u_resolution.x / max(u_resolution.y, 1.0), 1.0);
-    vec2 uv = (v_uv - 0.5) * aspect;
-    vec2 mouseOffset = (u_mouse - 0.5) * 0.35;
-    vec2 p = uv * 2.1 - mouseOffset;
-    float t = u_time * 0.65;
+    float aspect = u_resolution.x / max(u_resolution.y, 1.0);
+    vec2 uv = v_uv;
+    float t = u_time;
 
-    // Finite-difference wave gradient for physical surface normal
-    float eps = 0.015;
-    float h = waveHeight(p, t);
-    float hx = waveHeight(p + vec2(eps, 0.0), t);
-    float hy = waveHeight(p + vec2(0.0, eps), t);
+    // Vertical fluted / reeded glass geometry
+    float fluteCount = floor(clamp(u_resolution.x / 26.0, 24.0, 68.0));
+    float fluteCoord = uv.x * fluteCount * 6.2831853;
 
-    // High-frequency frosted glass micro-bump normal perturbation
-    vec2 frostUv = v_uv * u_resolution * 0.28;
-    float f0 = noise(frostUv);
-    float fx = noise(frostUv + vec2(1.3, 0.0)) - f0;
-    float fy = noise(frostUv + vec2(0.0, 1.3)) - f0;
+    // Subtle organic wave modulation along the vertical reeds
+    float waveShift = sin(uv.y * 4.2 - t * 0.55 + sin(uv.x * 5.0 + t * 0.35) * 0.6) * 0.35;
+    float fluteSin = sin(fluteCoord + waveShift);
+    float fluteCos = cos(fluteCoord + waveShift);
 
-    vec3 normal = normalize(vec3(
-      -(hx - h) / eps * 0.55 - fx * 0.38,
-      -(hy - h) / eps * 0.55 - fy * 0.38,
-      1.0
-    ));
+    // Fine frosted micro-grain on the glass surface
+    float grain = (noise(uv * u_resolution * 0.35) - 0.5) * 0.06;
 
-    // View and animated light directions
-    vec3 viewDir = normalize(vec3(-uv * 0.35, 1.0));
-    vec3 lightDir1 = normalize(vec3(-0.45 + sin(t * 0.4) * 0.25, 0.55 + cos(t * 0.35) * 0.2, 0.85));
-    vec3 lightDir2 = normalize(vec3(0.6, -0.45, 0.7));
+    // Cylindrical glass normal for each vertical flute
+    vec3 normal = normalize(vec3(fluteSin * 0.78 + grain, sin(uv.y * 3.14159 - t * 0.4) * 0.08, 1.0));
 
-    // Diffuse & Blinn-Phong specular with glossiness = 0.8
-    float diff1 = max(dot(normal, lightDir1), 0.0);
-    float diff2 = max(dot(normal, lightDir2), 0.0);
+    // Refract UV through the cylindrical fluted lens
+    vec2 refractedUv = uv + vec2(normal.x * (0.045 / max(aspect * 0.6, 0.8)), normal.y * 0.02);
+
+    // Sample both light and dark wave fields and crossfade smoothly via u_dark
+    vec3 lightCol = sampleLightPalette(refractedUv, t);
+    vec3 darkCol  = sampleDarkPalette(refractedUv, t);
+    vec3 baseCol  = mix(lightCol, darkCol, u_dark);
+
+    // Physical Blinn-Phong + Fresnel lighting with glossiness = 0.8
+    vec3 viewDir  = vec3(0.0, 0.0, 1.0);
+    vec3 lightDir = normalize(vec3(0.42 + sin(t * 0.3) * 0.15, 0.38, 0.85));
+    vec3 halfVec  = normalize(lightDir + viewDir);
+
     float glossiness = 0.8;
-    float shininess = mix(12.0, 76.0, glossiness);
+    float shininess  = 58.0;
+    float spec = pow(max(dot(normal, halfVec), 0.0), shininess) * glossiness;
+    float rim  = pow(1.0 - abs(fluteCos), 3.0) * 0.28;
+    float shadow = mix(0.84, 1.06, fluteCos * 0.5 + 0.5);
 
-    vec3 halfVec1 = normalize(lightDir1 + viewDir);
-    vec3 halfVec2 = normalize(lightDir2 + viewDir);
-    float spec1 = pow(max(dot(normal, halfVec1), 0.0), shininess) * glossiness;
-    float spec2 = pow(max(dot(normal, halfVec2), 0.0), shininess * 0.6) * (glossiness * 0.55);
-    float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 3.0) * glossiness;
+    vec3 specTint = mix(vec3(1.0, 0.97, 0.92), vec3(0.82, 0.99, 0.90), u_dark);
+    vec3 finalCol = baseCol * shadow + specTint * (spec * 0.55 + rim * mix(0.45, 0.25, u_dark));
 
-    // Rich metallic rose / crimson / pearl palette from reference image
-    vec3 deepCrimson = vec3(0.56, 0.07, 0.24);
-    vec3 vibrantRose = vec3(0.85, 0.25, 0.46);
-    vec3 warmBlush   = vec3(0.95, 0.56, 0.70);
-    vec3 pearlPink   = vec3(0.99, 0.86, 0.91);
-
-    float band = clamp(h * 0.5 + 0.5, 0.0, 1.0);
-    vec3 baseColor = mix(deepCrimson, vibrantRose, smoothstep(0.05, 0.55, band));
-    baseColor = mix(baseColor, warmBlush, smoothstep(0.45, 0.88, diff1 * 0.75 + band * 0.35));
-
-    // Add frosted micro-sparkle and glossy specular highlights
-    float microSparkle = smoothstep(0.62, 0.98, f0) * spec1 * 0.65;
-    vec3 color = baseColor * (0.62 + 0.45 * diff1 + 0.22 * diff2);
-    color += pearlPink * (spec1 * 0.95 + spec2 * 0.45 + fresnel * 0.35 + microSparkle);
-
-    // Subtle dark-mode dimming so white monochrome glass text remains ultra-crisp
-    color = mix(color, color * 0.58 + vec3(0.06, 0.01, 0.03), u_dark * 0.72);
-
-    gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
+    gl_FragColor = vec4(clamp(finalCol, 0.0, 1.0), 1.0);
   }
 `;
 
@@ -131,16 +140,17 @@ function compileShader(gl: WebGLRenderingContext, type: number, source: string):
 }
 
 /**
- * Full-viewport live WebGL shader canvas rendering the frosted liquid-rose wave motion.
- * Falls back gracefully when WebGL is unavailable (e.g. headless unit tests).
+ * Full-viewport non-interactive WebGL fluted-glass wave background.
+ * Smoothly cross-dissolves between the Light Mode (periwinkle/aqua/champagne) and
+ * Night Mode (deep teal/emerald/mint) shaders whenever the theme changes.
  */
 export function ShaderBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const theme = useThemeStore((s) => s.theme);
-  const darkRef = useRef(theme === 'dark' ? 1 : 0);
+  const darkTargetRef = useRef(theme === 'dark' ? 1 : 0);
 
   useEffect(() => {
-    darkRef.current = theme === 'dark' ? 1 : 0;
+    darkTargetRef.current = theme === 'dark' ? 1 : 0;
   }, [theme]);
 
   useEffect(() => {
@@ -182,11 +192,10 @@ export function ShaderBackground() {
 
     const uTime = gl.getUniformLocation(program, 'u_time');
     const uRes = gl.getUniformLocation(program, 'u_resolution');
-    const uMouse = gl.getUniformLocation(program, 'u_mouse');
     const uDark = gl.getUniformLocation(program, 'u_dark');
 
-    const mouse = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5 };
-    let currentDark = darkRef.current;
+    let currentDark = darkTargetRef.current;
+    let lastTime = performance.now();
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
@@ -196,26 +205,22 @@ export function ShaderBackground() {
     };
     resize();
 
-    const onPointerMove = (e: PointerEvent) => {
-      mouse.tx = e.clientX / Math.max(window.innerWidth, 1);
-      mouse.ty = 1.0 - e.clientY / Math.max(window.innerHeight, 1);
-    };
-
     window.addEventListener('resize', resize, { passive: true });
-    window.addEventListener('pointermove', onPointerMove, { passive: true });
 
     let raf = 0;
     const start = performance.now();
 
     const render = (now: number) => {
+      const dt = Math.min((now - lastTime) * 0.001, 0.1);
+      lastTime = now;
       const elapsed = (now - start) * 0.001;
-      mouse.x += (mouse.tx - mouse.x) * 0.05;
-      mouse.y += (mouse.ty - mouse.y) * 0.05;
-      currentDark += (darkRef.current - currentDark) * 0.08;
+
+      // Exponentially damped interpolation for silky-smooth light/dark mode transition
+      const blendRate = 1 - Math.exp(-dt * 4.5);
+      currentDark += (darkTargetRef.current - currentDark) * blendRate;
 
       gl?.uniform1f(uTime, elapsed);
       gl?.uniform2f(uRes, canvas.width, canvas.height);
-      gl?.uniform2f(uMouse, mouse.x, mouse.y);
       gl?.uniform1f(uDark, currentDark);
       gl?.drawArrays(gl.TRIANGLES, 0, 6);
       raf = requestAnimationFrame(render);
@@ -225,21 +230,21 @@ export function ShaderBackground() {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
-      window.removeEventListener('pointermove', onPointerMove);
     };
   }, []);
 
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden transition-colors duration-700"
       style={{
         background:
-          'radial-gradient(circle at 25% 20%, #f8a4c0 0%, #d43d6e 45%, #8c143c 100%)',
+          theme === 'dark'
+            ? 'linear-gradient(135deg, #04202c 0%, #074e3a 55%, #0e6b4c 100%)'
+            : 'linear-gradient(135deg, #7492d2 0%, #bfe2e5 55%, #fae6cf 100%)',
       }}
     >
-      <canvas ref={canvasRef} className="h-full w-full block" />
+      <canvas ref={canvasRef} className="block h-full w-full" />
     </div>
   );
 }
-

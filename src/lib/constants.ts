@@ -67,13 +67,13 @@ export const DOCUMENT_LABELS: Record<DocumentType, string> = {
   'research-proposal': 'Research proposal',
 };
 
-/** Strictly monochrome black & white status styles for glassmorphism UI. */
+/** Shader-harmonized status styles for glassmorphism UI. */
 export const STATUS_META: Record<ApplicationStatus, { label: string; tone: string; dot: string }> = {
-  saved: { label: 'Saved', tone: 'text-ink', dot: 'bg-ink/40' },
-  preparing: { label: 'Preparing', tone: 'text-ink', dot: 'bg-ink/60' },
-  submitted: { label: 'Submitted', tone: 'text-ink', dot: 'bg-ink/75' },
-  interview: { label: 'Interview', tone: 'text-ink', dot: 'bg-ink/85' },
-  awarded: { label: 'Awarded', tone: 'bg-ink text-surface font-semibold', dot: 'bg-ink' },
+  saved: { label: 'Saved', tone: 'text-ink', dot: 'bg-accent/45' },
+  preparing: { label: 'Preparing', tone: 'text-ink', dot: 'bg-accent/65' },
+  submitted: { label: 'Submitted', tone: 'text-ink', dot: 'bg-accent/80' },
+  interview: { label: 'Interview', tone: 'text-ink', dot: 'bg-accent/90' },
+  awarded: { label: 'Awarded', tone: 'bg-accent text-accent-ink font-semibold', dot: 'bg-accent' },
   rejected: { label: 'Not selected', tone: 'text-ink-muted line-through', dot: 'bg-ink/25' },
 };
 

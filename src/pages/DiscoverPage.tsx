@@ -105,7 +105,7 @@ export default function DiscoverPage() {
             <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
             Filters
             {activeCount > 0 && (
-              <span className="rounded-full bg-ink px-2 py-0.5 text-xs text-surface">{activeCount}</span>
+              <span className="rounded-full bg-accent px-2 py-0.5 text-xs text-accent-ink">{activeCount}</span>
             )}
           </Button>
         </div>

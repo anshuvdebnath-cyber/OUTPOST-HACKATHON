@@ -2,8 +2,8 @@ import { cn } from '@/lib/cn';
 import type { MatchResult } from './matchEngine';
 
 const VERDICT_META = {
-  eligible: { label: 'Eligible', ring: 'text-ink', chip: 'bg-ink text-surface' },
-  likely: { label: 'Likely eligible', ring: 'text-ink/75', chip: 'text-ink' },
+  eligible: { label: 'Eligible', ring: 'text-accent', chip: 'bg-accent text-accent-ink' },
+  likely: { label: 'Likely eligible', ring: 'text-ink/80', chip: 'text-ink' },
   ineligible: { label: 'Not eligible', ring: 'text-ink/35', chip: 'text-ink-muted' },
 } as const;
 
@@ -12,7 +12,7 @@ interface MatchBadgeProps {
   size?: 'sm' | 'lg';
 }
 
-/** Monochrome circular match-score gauge with frosted glass verdict label. */
+/** Shader-harmonized circular match-score gauge with frosted glass verdict label. */
 export function MatchBadge({ match, size = 'sm' }: MatchBadgeProps) {
   const meta = VERDICT_META[match.verdict];
   const dim = size === 'lg' ? 88 : 48;

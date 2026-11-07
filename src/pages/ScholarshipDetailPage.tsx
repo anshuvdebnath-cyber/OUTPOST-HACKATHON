@@ -255,7 +255,7 @@ function ApplicationSteps({ scholarship: s }: { scholarship: Scholarship }) {
               <span
                 className={cn(
                   'grid h-7 w-7 shrink-0 place-items-center rounded-full text-xs font-semibold',
-                  step?.done ? 'bg-ink text-surface' : 'glass-subtle text-ink',
+                  step?.done ? 'bg-accent text-accent-ink' : 'glass-subtle text-ink',
                 )}
                 aria-hidden="true"
               >

@@ -92,7 +92,7 @@ export const ScholarshipCard = memo(function ScholarshipCard({ scholarship: s, m
             className={cn(
               'grid h-10 w-10 place-items-center rounded-full transition-all duration-300',
               isComparing
-                ? 'bg-ink text-surface shadow-sm scale-105'
+                ? 'bg-accent text-accent-ink shadow-sm scale-105'
                 : 'glass-subtle text-ink hover:scale-105',
             )}
           >
@@ -107,7 +107,7 @@ export const ScholarshipCard = memo(function ScholarshipCard({ scholarship: s, m
             className={cn(
               'grid h-10 w-10 place-items-center rounded-full transition-all duration-300',
               isSaved
-                ? 'bg-ink text-surface shadow-sm scale-105'
+                ? 'bg-accent text-accent-ink shadow-sm scale-105'
                 : 'glass-subtle text-ink hover:scale-105',
             )}
           >

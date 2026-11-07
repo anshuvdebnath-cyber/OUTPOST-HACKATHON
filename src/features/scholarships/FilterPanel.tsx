@@ -89,7 +89,7 @@ export function FilterPanel() {
               className={cn(
                 'rounded-full px-3 py-2 text-xs font-medium transition-all duration-300',
                 filters.deadlineWithinDays === o.value
-                  ? 'bg-ink text-surface shadow-sm'
+                  ? 'bg-accent text-accent-ink shadow-sm'
                   : 'glass-subtle text-ink-muted hover:text-ink',
               )}
             >
@@ -125,7 +125,7 @@ function ChipGroup<T extends string>({ legend, options, selected, onToggle }: Ch
               className={cn(
                 'rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-300',
                 active
-                  ? 'bg-ink text-surface shadow-sm'
+                  ? 'bg-accent text-accent-ink shadow-sm'
                   : 'glass-subtle text-ink-muted hover:text-ink',
               )}
             >
