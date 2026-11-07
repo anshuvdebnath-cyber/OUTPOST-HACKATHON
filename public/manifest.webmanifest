@@ -1,0 +1,11 @@
+{
+  "name": "Grantly — Scholarship Discovery & Management",
+  "short_name": "Grantly",
+  "description": "Discover, match and track scholarships in one seamless journey.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
+

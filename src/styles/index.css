@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------
+ * Design tokens (RGB channels so Tailwind can apply opacity modifiers)
+ * ------------------------------------------------------------------ */
+@layer base {
+  :root {
+    --color-base: 248 250 252; /* page background */
+    --color-surface: 255 255 255; /* cards */
+    --color-surface-muted: 241 245 249;
+    --color-line: 226 232 240;
+    --color-ink: 15 23 42; /* primary text — 15.4:1 contrast on white */
+    --color-ink-muted: 71 85 105; /* secondary text — 7.5:1 contrast on white */
+    color-scheme: light;
+  }
+
+  .dark {
+    --color-base: 2 6 23;
+    --color-surface: 15 23 42;
+    --color-surface-muted: 30 41 59;
+    --color-line: 51 65 85;
+    --color-ink: 241 245 249;
+    --color-ink-muted: 165 180 203;
+    color-scheme: dark;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-base font-sans text-ink antialiased;
+    min-height: 100dvh;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+
+  /* Highly visible keyboard focus indicator (WCAG 2.4.7) */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-base;
+  }
+
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-line bg-surface shadow-card;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-muted/70
+      transition focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30;
+  }
+
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-ink;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-600 via-violet-600 to-fuchsia-600 bg-clip-text text-transparent;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  .pb-safe {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* Small screens: slightly larger tap targets */
+@media (max-width: 640px) {
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Respect users who prefer reduced motion (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print-friendly scholarship details */
+@media print {
+  nav,
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+}
+
