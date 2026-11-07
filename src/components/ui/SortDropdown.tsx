@@ -94,3 +94,4 @@ export function SortDropdown({ value, onChange, options, className }: SortDropdo
     </div>
   );
 }
+
