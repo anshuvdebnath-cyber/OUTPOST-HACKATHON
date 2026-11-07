@@ -11,11 +11,12 @@ const VERTEX_SHADER = `
 `;
 
 /**
- * Dual-Mode Fluted / Reeded Glass WebGL Fragment Shader:
- *  - Non-interactive (purely autonomous time-driven wave motion)
- *  - Light mode (u_dark = 0): Periwinkle blue, icy seafoam-aqua, warm champagne sunlight
- *  - Night mode (u_dark = 1): Deep sapphire-teal, rich forest emerald, luminous mint-jade
- *  - Vertical cylindrical glass flutes refract the underlying wave field with 0.8 specular glossiness
+ * Dual-Mode Optical Fluted-Glass WebGL Fragment Shader:
+ *  - The vertical glass reeds are nearly invisible on their own; they manifest
+ *    through cylindrical Snell refraction, subtle RGB lens dispersion, and
+ *    wave-coupled specular highlights (glossiness = 0.8) as the colour waves
+ *    glide behind them.
+ *  - Wave speed increased slightly (u_time * 1.38) for fluid organic motion.
  */
 const FRAGMENT_SHADER = `
   precision highp float;
@@ -24,104 +25,108 @@ const FRAGMENT_SHADER = `
   uniform vec2 u_resolution;
   uniform float u_dark;
 
-  // Smooth procedural noise for subtle glass grain
-  float hash(vec2 p) {
-    vec3 p3 = fract(vec3(p.xyx) * 0.1031);
-    p3 += dot(p3, p3.yzx + 33.33);
-    return fract((p3.x + p3.y) * p3.z);
-  }
+  // Light Mode: Periwinkle blue + icy seafoam-aqua + warm champagne sunlight waves
+  vec3 sampleLightWave(vec2 uv, float t) {
+    float w1 = sin(uv.x * 2.7 - uv.y * 2.2 + t * 0.58);
+    float w2 = cos(uv.x * 2.0 + uv.y * 2.9 - t * 0.48);
+    float w3 = sin((uv.x * 1.6 + uv.y * 1.9) * 2.3 - t * 0.62);
 
-  float noise(vec2 p) {
-    vec2 i = floor(p);
-    vec2 f = fract(p);
-    vec2 u = f * f * (3.0 - 2.0 * f);
-    return mix(
-      mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
-      mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
-      u.y
-    );
-  }
+    vec3 deepPeriwinkle = vec3(0.38, 0.53, 0.84);
+    vec3 softPeriwinkle = vec3(0.67, 0.75, 0.93);
+    vec3 icyAqua        = vec3(0.74, 0.90, 0.92);
+    vec3 warmChampagne  = vec3(0.99, 0.89, 0.77);
+    vec3 pearlLight     = vec3(0.96, 0.98, 1.00);
 
-  // Light Mode: Periwinkle blue + icy aqua-mint + warm champagne sunlight wave field
-  vec3 sampleLightPalette(vec2 uv, float t) {
-    float w1 = sin(uv.x * 2.6 - uv.y * 2.1 + t * 0.45);
-    float w2 = cos(uv.x * 1.9 + uv.y * 2.8 - t * 0.38);
-    float diag = sin((uv.x * 1.4 + uv.y * 1.8) * 2.2 - t * 0.5);
-
-    vec3 periwinkle = vec3(0.42, 0.56, 0.84);
-    vec3 softLavender = vec3(0.72, 0.77, 0.93);
-    vec3 icyAqua    = vec3(0.75, 0.90, 0.92);
-    vec3 champagne  = vec3(0.99, 0.89, 0.78);
-    vec3 pearlWhite = vec3(0.95, 0.98, 1.00);
-
-    vec3 col = mix(periwinkle, icyAqua, smoothstep(-0.7, 0.7, w1 * 0.6 + (uv.x - 0.5) * 0.9));
-    col = mix(col, softLavender, smoothstep(0.1, 0.9, (1.0 - uv.y) * 0.8 + w2 * 0.25));
-    float sunBand = smoothstep(0.18, 0.85, diag * 0.5 + uv.x * 0.45 + uv.y * 0.35);
-    col = mix(col, champagne, sunBand * 0.78);
-    col = mix(col, pearlWhite, smoothstep(0.55, 0.98, w2 * 0.5 + 0.5) * 0.35);
+    vec3 col = mix(deepPeriwinkle, icyAqua, smoothstep(-0.75, 0.75, w1 * 0.65 + (uv.x - 0.48) * 0.85));
+    col = mix(col, softPeriwinkle, smoothstep(0.05, 0.92, (1.0 - uv.y) * 0.75 + w2 * 0.3));
+    float sunCrest = smoothstep(0.12, 0.86, w3 * 0.52 + uv.x * 0.42 + uv.y * 0.36);
+    col = mix(col, warmChampagne, sunCrest * 0.82);
+    col = mix(col, pearlLight, smoothstep(0.5, 0.98, w2 * 0.5 + 0.5) * 0.32);
     return col;
   }
 
-  // Night Mode: Deep teal-sapphire + rich forest emerald + luminous mint-jade wave field
-  vec3 sampleDarkPalette(vec2 uv, float t) {
-    float w1 = sin(uv.x * 2.4 + uv.y * 1.7 - t * 0.42);
-    float w2 = cos(uv.x * 3.1 - uv.y * 2.0 + t * 0.36);
-    float crest = sin((uv.x * 2.0 - uv.y * 1.3) * 2.0 + t * 0.48);
+  // Night Mode: Deep abyssal teal + rich forest emerald + luminous mint-jade waves
+  vec3 sampleDarkWave(vec2 uv, float t) {
+    float w1 = sin(uv.x * 2.5 + uv.y * 1.9 - t * 0.55);
+    float w2 = cos(uv.x * 3.0 - uv.y * 2.2 + t * 0.46);
+    float crest = sin((uv.x * 2.1 - uv.y * 1.4) * 2.1 + t * 0.60);
 
-    vec3 abyssTeal     = vec3(0.02, 0.14, 0.22);
-    vec3 deepPine      = vec3(0.02, 0.24, 0.18);
-    vec3 richEmerald   = vec3(0.05, 0.48, 0.34);
-    vec3 vibrantJade   = vec3(0.16, 0.72, 0.50);
-    vec3 champagneMint = vec3(0.78, 0.96, 0.84);
+    vec3 abyssTeal     = vec3(0.01, 0.13, 0.21);
+    vec3 deepPine      = vec3(0.02, 0.23, 0.17);
+    vec3 richEmerald   = vec3(0.04, 0.49, 0.34);
+    vec3 vibrantJade   = vec3(0.15, 0.74, 0.51);
+    vec3 champagneMint = vec3(0.80, 0.97, 0.86);
 
-    vec3 col = mix(abyssTeal, deepPine, smoothstep(0.0, 0.65, uv.x + w1 * 0.22));
-    col = mix(col, richEmerald, smoothstep(-0.5, 0.65, w1 * 0.55 + w2 * 0.45));
-    col = mix(col, vibrantJade, smoothstep(0.15, 0.88, crest * 0.5 + 0.5) * 0.75);
-    col = mix(col, champagneMint, pow(clamp(crest * 0.5 + 0.5, 0.0, 1.0), 4.0) * 0.48);
+    vec3 col = mix(abyssTeal, deepPine, smoothstep(-0.1, 0.7, uv.x + w1 * 0.28));
+    col = mix(col, richEmerald, smoothstep(-0.55, 0.65, w1 * 0.58 + w2 * 0.45));
+    col = mix(col, vibrantJade, smoothstep(0.12, 0.88, crest * 0.5 + 0.5) * 0.78);
+    col = mix(col, champagneMint, pow(clamp(crest * 0.5 + 0.5, 0.0, 1.0), 3.6) * 0.52);
     return col;
+  }
+
+  vec3 sampleScene(vec2 uv, float t, float darkMix) {
+    return mix(sampleLightWave(uv, t), sampleDarkWave(uv, t), darkMix);
   }
 
   void main() {
     float aspect = u_resolution.x / max(u_resolution.y, 1.0);
     vec2 uv = v_uv;
-    float t = u_time;
+    // Slightly faster wave speed for more fluid motion
+    float t = u_time * 1.38;
 
-    // Vertical fluted / reeded glass geometry
-    float fluteCount = floor(clamp(u_resolution.x / 26.0, 24.0, 68.0));
-    float fluteCoord = uv.x * fluteCount * 6.2831853;
+    // Optical cylindrical fluted glass geometry
+    float fluteCount = floor(clamp(u_resolution.x / 24.0, 28.0, 74.0));
+    float flutePhase = uv.x * fluteCount * 6.2831853;
 
-    // Subtle organic wave modulation along the vertical reeds
-    float waveShift = sin(uv.y * 4.2 - t * 0.55 + sin(uv.x * 5.0 + t * 0.35) * 0.6) * 0.35;
-    float fluteSin = sin(fluteCoord + waveShift);
-    float fluteCos = cos(fluteCoord + waveShift);
+    // Subtle organic wave undulation along the lens axis
+    float waveBend = sin(uv.y * 3.4 - t * 0.52 + cos(uv.x * 3.8 + t * 0.4) * 0.5) * 0.28;
+    float fluteSin = sin(flutePhase + waveBend);
+    float fluteCos = cos(flutePhase + waveBend);
 
-    // Fine frosted micro-grain on the glass surface
-    float grain = (noise(uv * u_resolution * 0.35) - 0.5) * 0.06;
+    // Cylindrical glass surface normal (transparent lens curvature)
+    vec3 normal = normalize(vec3(
+      fluteSin * 0.62,
+      cos(uv.y * 3.14159 - t * 0.45) * 0.06,
+      1.0
+    ));
 
-    // Cylindrical glass normal for each vertical flute
-    vec3 normal = normalize(vec3(fluteSin * 0.78 + grain, sin(uv.y * 3.14159 - t * 0.4) * 0.08, 1.0));
+    // Optical Snell refraction through the clear glass slide:
+    // Each reed bends the underlying wave horizontally & vertically, with subtle RGB dispersion
+    float iorStrength = 0.068 / max(aspect * 0.55, 0.75);
+    vec2 refractOffset = vec2(
+      normal.x * iorStrength + sin(uv.y * 5.0 - t * 0.7) * 0.008 * fluteSin,
+      normal.y * 0.028 + fluteCos * 0.012 * sin(uv.x * 4.0 + t * 0.5)
+    );
 
-    // Refract UV through the cylindrical fluted lens
-    vec2 refractedUv = uv + vec2(normal.x * (0.045 / max(aspect * 0.6, 0.8)), normal.y * 0.02);
+    // Subtle chromatic dispersion across the lens edge (red/green/blue bend slightly differently)
+    vec2 disp = vec2(fluteSin * 0.0032, 0.0);
+    vec3 colR = sampleScene(uv + refractOffset + disp, t, u_dark);
+    vec3 colG = sampleScene(uv + refractOffset, t, u_dark);
+    vec3 colB = sampleScene(uv + refractOffset - disp, t, u_dark);
+    vec3 refractedWave = vec3(colR.r, colG.g, colB.b);
 
-    // Sample both light and dark wave fields and crossfade smoothly via u_dark
-    vec3 lightCol = sampleLightPalette(refractedUv, t);
-    vec3 darkCol  = sampleDarkPalette(refractedUv, t);
-    vec3 baseCol  = mix(lightCol, darkCol, u_dark);
+    // Wave-coupled lighting: the glass itself is nearly invisible, so specular & Fresnel
+    // reflections are driven by the local wave luminance and wave slope behind the glass
+    vec3 unrefracted = sampleScene(uv, t, u_dark);
+    float waveLuma = dot(refractedWave, vec3(0.299, 0.587, 0.114));
+    float waveContrast = length(refractedWave - unrefracted);
 
-    // Physical Blinn-Phong + Fresnel lighting with glossiness = 0.8
     vec3 viewDir  = vec3(0.0, 0.0, 1.0);
-    vec3 lightDir = normalize(vec3(0.42 + sin(t * 0.3) * 0.15, 0.38, 0.85));
+    vec3 lightDir = normalize(vec3(0.38 + sin(t * 0.35) * 0.22, 0.42 + cos(t * 0.28) * 0.15, 0.88));
     vec3 halfVec  = normalize(lightDir + viewDir);
 
     float glossiness = 0.8;
-    float shininess  = 58.0;
+    float shininess  = 72.0;
     float spec = pow(max(dot(normal, halfVec), 0.0), shininess) * glossiness;
-    float rim  = pow(1.0 - abs(fluteCos), 3.0) * 0.28;
-    float shadow = mix(0.84, 1.06, fluteCos * 0.5 + 0.5);
+    float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 3.5) * glossiness;
 
-    vec3 specTint = mix(vec3(1.0, 0.97, 0.92), vec3(0.82, 0.99, 0.90), u_dark);
-    vec3 finalCol = baseCol * shadow + specTint * (spec * 0.55 + rim * mix(0.45, 0.25, u_dark));
+    // Extremely subtle depth modulation (0.965 to 1.025) so flutes are invisible until they bend a wave
+    float subtleDepth = mix(0.968, 1.024, fluteCos * 0.5 + 0.5);
+    float waveCatch = smoothstep(0.25, 0.85, waveLuma) * (0.45 + waveContrast * 3.2);
+
+    vec3 specTint = mix(vec3(1.0, 0.98, 0.94), vec3(0.84, 0.99, 0.91), u_dark);
+    vec3 finalCol = refractedWave * subtleDepth
+                  + specTint * (spec * 0.24 * waveCatch + fresnel * 0.11 * waveCatch);
 
     gl_FragColor = vec4(clamp(finalCol, 0.0, 1.0), 1.0);
   }
@@ -141,8 +146,7 @@ function compileShader(gl: WebGLRenderingContext, type: number, source: string):
 
 /**
  * Full-viewport non-interactive WebGL fluted-glass wave background.
- * Smoothly cross-dissolves between the Light Mode (periwinkle/aqua/champagne) and
- * Night Mode (deep teal/emerald/mint) shaders whenever the theme changes.
+ * Smoothly cross-dissolves between Light Mode and Night Mode shaders.
  */
 export function ShaderBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -215,7 +219,6 @@ export function ShaderBackground() {
       lastTime = now;
       const elapsed = (now - start) * 0.001;
 
-      // Exponentially damped interpolation for silky-smooth light/dark mode transition
       const blendRate = 1 - Math.exp(-dt * 4.5);
       currentDark += (darkTargetRef.current - currentDark) * blendRate;
 
