@@ -64,15 +64,15 @@ export default function LandingPage() {
   return (
     <div className="flex min-h-dvh flex-col">
       {/* Floating glassmorphism pill navbar with new Fluted-Prism Logo */}
-      <header className="sticky top-4 z-40 mx-auto w-full max-w-6xl px-4 sm:top-6 sm:px-6">
-        <div className="glass-pill flex items-center justify-between gap-4 rounded-full px-3.5 py-2 sm:px-5 sm:py-2.5">
+      <header className="sticky top-4 z-40 mx-auto w-full max-w-7xl px-4 sm:top-6 sm:px-6 lg:px-8">
+        <div className="glass-pill flex items-center justify-between gap-4 rounded-full px-4 py-2 sm:px-6 sm:py-2.5">
           <Logo to="/" />
-          <nav aria-label="Landing navigation" className="hidden items-center gap-1 md:flex">
+          <nav aria-label="Landing navigation" className="hidden items-center gap-1.5 md:flex">
             {NAV_ITEMS.map(({ to, label }) => (
               <NavLink
                 key={to}
                 to={to}
-                className="rounded-full px-4 py-2 text-sm font-medium text-ink-muted transition-colors duration-300 hover:bg-accent/15 hover:text-ink"
+                className="rounded-full px-4 py-2 text-[15px] font-medium text-ink-muted transition-colors duration-300 hover:bg-accent/15 hover:text-ink sm:text-base"
               >
                 {label}
               </NavLink>

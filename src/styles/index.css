@@ -45,22 +45,22 @@
     --color-ink-muted: 172 228 208;
     --color-accent: 180 246 216;
     --color-accent-ink: 4 34 26;
-    --glass-bg: rgba(4, 28, 23, 0.24);
-    --glass-bg-strong: rgba(6, 36, 29, 0.36);
-    --glass-bg-subtle: rgba(16, 76, 58, 0.18);
-    --glass-border: rgba(180, 246, 216, 0.26);
+    --glass-bg: rgba(4, 30, 24, 0.38);
+    --glass-bg-strong: rgba(6, 38, 30, 0.52);
+    --glass-bg-subtle: rgba(14, 68, 52, 0.28);
+    --glass-border: rgba(180, 246, 216, 0.32);
     --glass-sheen: linear-gradient(
       135deg,
-      rgba(209, 250, 229, 0.20) 0%,
-      rgba(16, 152, 104, 0.06) 38%,
+      rgba(209, 250, 229, 0.26) 0%,
+      rgba(16, 152, 104, 0.08) 38%,
       rgba(0, 0, 0, 0.01) 68%,
-      rgba(253, 230, 138, 0.12) 100%
+      rgba(253, 230, 138, 0.14) 100%
     );
     --glass-shadow:
-      0 24px 54px -14px rgba(1, 14, 12, 0.42),
-      inset 0 1.5px 1.5px 0 rgba(209, 250, 229, 0.38),
-      inset 1px 0 0.5px 0 rgba(167, 243, 208, 0.20),
-      inset 0 -1px 1px 0 rgba(16, 185, 129, 0.14);
+      0 24px 54px -14px rgba(1, 14, 12, 0.46),
+      inset 0 1.5px 1.5px 0 rgba(209, 250, 229, 0.44),
+      inset 1px 0 0.5px 0 rgba(167, 243, 208, 0.24),
+      inset 0 -1px 1px 0 rgba(16, 185, 129, 0.18);
     color-scheme: dark;
   }
 

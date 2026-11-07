@@ -76,15 +76,15 @@ export function AppShell() {
 
   return (
     <div className="flex min-h-dvh flex-col">
-      {/* Floating glassmorphism pill navbar */}
-      <header className="sticky top-4 z-40 mx-auto w-full max-w-6xl px-4 sm:top-6 sm:px-6">
-        <div className="glass-pill flex items-center justify-between gap-3 rounded-full px-3.5 py-2 sm:px-5 sm:py-2.5">
+      {/* Floating glassmorphism pill navbar aligned to main content width */}
+      <header className="sticky top-4 z-40 mx-auto w-full max-w-7xl px-4 sm:top-6 sm:px-6 lg:px-8">
+        <div className="glass-pill flex items-center justify-between gap-4 rounded-full px-4 py-2 sm:px-6 sm:py-2.5">
           <Logo to="/" />
 
           <nav
             ref={navContainerRef}
             aria-label="Main navigation"
-            className="relative hidden items-center gap-1 lg:flex"
+            className="relative hidden items-center gap-1.5 lg:flex"
           >
             {/* Gliding active background pill */}
             <span
@@ -107,14 +107,14 @@ export function AppShell() {
                   to={to}
                   className={({ isActive }) =>
                     cn(
-                      'relative z-10 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium tracking-tight transition-colors duration-300',
+                      'relative z-10 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[15px] font-medium tracking-tight transition-colors duration-300 sm:px-4.5 sm:text-base',
                       isActive ? 'text-accent-ink' : 'text-ink-muted hover:text-ink',
                     )
                   }
                 >
                   <span>{label}</span>
                   {count > 0 && (
-                    <span className="rounded-full bg-current/15 px-2 py-0.5 text-[11px] font-semibold leading-none">
+                    <span className="rounded-full bg-current/15 px-2 py-0.5 text-xs font-semibold leading-none">
                       {count}
                     </span>
                   )}

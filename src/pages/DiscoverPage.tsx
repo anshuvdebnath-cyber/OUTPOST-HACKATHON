@@ -4,6 +4,7 @@ import { GitCompareArrows, Search, SearchX, SlidersHorizontal, X } from 'lucide-
 import { PageHeader } from '@/components/ui/PageHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button, buttonClasses } from '@/components/ui/Button';
+import { SortDropdown } from '@/components/ui/SortDropdown';
 import { SCHOLARSHIPS } from '@/data/scholarships';
 import { FilterPanel } from '@/features/scholarships/FilterPanel';
 import { ScholarshipCard } from '@/features/scholarships/ScholarshipCard';
@@ -79,22 +80,12 @@ export default function DiscoverPage() {
             autoComplete="off"
           />
         </div>
-        <div className="flex gap-2.5">
-          <label htmlFor="sort" className="sr-only">
-            Sort scholarships
-          </label>
-          <select
-            id="sort"
+        <div className="flex items-center gap-2.5">
+          <SortDropdown
             value={filters.sort}
-            onChange={(e) => setFilter('sort', e.target.value as SortOption)}
-            className="input h-12 flex-1 rounded-full px-5 sm:w-52"
-          >
-            {(Object.keys(SORT_LABELS) as SortOption[]).map((k) => (
-              <option key={k} value={k}>
-                {SORT_LABELS[k]}
-              </option>
-            ))}
-          </select>
+            onChange={(val) => setFilter('sort', val)}
+            options={SORT_LABELS}
+          />
           <Button
             variant="secondary"
             className="h-12 lg:hidden"

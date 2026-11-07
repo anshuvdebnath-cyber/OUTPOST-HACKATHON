@@ -55,14 +55,22 @@ export default function DeadlinesPage() {
         description="Never miss a submission window. Deadlines are grouped by urgency and can be exported to Google, Apple or Outlook Calendar."
         actions={
           <>
-            <div className="glass-pill inline-flex rounded-full p-1" role="group" aria-label="Deadline scope">
+            {/* Smooth sliding pill scope selector */}
+            <div className="glass-pill relative inline-flex items-center rounded-full p-1" role="group" aria-label="Deadline scope">
+              <span
+                aria-hidden="true"
+                className={cn(
+                  'pointer-events-none absolute inset-y-1 w-[calc(50%-4px)] rounded-full bg-accent shadow-sm transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)]',
+                  scope === 'all' ? 'left-1' : 'left-[calc(50%)]',
+                )}
+              />
               <button
                 type="button"
                 aria-pressed={scope === 'all'}
                 onClick={() => setScope('all')}
                 className={cn(
-                  'rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-300',
-                  scope === 'all' ? 'bg-accent text-accent-ink' : 'text-ink-muted hover:text-ink',
+                  'relative z-10 flex-1 rounded-full px-4 py-1.5 text-xs font-medium transition-colors duration-300',
+                  scope === 'all' ? 'text-accent-ink' : 'text-ink-muted hover:text-ink',
                 )}
               >
                 All open ({SCHOLARSHIPS.length})
@@ -72,8 +80,8 @@ export default function DeadlinesPage() {
                 aria-pressed={scope === 'tracked'}
                 onClick={() => setScope('tracked')}
                 className={cn(
-                  'rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-300',
-                  scope === 'tracked' ? 'bg-accent text-accent-ink' : 'text-ink-muted hover:text-ink',
+                  'relative z-10 flex-1 rounded-full px-4 py-1.5 text-xs font-medium transition-colors duration-300',
+                  scope === 'tracked' ? 'text-accent-ink' : 'text-ink-muted hover:text-ink',
                 )}
               >
                 My tracked ({trackedIds.size})
@@ -95,23 +103,25 @@ export default function DeadlinesPage() {
       />
 
       {list.length === 0 ? (
-        <EmptyState
-          icon={CalendarClock}
-          title="No tracked deadlines yet"
-          description="Save scholarships from Discover or switch to 'All open' to view every upcoming deadline."
-          action={
-            <div className="flex flex-wrap justify-center gap-2.5">
-              <Button variant="secondary" onClick={() => setScope('all')}>
-                Show all open deadlines
-              </Button>
-              <Link to="/discover" className={buttonClasses('primary')}>
-                <Compass aria-hidden="true" className="h-4 w-4" /> Discover scholarships
-              </Link>
-            </div>
-          }
-        />
+        <div key="empty" className="animate-fade-in-up">
+          <EmptyState
+            icon={CalendarClock}
+            title="No tracked deadlines yet"
+            description="Save scholarships from Discover or switch to 'All open' to view every upcoming deadline."
+            action={
+              <div className="flex flex-wrap justify-center gap-2.5">
+                <Button variant="secondary" onClick={() => setScope('all')}>
+                  Show all open deadlines
+                </Button>
+                <Link to="/discover" className={buttonClasses('primary')}>
+                  <Compass aria-hidden="true" className="h-4 w-4" /> Discover scholarships
+                </Link>
+              </div>
+            }
+          />
+        </div>
       ) : (
-        <div className="space-y-8">
+        <div key={scope} className="animate-fade-in-up space-y-8">
           {URGENCY_SECTIONS.map((sec) => {
             const items = grouped.get(sec.key) ?? [];
             if (items.length === 0) return null;
@@ -123,11 +133,12 @@ export default function DeadlinesPage() {
                   </h2>
                 </div>
                 <ol className="space-y-3">
-                  {items.map((s) => {
+                  {items.map((s, idx) => {
                     const app = applications[s.id];
                     return (
                       <li
                         key={s.id}
+                        style={{ animationDelay: `${Math.min(idx * 35, 200)}ms` }}
                         className="card animate-fade-in-up flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6 hover:-translate-y-0.5"
                       >
                         <div className="min-w-0">
