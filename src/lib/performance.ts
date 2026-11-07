@@ -46,3 +46,4 @@ export function initPerformanceMonitoring(onReport?: (metric: WebVitalMetric) =>
     // Ignore unsupported entry types in older or headless environments
   }
 }
+
